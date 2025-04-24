@@ -281,7 +281,7 @@
                         <p class="mt-4 font-semibold text-purple-800">— Anna, KTH Student</p>
                     </div>
                     <div class="carousel-slide flex-shrink-0 w-full text-center">
-                        <p class="text-nav-800 italic max-w-2xl mx-auto">"I love how intuitive and fast it is. Found the perfect course in minutes!"</p>
+                        <p class="text-nav-800 italic max-w-2xl mx-auto">"I love how intuitive and fast it is. Very easy to find a tailored course for my interests!"</p>
                         <p class="mt-4 font-semibold text-purple-800">— Erik, KTH Student</p>
                     </div>
                     <div class="carousel-slide flex-shrink-0 w-full text-center">
@@ -330,7 +330,7 @@
                         <a href="https://github.com/emyemy89" class="text-nav-800 hover:text-gold-400 social-icon">
                             <i class="fab fa-github"></i>
                         </a>
-                        <a href="mailto:emanuel@example.com" class="text-nav-800 hover:text-gold-400 social-icon">
+                        <a href="emapar@kth.se" class="text-nav-800 hover:text-gold-400 social-icon">
                             <i class="fas fa-envelope"></i>
                         </a>
                     </div>
@@ -467,21 +467,23 @@
                 <div class="glass-card p-8 animate-slide-in">
                     <h3 class="text-xl font-semibold text-purple-800 mb-4">Contact Us</h3>
                     <p class="text-nav-800 mb-6">Have questions or feedback? Reach out to us, and we’ll get back to you as soon as possible.</p>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-nav-800">Name</label>
-                            <input type="text" class="newsletter-input mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" placeholder="Your Name">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-nav-800">Email</label>
-                            <input type="email" class="newsletter-input mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" placeholder="Your Email">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-nav-800">Message</label>
-                            <textarea class="newsletter-input mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" rows="4" placeholder="Your Message"></textarea>
-                        </div>
-                        <button class="cta-button w-full px-6 py-3 bg-gold-400 text-nav-800 font-semibold rounded-lg hover:bg-gold-500">Send Message</button>
-                    </div>
+                    <!-- <div class="space-y-4"> -->
+                        <form action="https://formspree.io/f/movdqzvq" method="POST" class="space-y-4">
+                            <div>
+                              <label class="block text-sm font-medium text-nav-800">Name</label>
+                              <input name="name" type="text" required class="newsletter-input mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" placeholder="Your Name">
+                            </div>
+                            <div>
+                              <label class="block text-sm font-medium text-nav-800">Email</label>
+                              <input name="email" type="email" required class="newsletter-input mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" placeholder="Your Email">
+                            </div>
+                            <div>
+                              <label class="block text-sm font-medium text-nav-800">Message</label>
+                              <textarea name="message" required class="newsletter-input mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" rows="4" placeholder="Your Message"></textarea>
+                            </div>
+                            <button type="submit" class="cta-button w-full px-6 py-3 bg-gold-400 text-nav-800 font-semibold rounded-lg hover:bg-gold-500">Send Message</button>
+                          </form>
+                    <!-- </div> -->
                 </div>
                 <div class="glass-card p-8 animate-slide-in">
                     <h3 class="text-xl font-semibold text-purple-800 mb-4">Stay Connected</h3>
