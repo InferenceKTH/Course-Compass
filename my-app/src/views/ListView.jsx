@@ -8,6 +8,8 @@ function ListView(props) {
     const [hasMore, setHasMore] = useState(true);
     const [readMore, setReadMore] = useState({});
     const [isLoading, setIsLoading] = useState(true);
+    const [sortBy, setSortBy] = useState('relevance');
+    const [sortDirection, setSortDirection] = useState('asc');
    
     const toggleReadMore = (courseCode) => {
         setReadMore(prevState => ({
