@@ -49,6 +49,12 @@ function ListView(props) {
         }
     }, [props.targetScroll, hasMore, displayedCourses.length]);
    
+    useEffect(() => {
+    if (props.targetScroll === 0 && props.scrollContainerRef?.current) {
+        props.scrollContainerRef.current.scrollTop = 0;
+    }
+}, [props.targetScroll]);
+
     if (!props.courses) {
         return (
             <div className="relative bg-white text-black p-2 flex flex-col gap-5 h-screen">
@@ -170,6 +176,16 @@ function ListView(props) {
                 </div>
             )}
             {props.popup}
+            {!isLoading && props.targetScroll > 1000 &&(
+            <button
+                onClick={() => props.setTargetScroll(0)}
+                className="fixed bottom-6 right-6 z-50 bg-[#000061] text-white p-3 rounded-full shadow-lg hover:bg-[#1a1a80] transition-all"
+                title="Scroll to top"
+            >
+                ↑
+            </button>
+            )}
+
         </div>
    );
 }
