@@ -1,12 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { observer } from "mobx-react-lite";
 import SidebarView from "../views/SidebarView.jsx";
 
 
 const SidebarPresenter = observer(({ model }) => {
 
+    useEffect(() => {
+        model.setFiltersChange();
+    })
+
     let currentLanguageSet = 'none';
-    let currentLevelSet = [];
+    let currentLevelSet = ["PREPARATORY", "BASIC", "ADVANCED", "RESEARCH"];
+    let currentDepartmentSet = [
+        "EECS/Computational Science and  Technology", "EECS/Theoretical Computer Science", "EECS/Electric Power and Energy Systems", "EECS/Network and Systems Engineering",
+        "ITM/Learning in Engineering Sciences", "ITM/Industrial Economics and Management", "ITM/Energy Systems", "ITM/Integrated Product Development and Design", "ITM/SKD GRU",
+        "SCI/Mathematics", "SCI/Applied Physics", "SCI/Mechanics", "SCI/Aeronautical and Vehicle Engineering",
+        "ABE/Sustainability and Environmental Engineering", "ABE/Concrete Structures", "ABE/Structural Design & Bridges", "ABE/History of Science, Technology and Environment",
+    ]
     function handleLanguageFilterChange(param) {
         if (param === "English") {
             switch (currentLanguageSet) {
@@ -73,6 +83,19 @@ const SidebarPresenter = observer(({ model }) => {
         model.updateLevelFilter(currentLevelSet);
     }
 
+    function handleDepartmentFilterChange(param) {
+        if (currentDepartmentSet.includes(param)) {
+            const index = currentDepartmentSet.indexOf(param);
+            if (index > -1) {
+                currentDepartmentSet.splice(index, 1);
+            }
+        } else {
+            currentDepartmentSet.push(param);
+        }
+        model.updateDepartmentFilter(currentDepartmentSet);
+        model.setFiltersChange();
+    }
+
     /*HandleFilterChange param is structured as such
         [
             type of the field: (toggle, slider, dropdown, buttongroup)
@@ -96,6 +119,9 @@ const SidebarPresenter = observer(({ model }) => {
                 break;
             case "eligibility":
                 model.updateTranscriptElegibilityFilter(param[2].toLowerCase());
+                break;
+            case "department":
+                handleDepartmentFilterChange(param[2]);
                 break;
             default:
                 console.log("Invalid filter type");
@@ -131,14 +157,29 @@ const SidebarPresenter = observer(({ model }) => {
                 console.log("transcript filter set to: " + param[1]);
                 model.setApplyTranscriptFilter(param[1]);
                 break;
+            case "department":
+                console.log("department filter set to: " + param[1]);
+                model.setApplyDepartmentFilter(param[1]);
+                break;
             default:
                 console.log("Invalid filter type");
         }
         model.setFiltersChange();
     }
+    function reApplyFilter() {
+        model.setFiltersChange();
+    }
+
+    function setApplyRemoveNullCourses(){
+        model.setApplyRemoveNullCourses();
+    }
+
     return (
         <SidebarView HandleFilterChange={HandleFilterChange}
-            HandleFilterEnable={HandleFilterEnable} />
+            HandleFilterEnable={HandleFilterEnable}
+            reApplyFilter={reApplyFilter}
+            toggleRemoveNull={setApplyRemoveNullCourses}
+        />
     );
 });
 

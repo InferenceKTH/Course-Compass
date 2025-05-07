@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { observer } from "mobx-react-lite";
 import { useState } from 'react';
 import CoursePagePopup from '../views/Components/CoursePagePopup.jsx';
@@ -7,6 +7,7 @@ import { ReviewPresenter } from "../presenters/ReviewPresenter.jsx";
 import SearchbarView from "../views/SearchbarView.jsx";
 
 const SearchbarPresenter = observer(({ model }) => {
+
     const searchCourses = (query) => {
         //model.filteredCourses is essentially a smaller subset of model.courses, if theres no filters, it should be the same
         console.log("---------------search recalculated");

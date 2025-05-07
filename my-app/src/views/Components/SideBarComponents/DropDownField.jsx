@@ -12,12 +12,17 @@ export default function DropDownField(props) {
 
   const items = props.options;
 
+  useEffect(() => {
+    setSelectedItems(items);
+  }, [items]);
+
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const handleCheckboxChange = (item) => {
     setSelectedItems((prev) =>
       prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
     );
+    console.log(item);
     props.HandleFilterChange([paramFieldType, props.filterName, item]);
   };
 
@@ -52,7 +57,7 @@ export default function DropDownField(props) {
       <div className={`opacity-${filterEnabled ? "100" : "50"} ${filterEnabled ? "pointer-events-auto" : "pointer-events-none user-select-none"
         }`}>
 
-        <div className="relative flex justify-center text-left w-full"ref={dropdownRef}>
+        <div className="relative justify-center text-left w-full"ref={dropdownRef}>
           {/* Dropdown Button */}
           <button
             onClick={toggleDropdown}
@@ -63,7 +68,7 @@ export default function DropDownField(props) {
 
           {/* Dropdown Menu */}
           {isOpen && (
-            <div className="absolute bottom-10 mt-2 w-48 bg-[#aba8e0] border border-gray-200 rounded-lg shadow-lg z-30">
+            <div className=" bg-[#aba8e0] mx-1 border-b border-x rounded-b-lg shadow-lg z-30">
               <ul className="">
                 {items.map((item, index) => (
                   <li key={index} className="flex items-center p-2 hover:bg-gray-500">

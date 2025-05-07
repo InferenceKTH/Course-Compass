@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function CourseTranscriptList() {
+export default function CourseTranscriptList(props) {
     let local = [];
     if (localStorage.getItem("completedCourses"))
         local = JSON.parse(localStorage.getItem("completedCourses"));
@@ -23,12 +23,13 @@ export default function CourseTranscriptList() {
         }
         localStorage.setItem("completedCourses", JSON.stringify(newItems));
         window.dispatchEvent(new Event("completedCourses changed"));
+        props.reApplyFilter();
     };
     function removeAllItems() {
         let newitems = [];
         localStorage.setItem("completedCourses", JSON.stringify(newitems));
         window.dispatchEvent(new Event("completedCourses changed"));
-
+        props.reApplyFilter();
     };
 
 

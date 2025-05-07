@@ -4,7 +4,7 @@ import 'ldrs/react/Quantum.css';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 function ListView(props) {
-    const coursesToDisplay = props.searchResults.length > 0 ? props.searchResults : props.courses;
+    const coursesToDisplay = props.searchResults;
     const [displayedCourses, setDisplayedCourses] = useState([]);
     const [hasMore, setHasMore] = useState(true);
     const [readMore, setReadMore] = useState({});
@@ -106,7 +106,7 @@ function ListView(props) {
                                         dangerouslySetInnerHTML={{
                                             __html: readMore[course.code]
                                                 ? course.description
-                                                : course.description.slice(0, 150),
+                                                : (course.description.slice(0, 200)+"..."),
                                         }}
                                     />
                                     {course.description.length > 150 && (

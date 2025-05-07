@@ -25,11 +25,11 @@ const StarComponent = ({ index, rating, onRatingChange, onHover, readOnly = fals
             {!readOnly && (
                 <>
                     <button
-                        className="absolute top-0 left-1/2 w-1/2 h-full cursor-pointer"
+                        className="absolute top-0 right-1/2 w-1/2 h-full cursor-pointer"
                         onClick={handleLeftClick}
                     />
                     <button
-                        className="absolute top-0 right-1/2 w-1/2 h-full cursor-pointer"
+                        className="absolute top-0 left-1/2 w-1/2 h-full cursor-pointer"
                         onClick={handleRightClick}
                     />
                 </>

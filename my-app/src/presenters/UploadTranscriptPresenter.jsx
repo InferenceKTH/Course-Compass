@@ -167,6 +167,8 @@ const UploadTranscriptPresenter = observer((props) => {
         }
         writeLocalStorage_completedCourses(scrapedCodes);
         //console.log(localStorage.getItem("completedCourses"));
+
+        props.reApplyFilter();
     }
 
     const handleFileChange = (event) => {
@@ -185,7 +187,8 @@ const UploadTranscriptPresenter = observer((props) => {
             fileInputValue={fileInputValue}
             HandleFilterEnable={props.HandleFilterEnable}
             HandleFilterChange={props.HandleFilterChange}
-            filterName= {props.filterName}
+            filterName={props.filterName}
+            reApplyFilter = {props.reApplyFilter}
         />);
 });
 

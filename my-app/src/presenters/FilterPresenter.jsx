@@ -1,13 +1,14 @@
 import React from 'react';
 import { observer } from "mobx-react-lite";
 import eligibility from "../scripts/eligibility_refined.js";
+import { SearchbarPresenter } from './SearchbarPresenter.jsx';
 
 const FilterPresenter = observer(({ model }) => {
     var localFilteredCourses = []; //might need to declare out of scope. idk js
 
 
     function applyTranscriptEligibility() {
-        if(localFilteredCourses.length == 0) 
+        if (localFilteredCourses.length == 0)
             return;
         /* this elias thing  */
         const eligibilitytype = model.filterOptions.eligibility;
@@ -22,36 +23,38 @@ const FilterPresenter = observer(({ model }) => {
         if (localStorage.getItem("completedCourses"))
             storedFinishedCourses = JSON.parse(localStorage.getItem("completedCourses"));
 
-        
+
         localFilteredCourses.forEach(course => {
             //console.log(storedFinishedCourses);
             //console.log(course?.prerequisites);
-            if(course?.prerequisites && (course.prerequisites !== "null"))
+            if (storedFinishedCourses.includes(course?.code))
+                return;
+            if (course?.prerequisites && (course?.prerequisites !== "null"))
                 var resultEligibility = eligibility(storedFinishedCourses, course?.prerequisites);
-            else{ // {strong: , zero: , moderate: , weak: }
+            else { // {strong: , zero: , moderate: , weak: }
                 zerocourses.push(course);
                 return;
             }
-            if(resultEligibility.strong){
+            if (resultEligibility.strong) {
                 strongcourses.push(course);
                 return;
-            }else if(resultEligibility.zero){
+            } else if (resultEligibility.zero) {
                 zerocourses.push(course);
                 return;
-            }else if(resultEligibility.moderate){
+            } else if (resultEligibility.moderate) {
                 moderatecourses.push(course);
                 return;
-            }else if(resultEligibility.weak){
+            } else if (resultEligibility.weak) {
                 weakcourses.push(course);
                 return;
-            }else{
+            } else {
                 //it's not eligible at all
                 return;
             }
-            
+
         });
 
-        switch(eligibilitytype){
+        switch (eligibilitytype) {
             case "strong":
                 {
                     localFilteredCourses = [...strongcourses, ...zerocourses];
@@ -65,7 +68,7 @@ const FilterPresenter = observer(({ model }) => {
             case "weak":
                 {
                     localFilteredCourses = [...strongcourses, ...moderatecourses, ...weakcourses, ...zerocourses];
-                    break; 
+                    break;
                 }
             default:
                 {
@@ -74,24 +77,24 @@ const FilterPresenter = observer(({ model }) => {
                     break;
                 }
         }
-        
+
 
     }
 
     function updateCredits() {
-        if(localFilteredCourses.length == 0) 
+        if (localFilteredCourses.length == 0)
             return;
         const min = model.filterOptions.creditMin;
         const max = model.filterOptions.creditMax;
 
-        localFilteredCourses = localFilteredCourses.filter(function(course){
+        localFilteredCourses = localFilteredCourses.filter(function (course) {
             try {
-                return ((course.credits >= min)&&(course.credits <= max));
+                return ((course?.credits >= min) && (course?.credits <= max));
             } catch (error) {
-                console.log("for some reason course.credits is: ", course?.credits, error);
+                console.log("for some reason course?.credits is: ", course?.credits, error);
                 return false;
             }
-            
+
         });
     }
 
@@ -103,31 +106,31 @@ const FilterPresenter = observer(({ model }) => {
         let bestCourses = [];
         let worstCourses = [];
 
-        bestCourses = localFilteredCourses.filter(function(course) {
+        bestCourses = localFilteredCourses.filter(function (course) {
             try {
-                return (locations.includes(course.location));
+                return (locations.includes(course?.location));
             } catch (error) {
-                console.log("for some reason course.location is: ", course?.location, error);
+                console.log("for some reason course?.location is: ", course?.location, error);
                 return false;
             }
-            
+
         });
-        worstCourses = localFilteredCourses.filter(function(course) {
+        worstCourses = localFilteredCourses.filter(function (course) {
             try {
                 return ((course?.location === undefined) || (course?.location === "null"));
             } catch (error) {
                 console.log("BIG ERROR", error);
                 return false;
             }
-            
+
         });
 
         localFilteredCourses = [...bestCourses, ...worstCourses];
-        
+
     }
 
     function updateLanguages() {
-        if(localFilteredCourses.length == 0) 
+        if (localFilteredCourses.length == 0)
             return;
         //possible model.filterOptions.languages values: "none"/"english"/"swedish"/"both"
         const languages = model.filterOptions.language;
@@ -137,11 +140,11 @@ const FilterPresenter = observer(({ model }) => {
         let worstCourses = [];
 
         //in the database a course can have
-        //course.language.english (true/false/"null")
-        //course.language.swedish (true/false/"null")
+        //course?.language.english (true/false/"null")
+        //course?.language.swedish (true/false/"null")
 
         //console.log(data);
-        
+
         switch (languages) {
             case "none":
                 {
@@ -158,18 +161,18 @@ const FilterPresenter = observer(({ model }) => {
                             console.log("BIG ERROR", error);
                             return false;
                         }
-                        
+
                     }
                     );
-                    worstCourses = data.filter(function(course) {
+                    worstCourses = data.filter(function (course) {
                         try {
-                            return ((course?.language === undefined ) || course?.language?.english === "null");
+                            return ((course?.language === undefined) || course?.language?.english === "null");
                         } catch (error) {
                             console.log(course);
                             console.log("BIG ERROR");
                             return false;
                         }
-                        
+
                     });
                     break;
                 }
@@ -183,18 +186,18 @@ const FilterPresenter = observer(({ model }) => {
                             console.log("BIG ERROR");
                             return false;
                         }
-                        
+
                     }
                     );
-                    worstCourses = data.filter(function(course) {
+                    worstCourses = data.filter(function (course) {
                         try {
-                            return ((course?.language === undefined ) || course?.language?.swedish === "null");
+                            return ((course?.language === undefined) || course?.language?.swedish === "null");
                         } catch (error) {
                             console.log(course);
                             console.log("BIG ERROR");
                             return false;
                         }
-                        
+
                     });
                     break;
                 }
@@ -208,30 +211,30 @@ const FilterPresenter = observer(({ model }) => {
                             console.log("BIG ERROR");
                             return false;
                         }
-                        
+
                     }
                     );
                     middleCourses = data.filter(function (course) {
                         try {
                             return (((course?.language?.english === true) && (course?.language?.swedish === false))
-                            || ((course?.language?.english === false) && (course?.language?.swedish === true)));
+                                || ((course?.language?.english === false) && (course?.language?.swedish === true)));
                         } catch (error) {
                             console.log(course);
                             console.log("BIG ERROR");
                             return false;
                         }
-                        
-                        }
+
+                    }
                     );
-                    worstCourses = data.filter(function(course) {
+                    worstCourses = data.filter(function (course) {
                         try {
-                            return ((course?.language === undefined ) || course?.language?.english === "null");
+                            return ((course?.language === undefined) || course?.language?.english === "null");
                         } catch (error) {
                             console.log(course);
                             console.log("BIG ERROR");
                             return false;
                         }
-                        
+
                     });
                     break;
                 }
@@ -241,16 +244,16 @@ const FilterPresenter = observer(({ model }) => {
     }
 
     function updateLevels() {
-        if(localFilteredCourses.length == 0) 
+        if (localFilteredCourses.length == 0)
             return;
 
         //the possible values are: "PREPARATORY", "BASIC", "ADVANCED", "RESEARCH"
         //model.filterOptions.level is an array. it can have []
         const levels = model.filterOptions.level;
-        
-        
-        localFilteredCourses = localFilteredCourses.filter(course => levels.includes(course.academicLevel));
-        
+
+
+        localFilteredCourses = localFilteredCourses.filter(course => levels.includes(course?.academicLevel));
+
         /*
         let levels = model.filterOptions.level;
         let stayingCourses = [];
@@ -268,64 +271,120 @@ const FilterPresenter = observer(({ model }) => {
         localFilteredCourses = [...stayingCourses];*/
     }
 
-    function updateDepartments(){
+    function updateDepartments() {
         const deparments = model.filterOptions.deparment;
         let bestCourses = [];
         let worstCourses = [];
 
-        bestCourses = localFilteredCourses.filter(function(course) {
+        bestCourses = localFilteredCourses.filter(function (course) {
             try {
-                return (deparments.includes(course.deparment));
+                return (deparments.includes(course?.deparment));
             } catch (error) {
-                console.log("for some reason course.department is: ", course?.department, error);
+                console.log("for some reason course?.department is: ", course?.department, error);
                 return false;
             }
-            
+
         });
-        worstCourses = localFilteredCourses.filter(function(course) {
+        worstCourses = localFilteredCourses.filter(function (course) {
             try {
                 return ((course?.department === undefined) || (course?.deparment === "null"));
             } catch (error) {
                 console.log("BIG ERROR", error);
                 return false;
             }
-            
+
         });
 
         localFilteredCourses = [...bestCourses, ...worstCourses];
     }
-    
-    if (model.filtersChange) {
-        localFilteredCourses = [...model.courses];
 
-        if (model.filterOptions.applyLocationFilter) {
-            //after deo finishes locations, until then dont
+    function updateNoNullcourses(){
+        let local = [...localFilteredCourses];
 
-            //console.log("going to apply location on:",localFilteredCourses.length);
-            //updateLocations();
-        }
-        if (model.filterOptions.applyLevelFilter) {
-            updateLevels();
-        }
-        if (model.filterOptions.applyLanguageFilter) {
-            updateLanguages();
-        }
-        if (model.filterOptions.applyCreditsFilter) {
-            updateCredits();
-        }
-        if (model.filterOptions.applyTranscriptFilter) {
-            applyTranscriptEligibility();
-        }
-        if (model.filterOptions.applyDepartments) {
-            //console.log("going to apply location on:",localFilteredCourses.length);
-            //updateDepartments();
-        }
+        console.log("miauuuuu:",local.length);
 
-        model.filteredCourses = [...localFilteredCourses];
-        model.filtersChange = false;
-        model.setFiltersCalculated();
-        console.log("filtered objects number of elements: ", model.filteredCourses.length);
+        if(model.filterOptions.applyTranscriptFilter){
+            local = local.filter(function(course){
+                return (course?.prerequisites && (course?.prerequisites !== "null"));
+            })
+        }
+        console.log("miauuuuu:",local.length);
+        if(model.filterOptions.applyLevelFilter){
+            local = local.filter(function(course){
+                return (course?.prerequisites && (course?.prerequisites !== "null"));
+            })
+        }
+        console.log("miauuuuu:",local.length);
+        if(model.filterOptions.applyLanguageFilter){
+            local = local.filter(function(course){
+                return ((course?.language) && ((course?.language?.swedish !== "null") && (course?.language?.english !== "null")));
+            })
+        }
+        console.log("miauuuuu:",local.length);
+        /*if(model.filterOptions.applyLocationFilter){
+            local = local.filter(function(course){
+                return ((course?.location) && (course?.location !== "null"));
+            })
+        }*/
+        console.log("miauuuuu:",local.length);
+        if(model.filterOptions.applyCreditsFilter){
+            local = local.filter(function(course){
+                return ((course?.credits) && (course?.credits !== "null"));
+            })
+        }
+        console.log("miauuuuu:",local.length);
+        if(model.filterOptions.applyDepartmentFilter){
+            local = local.filter(function(course){
+                return ((course?.department) && (course?.department !== "null"));
+            })
+        }
+        console.log("miauuuuu:",local.length);
+
+        localFilteredCourses = [...local];
     }
+
+    async function run() {
+        if (model.courses.length == 0) {
+            return;
+        }
+        if (model.filtersChange) {
+            localFilteredCourses = [...model.courses];
+
+            if (model.filterOptions.applyRemoveNullCourses) {
+                updateNoNullcourses();
+            }
+            if (model.filterOptions.applyLocationFilter) {
+                //after deo finishes locations, until then dont
+
+                //console.log("going to apply location on:",localFilteredCourses.length);
+                //updateLocations();
+            }
+            if (model.filterOptions.applyLevelFilter) {
+                updateLevels();
+            }
+            if (model.filterOptions.applyLanguageFilter) {
+                updateLanguages();
+            }
+            if (model.filterOptions.applyCreditsFilter) {
+                updateCredits();
+            }
+            if (model.filterOptions.applyTranscriptFilter) {
+                applyTranscriptEligibility();
+            }
+            if (model.filterOptions.applyDepartments) {
+                //console.log("going to apply location on:",localFilteredCourses.length);
+                //updateDepartments();
+            }
+
+            model.filteredCourses = [...localFilteredCourses];
+            model.filtersChange = false;
+            model.setFiltersCalculated();
+            console.log("filtered objects number of elements: ", model.filteredCourses.length);
+        }
+    }
+
+    run();
+    
 });
 
 export { FilterPresenter };

@@ -18,26 +18,27 @@ function SidebarView(props) {
             }}
         >
             <h6 className="m-2 text-lg font-medium text-white text-center">
-                        Filters 
-                    </h6>
+                Filters
+            </h6>
             <UploadTranscriptPresenter
                 HandleFilterChange={props.HandleFilterChange}
-                filterName = "transcript"
+                filterName="transcript"
                 HandleFilterEnable={props.HandleFilterEnable}
+                reApplyFilter={props.reApplyFilter}
             />
             <div className='flex-auto justify-center h-100 max-h-100 '>
                 <div className="z-10 w-100% rounded-lg justify-center pb-10" >
-                    
+
                     <DropDownField
                         options={["Preparatory", "Basic", "Advanced", "Research"]}
                         HandleFilterChange={props.HandleFilterChange}
-                        filterName = "level"
+                        filterName="level"
                         HandleFilterEnable={props.HandleFilterEnable}
                     />
                     <ToggleField
                         fields={["English", "Swedish"]}
                         HandleFilterChange={props.HandleFilterChange}
-                        filterName = "language"
+                        filterName="language"
                         HandleFilterEnable={props.HandleFilterEnable}
                     />
 
@@ -58,7 +59,67 @@ function SidebarView(props) {
                         HandleFilterChange={props.HandleFilterChange}
                         filterName="department"
                         HandleFilterEnable={props.HandleFilterEnable}
+                        fields={
+                            [
+                                {
+                                    id: 1,
+                                    label: "EECS",
+                                    subItems: [
+                                        "Computational Science and  Technology",
+                                        "Theoretical Computer Science",
+                                        "Electric Power and Energy Systems",
+                                        "Network and Systems Engineering",
+                                    ],
+                                },
+                                {
+                                    id: 2,
+                                    label: "ITM",
+                                    subItems: [
+                                        "Learning in Engineering Sciences",
+                                        "Industrial Economics and Management",
+                                        "Energy Systems",
+                                        "Integrated Product Development and Design",
+                                        "SKD GRU",
+                                    ],
+                                },
+                                {
+                                    id: 3,
+                                    label: "SCI",
+                                    subItems: [
+                                        "Mathematics",
+                                        "Applied Physics",
+                                        "Mechanics",
+                                        "Aeronautical and Vehicle Engineering",
+                                    ],
+                                },
+                                {
+                                    id: 4,
+                                    label: "ABE",
+                                    subItems: [
+                                        "Sustainability and Environmental Engineering",
+                                        "Concrete Structures",
+                                        "Structural Design & Bridges",
+                                        "History of Science, Technology and Environment",
+                                    ],
+                                },
+                            ]
+                        }
                     />
+                    <div className='mr-3'>
+                    <input
+                            id="excludeNullCheckbox"
+                            type="checkbox"
+                            onChange={props.toggleRemoveNull}
+                            className="w-4 h-4 pt-4 text-purple-600 bg-gray-100 border-gray-300 rounded-sm accent-violet-600"
+                        />
+                        <label 
+                            htmlFor="excludeNullCheckbox" 
+                            className="ml-2 text-sm font-medium text-gray-300 cursor-pointer"
+                        >
+                            Exclude unidentified field courses
+                        </label>
+                        
+                    </div>
                 </div>
 
             </div>
