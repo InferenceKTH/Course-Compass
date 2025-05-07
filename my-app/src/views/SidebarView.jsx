@@ -6,6 +6,7 @@ import { UploadTranscriptPresenter } from '../presenters/UploadTranscriptPresent
 import CollapsibleCheckboxes from './Components/SideBarComponents/CollapsibleCheckboxes.jsx';
 import Tooltip from './Components/SideBarComponents/ToolTip.jsx';
 import ButtonGroupField from './Components/SideBarComponents/ButtonGroupField.jsx';
+import ButtonGroupFullComponent from './Components/SideBarComponents/ButtonGroupFullComponent.jsx';
 
 
 function SidebarView(props) {
@@ -36,14 +37,19 @@ function SidebarView(props) {
                         HandleFilterEnable={props.HandleFilterEnable}
                         description="Filter by the level of the courses. Basic courses correspond to bachelor courses, Advanced to master courses."
                     />
+                    
+                    <ButtonGroupFullComponent
+                        items={["P1", "P2", "P3", "P4"]}
+                        HandleFilterChange={props.HandleFilterChange}
+                        filterName="period"
+                        HandleFilterEnable={props.HandleFilterEnable}
+                    />
                     <ToggleField
                         fields={["English", "Swedish"]}
                         HandleFilterChange={props.HandleFilterChange}
                         filterName="language"
                         HandleFilterEnable={props.HandleFilterEnable}
                     />
-
-                    {/*expanding list for department */}
 
                     <DropDownField
                         options={["Kista", "Valhalavagen", "Sodetalje", "T-centralen"]}
@@ -105,10 +111,6 @@ function SidebarView(props) {
                                 },
                             ]
                         }
-                    />
-                    <ButtonGroupField
-                        items={["P1", "P2", "P3", "P4"]}
-                        HandleFilterChange={props.HandleFilterChange}
                     />
                     <div className='mr-3 flex justify-between'>
                         <input

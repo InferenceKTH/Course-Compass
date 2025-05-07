@@ -11,6 +11,7 @@ const SidebarPresenter = observer(({ model }) => {
 
     let currentLanguageSet = 'none';
     let currentLevelSet = ["PREPARATORY", "BASIC", "ADVANCED", "RESEARCH"];
+    let currentPeriodSet = [true,true,true,true]//model.filterOptions.period;
     let currentDepartmentSet = [
         "EECS/Computational Science and  Technology", "EECS/Theoretical Computer Science", "EECS/Electric Power and Energy Systems", "EECS/Network and Systems Engineering",
         "ITM/Learning in Engineering Sciences", "ITM/Industrial Economics and Management", "ITM/Energy Systems", "ITM/Integrated Product Development and Design", "ITM/SKD GRU",
@@ -96,6 +97,12 @@ const SidebarPresenter = observer(({ model }) => {
         model.setFiltersChange();
     }
 
+    function handlePeriodFilterChange(param) {
+        currentPeriodSet[param] = !currentPeriodSet[param];
+        model.updatePeriodFilter(currentPeriodSet);
+        model.setFiltersChange();
+    }
+
     /*HandleFilterChange param is structured as such
         [
             type of the field: (toggle, slider, dropdown, buttongroup)
@@ -122,6 +129,9 @@ const SidebarPresenter = observer(({ model }) => {
                 break;
             case "department":
                 handleDepartmentFilterChange(param[2]);
+                break;
+            case "period":
+                handlePeriodFilterChange(param[2]);
                 break;
             default:
                 console.log("Invalid filter type");
@@ -160,6 +170,10 @@ const SidebarPresenter = observer(({ model }) => {
             case "department":
                 console.log("department filter set to: " + param[1]);
                 model.setApplyDepartmentFilter(param[1]);
+                break;
+            case "period":
+                console.log("period filter set to: " + param[1]);
+                model.setApplyPeriodFilter(param[1]);
                 break;
             default:
                 console.log("Invalid filter type");

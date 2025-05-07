@@ -173,6 +173,11 @@ export const model = {
         this.filterOptions.department = department;
     },
 
+    updatePeriodFilter(period) {
+        this.filterOptions.period = period;
+        console.log(period);
+    },
+
     setApplyTranscriptFilter(transcriptFilterState) {
         this.filterOptions.applyTranscriptFilter = transcriptFilterState;
     },
@@ -190,6 +195,9 @@ export const model = {
     },
     setApplyDepartmentFilter(departmentFilterState) {
         this.filterOptions.applyDepartmentFilter = departmentFilterState;
+    },
+    setApplyPeriodFilter(periodfilterState) {
+        this.filterOptions.applyPeriodFilter = periodfilterState;
     },
     async getAverageRating(courseCode) {
         const reviews = await getReviewsForCourse(courseCode);
