@@ -5,16 +5,27 @@ export const model = {
     user: undefined,
     //add searchChange: false,   //this is for reworking the searchbar presenter, so that it triggers as a model, 
     //instead of passing searchcouses lambda function down into the searchbarview.
+    /* courses returned from SearchbarPresenter (search is applied on top of filteredCourses[]) to be shown in the ListView */
     currentSearch: [],
+    /* current query text */
     currentSearchText: "",
     scrollPosition: 0,
+    /* list of all course objects downloaded from the Firebase realtime database and stored locally as JSON object in this array */
     courses: [],
+    /* courses the user selected as their favourite */
     favourites: [],
     isReady: false,
-    filtersChange: false,
+    /* this is a boolean flag showing that filtering options in the UI have changed, triggering the FilterPresenter to recalculate the filteredCourses[] */
+    filtersChange: false, 
+    /* this is a flag showing if the filteredCourses[] has changed (since FilterPresenter recalculated it), so now SearchBarPresenter needs to 
+    recalculate currentSearch[] depending this updated list of courses */
     filtersCalculated: false,
-    filteredCourses: [],
+    /* this is the array that FilterPresenter fills up with course objects, filtered from the model.courses[] */
+    filteredCourses: [], 
+    /* JSON object containing all important parameters the FilterPresenter needs to calculate the filtered list of courses */
     filterOptions: {
+        //apply-X-Filter boolean triggering flag wether corresponding filtering functions should run or not
+        //different arrays require different data, some uses string arrays, some boolean values, and so on
         applyTranscriptFilter: true,
         eligibility: "weak",  //the possible values for the string are: "weak"/"moderate"/"strong"
         applyLevelFilter: true,
@@ -175,7 +186,6 @@ export const model = {
 
     updatePeriodFilter(period) {
         this.filterOptions.period = period;
-        console.log(period);
     },
 
     setApplyTranscriptFilter(transcriptFilterState) {
