@@ -1,24 +1,48 @@
-import { KTH_API_course_fetch, KTH_API_all_active_courses } from "./api_data_fetching.js";
 import fs from "fs";
 
-
+/* 
+This file contains an atempted version of a regex based prerequiste scraper. Due to the unconsistency that the prerequsites have when extracted from the api this project is mostly a falure. It is no longer worth it to deal with all the spelling errors and unstandardised human langage that webpages contain. For this to be fesable in the future there would have to be a restructuring of the kth api prerequsites.
+*/
 
 let previous_data = fs.readFileSync('all_courses_data4.json');
 let previous_object = JSON.parse(previous_data);
-
-
 let codes = Object.keys(previous_object);
 
-//glosery
-let orW = ["or", " or ", " or", "alternatively"];// or
-let andW = ["and", " and ", "in parallel", "combined with"];// and
 
-let testCodes = ["ID2218", "IK1203", "DD2421", "MH2037", "DD2350"];
+
+// corses that is iposible to deal with curently with this method and are therfore stoped before they break something
+let areBroken = ["SF250X", "LT2033", "A42SES", "MF2091", "LT1035", "IL2233", "DD2434"];
+function isBroken(key) {
+    for (let i = 0; i < areBroken.length; i++) {
+        if (areBroken[i] === key) {
+            return true;
+        }
+    }
+    return false;
+}
+
+//glosery for geting synonyms 
+let orW = ["or", " or ", " or", "alternatively"];// or
+let andW = ["and", " and ", "in parallel", "combined with", "together with"];// and
+
+//let testCodes = ["ID2218", "IK1203", "DD2421", "MH2037", "DD2350", "AG2415", "DD2448", "SF2942","MG2117"];
+let testCodes = codes;
 console.log("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
 
-
-function fixArr(arr) {
+function fixArr(arr, key) {
     let newArr = [];
+
+    //if the code is on the blacklist as imposible return error string
+    if (isBroken(key)) {
+        return ["This course is known to be broken: " + key];
+    }
+
+    //If the array is null just return an empty array there is no point in continuing anyway
+    if (arr == null || arr == undefined) {
+        return [];
+    }
+
+
 
     //replace all keywords with or / and
     for (let i = 0; i < arr.length; i++) {
@@ -58,7 +82,6 @@ function fixArr(arr) {
     arr = newArr;
     newArr = [];
 
-
     //for removing a verry iritating edge case "DD 1319"
     for (let i = 0; i < arr.length; i++) {
         let k = arr[i].search(/[A-Z]{2} [0-9]{4,5}/g);
@@ -74,9 +97,7 @@ function fixArr(arr) {
 
         let index = arr[i].search(regx);
 
-        console.log(index);
         if (index != -1) {
-            console.log((index != -1) + " index:" + index);
             let stringB = arr[i].substring(0, index);
             let expand = arr[i].match(regx)[0];
             let stringE = arr[i].substring(index + expand.length);
@@ -110,65 +131,63 @@ function fixArr(arr) {
             i--;
         }
     }
+
+
+    //remove anamalies from edge cases (there is a lot of them)
+    let toRemove = [" or undefined", " and undefined", " or or", "-", " or ", " or and", "/"];
+    for (let i = 0; i < arr.length; i++) {
+        //replacing all "or or or" with "or"
+        let regx = /or or or/g;
+        arr[i] = arr[i].replace(regx, "or");
+        //replacing all " / " and ", " with "/"
+        regx = /( \/ )|(, )/g;
+        arr[i] = arr[i].replace(regx, "/");
+
+        //removing all anomalies from the toRemove list
+        for (let k = 0; k < toRemove.length; k++) {
+            let temp = arr[i].substring(arr[i].length - toRemove[k].length);
+            if (temp === toRemove[k]) {
+                arr[i] = arr[i].substring(0, arr[i].length - toRemove[k].length);
+            }
+        }
+    }
     return arr;
 }
 
 
+
+
+let count = [];
 for (let i = 0; i < testCodes.length; i++) {
     if (previous_object[testCodes[i]]["prerequisites_text"] != null) {
 
-        console.log(testCodes[i]);
-
-        console.log(previous_object[testCodes[i]]["prerequisites_text"]);
-
         let work = previous_object[testCodes[i]]["prerequisites_text"];
 
-        let temp = work.match(/(([A-Z]{3}[0-9]{4}|[A-Z]{2}(?: ?)[0-9]{4,5}|[A-Z]{2}[0-9]{3}[A-Z]|[A-Z][0-9][A-Z][0-9]{4}|[A-Z][0-9][0-9][A-Z]{3}|[A-Z]{3}[0-9]{3}|[A-Z][A-Z][0-9][A-Z]{3}|[A-Z][0-9]{2}[A-Z][0-9][A-Z]|[A-Z][A-Z][0-9][A-Z]{2}[0-9]|[A-Z]{2}[0-9][A-Z][0-9]{2}|[A-Z][0-9]{2}[A-Z][0-9]{2}|[A-Z]{4}[0-9]{2})(?:( or )|( and )|[\/-]?))+|alternatively|in parallel| or( ?)|BSc degree|combined with/g);
+        let temp = work.match(/(([A-Z]{3}[0-9]{4}|[A-Z]{2}(?: ?)[0-9]{4,5}|[A-Z]{2}[0-9]{3}[A-Z]|[A-Z][0-9][A-Z][0-9]{4}|[A-Z][0-9][0-9][A-Z]{3}|[A-Z]{3}[0-9]{3}|[A-Z][A-Z][0-9][A-Z]{3}|[A-Z][0-9]{2}[A-Z][0-9][A-Z]|[A-Z][A-Z][0-9][A-Z]{2}[0-9]|[A-Z]{2}[0-9][A-Z][0-9]{2}|[A-Z][0-9]{2}[A-Z][0-9]{2}|[A-Z]{4}[0-9]{2})(?:( or )|( and )|( \/ )|[\/-]|(, )?))+|alternatively|in parallel| or( ?)|BSc degree|combined with|together with|Bachelor's degree/g);
 
-        let fixed = fixArr(temp);
+        let fixed = fixArr(temp, testCodes[i]);
+        if (count[fixed.length] == null) {
+            count[fixed.length] = 1;
+        } else {
+            count[fixed.length]++;
+        }
 
-        console.log(fixed);
+        if (fixed.length > 6) {
+            console.log(testCodes[i]);
+            console.log(fixed);
+            console.log();
+        }
 
-        console.log();
     }
 }
+console.log;
+for (let i = 0; i < count.length; i++) {
+    if (count[i] == null) {
+        count[i] = 0;
+    }
+    console.log(i + ": " + count[i]);
+}
 
-/* 
-let i = 0;
-let saved_object = {};
-for (let course of Object.keys(data_object)) {
-    if (i < 4567) {i++; continue;}
-    //if (!new_data_object[course]["prerequisites"]) {continue;} 
-    //if (!(new_data_object[course]["prerequisites"].length == 0 || new_data_object[course]["prerequisites"] == "RERUNTHIS")) {continue;}
 
-    if (data_object[course]["prerequisites"]) {
-        try {
-            let pruned_prereqs = await course_prereqs_interpreter(course);
-            //console.log(data_object[course]["prerequisites"]);
-            await sleep(6050);
-            //console.log(pruned_prereqs);
-            data_object[course]["prerequisites"] = JSON.parse(pruned_prereqs)["prerequisites"];
-        } catch(err) {
-            console.log(err);
-            data_object[course]["prerequisites"] = "RERUNTHIS";
-            break;
-        }   
-    } 
-    saved_object[course] = data_object[course];
-    console.log(saved_object[course]);
-    
-    let previous_saved = fs.readFileSync('all_courses_pruned.json');
-    let previous_saved_object = JSON.parse(previous_saved);
-    let new_object = {...previous_saved_object, ...saved_object}
 
-    const jsonString = JSON.stringify(new_object, null, 4);  // Pretty print with 4 spaces
-
-    fs.writeFileSync('all_courses_pruned.json', jsonString, (err) => {
-        if (err) {
-            console.error('\nError writing file\n', err);
-        } 
-    });
-    
-    i++;
-    console.log("Course number " + i + " is done which is named " + course);
-} */
+//Writen by Elias Tosteberg
