@@ -15,7 +15,8 @@ function SearchbarView(props) {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);
-    });
+    }
+    );
     return () => unsubscribe();
   }, [auth]);
 
