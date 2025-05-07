@@ -25,8 +25,6 @@ const FilterPresenter = observer(({ model }) => {
 
 
         localFilteredCourses.forEach(course => {
-            //console.log(storedFinishedCourses);
-            //console.log(course?.prerequisites);
             if (storedFinishedCourses.includes(course?.code))
                 return;
             if (course?.prerequisites && (course?.prerequisites !== "null"))
@@ -81,6 +79,34 @@ const FilterPresenter = observer(({ model }) => {
 
     }
 
+    function updatePeriods(){
+        if (localFilteredCourses.length == 0)
+            return;
+
+        const periodArr = model.filterOptions.period; //has 4 boolean values one for each period
+        //  [true, false, false, false] means we are only looking for P1 courses.
+
+        let bestcourses = localFilteredCourses.filter(function (course){
+            if(course?.periods.P1 && periodArr[0])
+                return true;
+            if(course?.periods.P2 && periodArr[1])
+                return true;
+            if(course?.periods.P3 && periodArr[2])
+                return true;
+            if(course?.periods.P4 && periodArr[3])
+                return true;
+            return false;
+        })
+
+        let worstcourses = localFilteredCourses.filter(function (course){
+            return (course?.periods === undefined);
+        })
+
+        localFilteredCourses = [...bestcourses, ...worstcourses];
+
+
+    }
+
     function updateCredits() {
         if (localFilteredCourses.length == 0)
             return;
@@ -117,7 +143,7 @@ const FilterPresenter = observer(({ model }) => {
         });
         worstCourses = localFilteredCourses.filter(function (course) {
             try {
-                return ((course?.location === undefined) || (course?.location === "null"));
+                return (course?.location === undefined);
             } catch (error) {
                 console.log("BIG ERROR", error);
                 return false;
@@ -140,8 +166,8 @@ const FilterPresenter = observer(({ model }) => {
         let worstCourses = [];
 
         //in the database a course can have
-        //course?.language.english (true/false/"null")
-        //course?.language.swedish (true/false/"null")
+        //course?.language.english (true/false/undefined)
+        //course?.language.swedish (true/false/undefined)
 
         //console.log(data);
 
@@ -166,7 +192,7 @@ const FilterPresenter = observer(({ model }) => {
                     );
                     worstCourses = data.filter(function (course) {
                         try {
-                            return ((course?.language === undefined) || course?.language?.english === "null");
+                            return (course?.language === undefined);
                         } catch (error) {
                             console.log(course);
                             console.log("BIG ERROR");
@@ -191,7 +217,7 @@ const FilterPresenter = observer(({ model }) => {
                     );
                     worstCourses = data.filter(function (course) {
                         try {
-                            return ((course?.language === undefined) || course?.language?.swedish === "null");
+                            return (course?.language === undefined);
                         } catch (error) {
                             console.log(course);
                             console.log("BIG ERROR");
@@ -228,7 +254,7 @@ const FilterPresenter = observer(({ model }) => {
                     );
                     worstCourses = data.filter(function (course) {
                         try {
-                            return ((course?.language === undefined) || course?.language?.english === "null");
+                            return (course?.language === undefined);
                         } catch (error) {
                             console.log(course);
                             console.log("BIG ERROR");
@@ -287,7 +313,7 @@ const FilterPresenter = observer(({ model }) => {
         });
         worstCourses = localFilteredCourses.filter(function (course) {
             try {
-                return ((course?.department === undefined) || (course?.deparment === "null"));
+                return (course?.department === undefined);
             } catch (error) {
                 console.log("BIG ERROR", error);
                 return false;
@@ -301,44 +327,42 @@ const FilterPresenter = observer(({ model }) => {
     function updateNoNullcourses(){
         let local = [...localFilteredCourses];
 
-        console.log("miauuuuu:",local.length);
+        if(model.filterOptions.applyPeriodFilter){
+            local = local.filter(function(course){
+                return (course?.periods && (course?.periods !== "null"));
+            })
+        }
 
         if(model.filterOptions.applyTranscriptFilter){
             local = local.filter(function(course){
                 return (course?.prerequisites && (course?.prerequisites !== "null"));
             })
         }
-        console.log("miauuuuu:",local.length);
         if(model.filterOptions.applyLevelFilter){
             local = local.filter(function(course){
                 return (course?.prerequisites && (course?.prerequisites !== "null"));
             })
         }
-        console.log("miauuuuu:",local.length);
         if(model.filterOptions.applyLanguageFilter){
             local = local.filter(function(course){
                 return ((course?.language) && ((course?.language?.swedish !== "null") && (course?.language?.english !== "null")));
             })
         }
-        console.log("miauuuuu:",local.length);
-        /*if(model.filterOptions.applyLocationFilter){
+        if(model.filterOptions.applyLocationFilter){
             local = local.filter(function(course){
                 return ((course?.location) && (course?.location !== "null"));
             })
-        }*/
-        console.log("miauuuuu:",local.length);
+        }
         if(model.filterOptions.applyCreditsFilter){
             local = local.filter(function(course){
                 return ((course?.credits) && (course?.credits !== "null"));
             })
         }
-        console.log("miauuuuu:",local.length);
         if(model.filterOptions.applyDepartmentFilter){
             local = local.filter(function(course){
                 return ((course?.department) && (course?.department !== "null"));
             })
         }
-        console.log("miauuuuu:",local.length);
 
         localFilteredCourses = [...local];
     }
@@ -352,6 +376,9 @@ const FilterPresenter = observer(({ model }) => {
 
             if (model.filterOptions.applyRemoveNullCourses) {
                 updateNoNullcourses();
+            }
+            if(model.filterOptions.applyPeriodFilter){
+                //updatePeriods();
             }
             if (model.filterOptions.applyLocationFilter) {
                 //after deo finishes locations, until then dont

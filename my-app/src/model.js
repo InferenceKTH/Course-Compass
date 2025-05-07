@@ -31,7 +31,9 @@ export const model = {
         "ITM/Learning in Engineering Sciences", "ITM/Industrial Economics and Management", "ITM/Energy Systems", "ITM/Integrated Product Development and Design", "ITM/SKD GRU",
         "SCI/Mathematics", "SCI/Applied Physics", "SCI/Mechanics", "SCI/Aeronautical and Vehicle Engineering", 
         "ABE/Sustainability and Environmental Engineering", "ABE/Concrete Structures", "ABE/Structural Design & Bridges", "ABE/History of Science, Technology and Environment", ],
-        applyRemoveNullCourses: false
+        applyRemoveNullCourses: false,
+        period: [true, true, true, true],
+        applyPeriodFilter: true
     },
 
     setUser(user) {
