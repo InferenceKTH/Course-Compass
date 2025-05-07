@@ -106,7 +106,7 @@ function ListView(props) {
                                 className="bg-white border-2 border-[#000061] text-[#000061] font-semibold p-2 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
                                 aria-label={`Sort ${props.sortDirection === 'asc' ? 'ascending' : 'descending'}`}
                             >
-                                {props.sortDirection === 'asc' ? (
+                                {props.sortDirection === 'desc' ? (
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>

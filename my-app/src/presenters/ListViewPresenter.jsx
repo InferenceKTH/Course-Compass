@@ -77,7 +77,7 @@ const ListViewPresenter = observer(({ model }) => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [sortBy, setSortBy] = useState('relevance');
-    const [sortDirection, setSortDirection] = useState('asc');
+    const [sortDirection, setSortDirection] = useState('desc');
     const [sortedCourses, setSortedCourses] = useState([]);
 
     const sortCourses = (courses, sortType) => {
@@ -94,6 +94,7 @@ const ListViewPresenter = observer(({ model }) => {
                 return sortedCourses.sort((a, b) => 
                     direction * (parseFloat(a.credits) - parseFloat(b.credits)));
             case 'relevance':
+                return direction === -1 ? sortedCourses : sortedCourses.reverse();
             default:
                 return direction === 1 ? sortedCourses : sortedCourses.reverse();
         }
