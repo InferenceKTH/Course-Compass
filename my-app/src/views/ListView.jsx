@@ -4,13 +4,10 @@ import 'ldrs/react/Quantum.css';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 function ListView(props) {
-    const coursesToDisplay = props.searchResults;
     const [displayedCourses, setDisplayedCourses] = useState([]);
     const [hasMore, setHasMore] = useState(true);
     const [readMore, setReadMore] = useState({});
     const [isLoading, setIsLoading] = useState(true);
-    const [sortBy, setSortBy] = useState('relevance');
-    const [sortDirection, setSortDirection] = useState('asc');
    
     const toggleReadMore = (courseCode) => {
         setReadMore(prevState => ({
@@ -26,46 +23,30 @@ function ListView(props) {
             props.addFavourite(course);
         }
     };
-    
-    const sortCourses = (courses, sortType) => {
-        const sortedCourses = [...courses];
-        const direction = sortDirection === 'asc' ? 1 : -1;
-
-        switch (sortType) {
-            case 'name':
-                return sortedCourses.sort((a, b) => 
-                    direction * a.name.localeCompare(b.name));
-            case 'credits':
-                return sortedCourses.sort((a, b) => 
-                    direction * (parseFloat(a.credits) - parseFloat(b.credits)));
-            case 'relevance':
-            default:
-                return direction === 1 ? courses : [...courses].reverse();
-        }
-    };
 
     useEffect(() => {
         setIsLoading(true);
-        const sortedCourses = sortCourses(coursesToDisplay, sortBy);
-        const initialCourses = sortedCourses.slice(0, 10);
+        const initialCourses = props.sortedCourses.slice(0, 10);
         setDisplayedCourses(initialCourses);
-        setHasMore(sortedCourses.length > 10);
+        setHasMore(props.sortedCourses.length > 10);
         setIsLoading(false);
-    }, [props.courses, props.searchResults, sortBy, sortDirection]);
+    }, [props.sortedCourses]);
 
     const fetchMoreCourses = useCallback(() => {
         if (!hasMore) return;
         
-        // Get the next batch of unsorted courses
-        const nextItems = coursesToDisplay.slice(displayedCourses.length, displayedCourses.length + 50);
+        const nextItems = props.sortedCourses.slice(
+            displayedCourses.length, 
+            displayedCourses.length + 50
+        );
         
-        // Sort the combined courses (existing + new) to maintain consistency
-        const allCourses = [...displayedCourses, ...nextItems];
-        const sortedCourses = sortCourses(allCourses, sortBy);
-        
-        setDisplayedCourses(sortedCourses);
-        setHasMore(displayedCourses.length + nextItems.length < coursesToDisplay.length);
-    }, [displayedCourses.length, coursesToDisplay, hasMore, sortBy, sortDirection]);
+        if (nextItems.length > 0) {
+            setDisplayedCourses(prev => [...prev, ...nextItems]);
+            setHasMore(displayedCourses.length + nextItems.length < props.sortedCourses.length);
+        } else {
+            setHasMore(false);
+        }
+    }, [displayedCourses.length, props.sortedCourses, hasMore]);
 
     const [isRestoringScroll, setIsRestoringScroll] = useState(false);
     useEffect(() => {
@@ -82,7 +63,7 @@ function ListView(props) {
     }
 }, [props.targetScroll]);
 
-    if (!props.courses) {
+    if (!props.sortedCourses) {
         return (
             <div className="relative bg-white text-black p-2 flex flex-col gap-5 h-screen">
                 <div className="text-white p-4 text-center">
@@ -111,10 +92,8 @@ function ListView(props) {
                         
                         <div className="flex items-center gap-2">
                             <select
-                                value={sortBy}
-                                onChange={(e) => {
-                                    setSortBy(e.target.value);
-                                }}
+                                value={props.sortBy}
+                                onChange={(e) => props.setSortBy(e.target.value)}
                                 className="bg-white border-2 border-[#000061] text-[#000061] font-semibold py-2 px-4 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
                             >
                                 <option value="relevance">Sort by Relevance</option>
@@ -123,11 +102,11 @@ function ListView(props) {
                             </select>
 
                             <button
-                                onClick={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
+                                onClick={() => props.setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
                                 className="bg-white border-2 border-[#000061] text-[#000061] font-semibold p-2 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
-                                aria-label={`Sort ${sortDirection === 'asc' ? 'ascending' : 'descending'}`}
+                                aria-label={`Sort ${props.sortDirection === 'asc' ? 'ascending' : 'descending'}`}
                             >
-                                {sortDirection === 'asc' ? (
+                                {props.sortDirection === 'asc' ? (
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
