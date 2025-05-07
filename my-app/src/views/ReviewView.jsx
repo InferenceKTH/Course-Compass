@@ -35,150 +35,115 @@ export function ReviewView(props) {
 				<div className="border border-black space-y-6 pb-4 mb-4">
 
 				<div className="flex flex-wrap justify-center gap-6 mt-4">
-		<div className="text-center">
-			<p className="font-bold font-kanit mb-1">Overall rating</p>
-			<RatingComponent
-				className="flex gap-[2px] text-sm justify-center"
-				value={formData.overallRating}
-				onChange={(val) => setFormData({ ...formData, overallRating: val })}
-			/>
-		</div>
+  {/* Overall Rating */}
+  <div className="text-center">
+    <p className="font-bold font-kanit mb-1">Overall rating</p>
+    <RatingComponent
+      className="flex gap-[2px] text-sm justify-center"
+      value={formData.overallRating}
+      onChange={(val) => setFormData({ ...formData, overallRating: val })}
+    />
+  </div>
 
-		<div className="text-center">
-			<p className="font-bold font-kanit mb-1">Difficulty rating</p>
-			<RatingComponent
-				className="flex gap-[2px] text-sm justify-center"
-				value={formData.difficultyRating}
-				onChange={(val) => setFormData({ ...formData, difficultyRating: val })}
-			/>
-		</div>
+  {/* Difficulty Rating */}
+  <div className="text-center">
+    <p className="font-bold font-kanit mb-1">Difficulty rating</p>
+    <RatingComponent
+      className="flex gap-[2px] text-sm justify-center"
+      value={formData.difficultyRating}
+      onChange={(val) => setFormData({ ...formData, difficultyRating: val })}
+    />
+  </div>
 
-		<div className="text-center">
-			<p className="font-bold font-kanit mb-1">Professor rating</p>
-			<RatingComponent
-				className="flex gap-[2px] text-sm justify-center"
-				value={formData.professorRating}
-				onChange={(val) => setFormData({ ...formData, professorRating: val })}
-			/>
-		</div>
-	</div>
+  {/* Professor Rating */}
+  <div className="text-center">
+    <p className="font-bold font-kanit mb-1">Professor rating</p>
+    <RatingComponent
+      className="flex gap-[2px] text-sm justify-center"
+      value={formData.professorRating}
+      onChange={(val) => setFormData({ ...formData, professorRating: val })}
+    />
+  </div>
 
-					{/* <div className="center-align ">
-						<p className="font-bold font-kanit items-center text-center">
-							Overall rating
-							<RatingComponent
-							//
-								className="flex gap-[2px] text-sm justify-center mb-1"
-								value={formData.overallRating}
-								onChange={(val) => setFormData({ ...formData, overallRating: val })}
-							/>
-						</p>
-					</div> */}
+  {/* Grade Section */}
+  <div className="relative" ref={gradeRef}>
+    <div className="flex-1 flex items-center justify-center gap-2">
+      <p className="font-bold font-kanit text-center">Grade:</p>
+      <div className="relative">
+        <div
+          className="px-2 py-1 border border-gray-300 rounded-sm text-sm cursor-pointer text-center"
+          onClick={() => setShowGradeOptions((prev) => !prev)}
+        >
+          {formData.grade || "Select"}
+        </div>
+        {showGradeOptions && (
+          <div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-white p-2 rounded-md shadow-lg space-x-2 z-10 flex">
+            {grades.map((grade) => (
+              <button
+                key={grade}
+                onClick={() => {
+                  setFormData({ ...formData, grade });
+                  setShowGradeOptions(false);
+                }}
+                className={`px-4 py-2 rounded-md shadow-md ${
+                  formData.grade === grade
+                    ? "bg-violet-600 text-white"
+                    : "bg-violet-200 hover:bg-violet-300"
+                }`}
+              >
+                {grade}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
 
-					{/* <div>
-						<p className="font-bold font-kanit items-center text-center">
-							Difficulty rating
-							<RatingComponent
-								className="flex gap-[2px] text-sm justify-center"
-								value={formData.difficultyRating}
-								onChange={(val) => setFormData({ ...formData, difficultyRating: val })}
-							/>
-						</p>
-					</div> */}
-
-<div className="flex flex-col md:flex-row justify-center gap-8">
-
-{/* Grade Section */}
-<div className="relative" ref={gradeRef}>
-
-<div className="flex-1 flex items-center justify-center gap-2">
-	<p className="font-bold font-kanit text-center">Grade:</p>
-
-	<div className="relative">
-		{/* Box that triggers the popup */}
-		<div
-			className="px-2 py-1 border border-gray-300 rounded-sm text-sm cursor-pointer text-center"
-			onClick={() => setShowGradeOptions((prev) => !prev)}
-		>
-			{formData.grade || "Select"}
-		</div>
-
-		{/* Popup options */}
-		{showGradeOptions && (
-			<div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-white p-2 rounded-md shadow-lg space-x-2 z-10 flex">
-				{grades.map((grade) => (
-					<button
-						key={grade}
-						onClick={() => {
-							setFormData({ ...formData, grade });
-							setShowGradeOptions(false);
-						}}
-						className={`px-4 py-2 rounded-md shadow-md ${
-							formData.grade === grade
-								? "bg-violet-600 text-white"
-								: "bg-violet-200 hover:bg-violet-300"
-						}`}
-					>
-						{grade}
-					</button>
-				))}
-			</div>
-		)}
-	</div>
-</div>
-
-</div>
-
-{/* Recommend Section */}
-<div className="relative" ref={recommendRef}>
-
-
-<div className="flex-1 flex items-center justify-center gap-2">
-	<p className="font-bold font-kanit text-center">Recommend?</p>
-
-	<div className="relative">
-		{/* Box that triggers the popup */}
-		<div
-			className="px-2 py-1 border border-gray-300 rounded-sm text-sm cursor-pointer text-center"
-			onClick={() => setShowRecommendOptions((prev) => !prev)}
-		>
-			{formData.recommend === null ? "Select" : formData.recommend ? "Yes" : "No"}
-		</div>
-
-		{/* Popup options */}
-		{showRecommendOptions && (
-			<div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-white p-2 rounded-md shadow-lg space-x-2 z-10 flex">
-				<button
-					onClick={() => {
-						setFormData({ ...formData, recommend: true });
-						setShowRecommendOptions(false);
-					}}
-					className={`px-4 py-2 rounded-md shadow-md ${
-						formData.recommend
-							? "bg-violet-600 text-white"
-							: "bg-violet-200 hover:bg-violet-300"
-					}`}
-				>
-					Yes
-				</button>
-				<button
-					onClick={() => {
-						setFormData({ ...formData, recommend: false });
-						setShowRecommendOptions(false);
-					}}
-					className={`px-4 py-2 rounded-md shadow-md ${
-						formData.recommend === false
-							? "bg-violet-600 text-white"
-							: "bg-violet-200 hover:bg-violet-300"
-					}`}
-				>
-					No
-				</button>
-			</div>
-		)}
-	</div>
-</div>
-</div>
+  {/* Recommend Section */}
+  <div className="relative" ref={recommendRef}>
+    <div className="flex-1 flex items-center justify-center gap-2">
+      <p className="font-bold font-kanit text-center">Recommend?</p>
+      <div className="relative">
+        <div
+          className="px-2 py-1 border border-gray-300 rounded-sm text-sm cursor-pointer text-center"
+          onClick={() => setShowRecommendOptions((prev) => !prev)}
+        >
+          {formData.recommend === null ? "Select" : formData.recommend ? "Yes" : "No"}
+        </div>
+        {showRecommendOptions && (
+          <div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-white p-2 rounded-md shadow-lg space-x-2 z-10 flex">
+            <button
+              onClick={() => {
+                setFormData({ ...formData, recommend: true });
+                setShowRecommendOptions(false);
+              }}
+              className={`px-4 py-2 rounded-md shadow-md ${
+                formData.recommend
+                  ? "bg-violet-600 text-white"
+                  : "bg-violet-200 hover:bg-violet-300"
+              }`}
+            >
+              Yes
+            </button>
+            <button
+              onClick={() => {
+                setFormData({ ...formData, recommend: false });
+                setShowRecommendOptions(false);
+              }}
+              className={`px-4 py-2 rounded-md shadow-md ${
+                formData.recommend === false
+                  ? "bg-violet-600 text-white"
+                  : "bg-violet-200 hover:bg-violet-300"
+              }`}
+            >
+              No
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
 </div>
 
 
