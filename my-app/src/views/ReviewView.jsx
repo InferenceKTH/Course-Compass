@@ -39,7 +39,7 @@ export function ReviewView(props) {
   <div className="text-center">
     <p className="font-bold font-kanit mb-1">Overall rating</p>
     <RatingComponent
-      className="flex gap-[2px] text-sm justify-center"
+      className="flex gap-[2px] text-base justify-center"
       value={formData.overallRating}
       onChange={(val) => setFormData({ ...formData, overallRating: val })}
     />
@@ -49,7 +49,7 @@ export function ReviewView(props) {
   <div className="text-center">
     <p className="font-bold font-kanit mb-1">Difficulty rating</p>
     <RatingComponent
-      className="flex gap-[2px] text-sm justify-center"
+      className="flex gap-[2px] text-[1.25rem] justify-center"
       value={formData.difficultyRating}
       onChange={(val) => setFormData({ ...formData, difficultyRating: val })}
     />
