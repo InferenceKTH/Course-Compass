@@ -76,6 +76,35 @@ const ListViewPresenter = observer(({ model }) => {
 
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState(null);
+    const [sortBy, setSortBy] = useState('relevance');
+    const [sortDirection, setSortDirection] = useState('desc');
+    const [sortedCourses, setSortedCourses] = useState([]);
+
+    const sortCourses = (courses, sortType) => {
+        if (!courses) return [];
+        
+        const sortedCourses = [...courses];
+        const direction = sortDirection === 'asc' ? 1 : -1;
+
+        switch (sortType) {
+            case 'name':
+                return sortedCourses.sort((a, b) => 
+                    direction * a.name.localeCompare(b.name));
+            case 'credits':
+                return sortedCourses.sort((a, b) => 
+                    direction * (parseFloat(a.credits) - parseFloat(b.credits)));
+            case 'relevance':
+                return direction === -1 ? sortedCourses : sortedCourses.reverse();
+            default:
+                return direction === 1 ? sortedCourses : sortedCourses.reverse();
+        }
+    };
+
+    useEffect(() => {
+        const sorted = sortCourses(model.currentSearch, sortBy);
+        setSortedCourses(sorted);
+    }, [model.currentSearch, sortBy, sortDirection]);
+
     const preP = <PrerequisitePresenter
         model={model}
         isPopupOpen={isPopupOpen}
@@ -98,9 +127,9 @@ const ListViewPresenter = observer(({ model }) => {
 
 
     return <ListView
-        courses={model.courses}
-        searchResults={model.currentSearch}
-        currentSearchLenght={model.currentSearch.length}
+        // courses={model.courses}
+        // searchResults={model.currentSearch}
+        // currentSearchLenght={model.currentSearch.length}
 
         favouriteCourses={model.favourites}
         addFavourite={addFavourite}
@@ -117,6 +146,12 @@ const ListViewPresenter = observer(({ model }) => {
         scrollContainerRef={scrollContainerRef}
         persistantScrolling={persistantScrolling}
 
+        sortedCourses={sortedCourses}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        sortDirection={sortDirection}
+        setSortDirection={setSortDirection}
+        currentSearchLenght={sortedCourses.length}
     />;
 });
 
