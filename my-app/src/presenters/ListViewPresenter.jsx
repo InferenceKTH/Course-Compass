@@ -70,6 +70,10 @@ const ListViewPresenter = observer(({ model }) => {
         }
     };
 
+    const setTargetScroll = (position) =>{
+        model.setScrollPosition(position);
+    }
+
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState(null);
     const preP = <PrerequisitePresenter
@@ -109,6 +113,7 @@ const ListViewPresenter = observer(({ model }) => {
         popup={popup}
 
         targetScroll={model.scrollPosition}
+        setTargetScroll={setTargetScroll}
         scrollContainerRef={scrollContainerRef}
         persistantScrolling={persistantScrolling}
 
