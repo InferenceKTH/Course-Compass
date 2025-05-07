@@ -149,9 +149,9 @@ export function ReviewView(props) {
 
 
 					<div>
-						<p className="font-bold font-kanit items-center text-center">
+						{/* <p className="font-bold font-kanit items-center text-center">
 							Professor Name & Rating
-						</p>
+						</p> */}
 						<div className="font-kanit flex justify-center mt-2">
 							<input
 								type="text"
