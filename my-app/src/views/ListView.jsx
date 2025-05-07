@@ -85,7 +85,7 @@ function ListView(props) {
                             </div>
                         }
                         endMessage={<p className="text-center py-2">No more courses</p>}
-                        scrollThreshold={0.9} // 90% of the container height
+                        scrollThreshold={0.9}
                         scrollableTarget="scrollableDiv"
                         initialScrollY={0}
                     >

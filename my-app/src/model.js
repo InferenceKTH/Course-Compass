@@ -162,7 +162,7 @@ export const model = {
         this.filterOptions.eligibility = eligibility;
     },
 
-    //setters for the filter options
+
     setApplyTranscriptFilter(transcriptFilterState) {
         this.filterOptions.applyTranscriptFilter = transcriptFilterState;
     },
