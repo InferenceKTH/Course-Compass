@@ -88,17 +88,17 @@ export const model = {
         entries.forEach(entry => {
             const course = {
                 code: entry[1].code,
-                name: entry[1]?.name ?? "null",
-                location: entry[1]?.location ?? "null",
-                department: entry[1]?.department ?? "null",
-                language: entry[1]?.language ?? "null",
-                description: entry[1]?.description ?? "null",
-                academicLevel: entry[1]?.academic_level ?? "null",
-                period: entry[1]?.period ?? "null",
+                name: entry[1]?.name ?? null,
+                location: entry[1]?.location ?? null,
+                department: entry[1]?.department ?? null,
+                language: entry[1]?.language ?? null,
+                description: entry[1]?.description ?? null,
+                academicLevel: entry[1]?.academic_level ?? null,
+                period: entry[1]?.period ?? null,
                 credits: entry[1]?.credits ?? 0,
-                prerequisites: entry[1]?.prerequisites ?? "null",
-                prerequisites_text: entry[1]?.prerequisites_text ?? "null",
-                learning_outcomes: entry[1]?.learning_outcomes ?? "null"
+                prerequisites: entry[1]?.prerequisites ?? null,
+                prerequisites_text: entry[1]?.prerequisites_text ?? null,
+                learning_outcomes: entry[1]?.learning_outcomes ?? null
             };
             this.addCourse(course);
         });
