@@ -15,7 +15,7 @@ const SearchbarPresenter = observer(({ model }) => {
         const searchResults = model.filteredCourses.filter(course =>
             course.code.toLowerCase().includes(query.toLowerCase()) ||
             course.name.toLowerCase().includes(query.toLowerCase()) ||
-            course.description.toLowerCase().includes(query.toLowerCase())
+            course.description?.toLowerCase().includes(query.toLowerCase())
         );
         model.setCurrentSearchText(query);
         model.setCurrentSearch(searchResults);

@@ -107,12 +107,6 @@ function SearchbarView(props) {
 
               )}
 
-              <button
-                  onClick={() => window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ"}
-                  className="w-[120px] h-[44px] bg-[#003399] text-white rounded-full border border-[#000061] cursor-pointer hover:bg-[#001a4d] transition-all duration-200">
-                  Super secret button
-              </button>
-
           </div>
 
           {user && (
