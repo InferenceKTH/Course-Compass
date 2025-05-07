@@ -1,7 +1,9 @@
 import fs from "fs";
 
 /* 
-This file contains an atempted version of a regex based prerequiste scraper. Due to the unconsistency that the prerequsites have when extracted from the api this project is mostly a falure. It is no longer worth it to deal with all the spelling errors and unstandardised human langage that webpages contain. For this to be fesable in the future there would have to be a restructuring of the kth api prerequsites.
+This file contains an atempted version of a regex based prerequiste scraper. Due to the unconsistency that the prerequsites have when extracted from the api 
+this project is mostly a falure. It is no longer worth it to deal with all the spelling errors and unstandardised human langage that webpages contain. 
+For this to be fesable in the future there would have to be a restructuring of the kth api prerequsites.
 */
 
 let previous_data = fs.readFileSync('all_courses_data4.json');
