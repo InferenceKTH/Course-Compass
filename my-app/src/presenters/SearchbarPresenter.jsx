@@ -15,7 +15,7 @@ const SearchbarPresenter = observer(({ model }) => {
         const searchResults = model.filteredCourses.filter(course =>
             course.code.toLowerCase().includes(query.toLowerCase()) ||
             course.name.toLowerCase().includes(query.toLowerCase()) ||
-            course.description.toLowerCase().includes(query.toLowerCase())
+            course.description?.toLowerCase().includes(query.toLowerCase())
         );
         model.setCurrentSearchText(query);
         model.setCurrentSearch(searchResults);
@@ -54,6 +54,7 @@ const SearchbarPresenter = observer(({ model }) => {
     const [selectedCourse, setSelectedCourse] = useState(null);
     const preP = <PrerequisitePresenter model={model} selectedCourse={selectedCourse} />;
     const reviewPresenter = <ReviewPresenter model={model} course={selectedCourse} />;
+    const [searchQuery, setSearchQuery] = useState("");
 
     const popup = <CoursePagePopup
         favouriteCourses={model.favourites}
@@ -69,7 +70,7 @@ const SearchbarPresenter = observer(({ model }) => {
     
 
     if(model.filtersCalculated){
-        searchCourses("");
+        searchCourses(searchQuery);
         model.filtersCalculated = false;
     }
 
@@ -84,6 +85,8 @@ const SearchbarPresenter = observer(({ model }) => {
             setIsPopupOpen={setIsPopupOpen}
             setSelectedCourse={setSelectedCourse}
             popup={popup}
+            setSearchQuery={setSearchQuery}
+            searchQuery={searchQuery}  // Add this line
             handleFavouriteClick={handleFavouriteClick}
             totalCredits={creditsSum(model.favourites)}
             resetScrollPosition={resetScoll}

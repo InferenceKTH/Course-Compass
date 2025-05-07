@@ -9,6 +9,8 @@ function ListView(props) {
     const [hasMore, setHasMore] = useState(true);
     const [readMore, setReadMore] = useState({});
     const [isLoading, setIsLoading] = useState(true);
+    const [sortBy, setSortBy] = useState('relevance');
+    const [sortDirection, setSortDirection] = useState('asc');
    
     const toggleReadMore = (courseCode) => {
         setReadMore(prevState => ({
@@ -25,20 +27,45 @@ function ListView(props) {
         }
     };
     
+    const sortCourses = (courses, sortType) => {
+        const sortedCourses = [...courses];
+        const direction = sortDirection === 'asc' ? 1 : -1;
+
+        switch (sortType) {
+            case 'name':
+                return sortedCourses.sort((a, b) => 
+                    direction * a.name.localeCompare(b.name));
+            case 'credits':
+                return sortedCourses.sort((a, b) => 
+                    direction * (parseFloat(a.credits) - parseFloat(b.credits)));
+            case 'relevance':
+            default:
+                return direction === 1 ? courses : [...courses].reverse();
+        }
+    };
+
     useEffect(() => {
         setIsLoading(true);
-        const initialCourses = coursesToDisplay.slice(0, 10);
+        const sortedCourses = sortCourses(coursesToDisplay, sortBy);
+        const initialCourses = sortedCourses.slice(0, 10);
         setDisplayedCourses(initialCourses);
-        setHasMore(coursesToDisplay.length > 10);
+        setHasMore(sortedCourses.length > 10);
         setIsLoading(false);
-    }, [props.courses, props.searchResults]);
+    }, [props.courses, props.searchResults, sortBy, sortDirection]);
 
     const fetchMoreCourses = useCallback(() => {
         if (!hasMore) return;
+        
+        // Get the next batch of unsorted courses
         const nextItems = coursesToDisplay.slice(displayedCourses.length, displayedCourses.length + 50);
-        setDisplayedCourses(prevCourses => [...prevCourses, ...nextItems]);
+        
+        // Sort the combined courses (existing + new) to maintain consistency
+        const allCourses = [...displayedCourses, ...nextItems];
+        const sortedCourses = sortCourses(allCourses, sortBy);
+        
+        setDisplayedCourses(sortedCourses);
         setHasMore(displayedCourses.length + nextItems.length < coursesToDisplay.length);
-    }, [displayedCourses.length, coursesToDisplay, hasMore]);
+    }, [displayedCourses.length, coursesToDisplay, hasMore, sortBy, sortDirection]);
 
     const [isRestoringScroll, setIsRestoringScroll] = useState(false);
     useEffect(() => {
@@ -73,13 +100,45 @@ function ListView(props) {
                 </div>
             ) : (
                 <div className="overflow-y-auto h-full" id="scrollableDiv" ref={props.scrollContainerRef}>
-                    <p className="text-base font-semibold text-gray-600 mb-2">
-                        Found
-                        <span className="font-bold text-[#000061] mx-1">
-                            {props.currentSearchLenght}
-                        </span>
-                        courses
-                    </p>
+                    <div className="flex justify-between items-center mb-4">
+                        <p className="text-base font-semibold text-gray-600">
+                            Found
+                            <span className="font-bold text-[#000061] mx-1">
+                                {props.currentSearchLenght}
+                            </span>
+                            courses
+                        </p>
+                        
+                        <div className="flex items-center gap-2">
+                            <select
+                                value={sortBy}
+                                onChange={(e) => {
+                                    setSortBy(e.target.value);
+                                }}
+                                className="bg-white border-2 border-[#000061] text-[#000061] font-semibold py-2 px-4 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
+                            >
+                                <option value="relevance">Sort by Relevance</option>
+                                <option value="name">Sort by Name</option>
+                                <option value="credits">Sort by Credits</option>
+                            </select>
+
+                            <button
+                                onClick={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
+                                className="bg-white border-2 border-[#000061] text-[#000061] font-semibold p-2 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
+                                aria-label={`Sort ${sortDirection === 'asc' ? 'ascending' : 'descending'}`}
+                            >
+                                {sortDirection === 'asc' ? (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                    </svg>
+                                )}
+                            </button>
+                        </div>
+                    </div>
 
                     <InfiniteScroll
                         dataLength={displayedCourses.length}
@@ -111,7 +170,7 @@ function ListView(props) {
                                         className="text-gray-600"
                                         dangerouslySetInnerHTML={{
                                             __html: readMore[course.code]
-                                                ? course.description
+                                                ? course?.description
                                                 : (course?.description?.slice(0, 200)+"..."),
                                         }}
                                     />

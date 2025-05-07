@@ -394,7 +394,7 @@ export const PrerequisitePresenter = observer((props) => {
     function loadTree() {
         
         console.log(JSON.stringify(props.selectedCourse.prerequisites, null, 4));
-        if (props.selectedCourse.prerequisites === "null" || props.selectedCourse.prerequisites.length == 0) {
+        if (!props.selectedCourse?.prerequisites || props.selectedCourse.prerequisites.length == 0) {
             let display_node = createNode("No Prerequisites", "No Prerequisites", "default");
             display_node.style["pointerEvents"] = "none";
             display_node["className"] = 'no-handles';
