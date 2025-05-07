@@ -1,17 +1,17 @@
 import React from 'react';
-import UploadField from "./Components/SideBarComponents/UploadField.jsx";
 import ToggleField from "./Components/SideBarComponents/ToggleField.jsx";
-import ButtonGroupField from "./Components/SideBarComponents/ButtonGroupField.jsx";
 import SliderField from "./Components/SideBarComponents/SliderField.jsx";
 import DropDownField from "./Components/SideBarComponents/DropDownField.jsx";
 import { UploadTranscriptPresenter } from '../presenters/UploadTranscriptPresenter.jsx';
 import CollapsibleCheckboxes from './Components/SideBarComponents/CollapsibleCheckboxes.jsx';
+import Tooltip from './Components/SideBarComponents/ToolTip.jsx';
+import ButtonGroupField from './Components/SideBarComponents/ButtonGroupField.jsx';
 
 
 function SidebarView(props) {
     return (
         <div className='object-center text-white p-3 pt-2  flex-col h-screen
-         overflow-y-scroll'
+         overflow-y-scroll overflow-x-hidden'
             style={{
                 scrollbarWidth: "thin",
                 scrollbarColor: "#888 #f1f1f1",
@@ -34,6 +34,7 @@ function SidebarView(props) {
                         HandleFilterChange={props.HandleFilterChange}
                         filterName="level"
                         HandleFilterEnable={props.HandleFilterEnable}
+                        description="Filter by the level of the courses. Basic courses correspond to bachelor courses, Advanced to master courses."
                     />
                     <ToggleField
                         fields={["English", "Swedish"]}
@@ -105,20 +106,30 @@ function SidebarView(props) {
                             ]
                         }
                     />
-                    <div className='mr-3'>
-                    <input
+                    <ButtonGroupField
+                        items={["P1", "P2", "P3", "P4"]}
+                        HandleFilterChange={props.HandleFilterChange}
+                    />
+                    <div className='mr-3 flex justify-between'>
+                        <input
                             id="excludeNullCheckbox"
                             type="checkbox"
                             onChange={props.toggleRemoveNull}
-                            className="w-4 h-4 pt-4 text-purple-600 bg-gray-100 border-gray-300 rounded-sm accent-violet-600"
+                            className="mx-2 w-4 h-4 pt-4 text-purple-600 bg-gray-100 border-gray-300 rounded-sm accent-violet-600"
                         />
-                        <label 
-                            htmlFor="excludeNullCheckbox" 
-                            className="ml-2 text-sm font-medium text-gray-300 cursor-pointer"
+                        <label
+                            htmlFor="excludeNullCheckbox"
+                            className="text-sm font-medium text-gray-300 cursor-pointer flex-auto"
                         >
                             Exclude unidentified field courses
                         </label>
-                        
+                        <div className='flex-none'>
+                            <Tooltip
+                                text={props.description}
+                                position={"left"}
+                            />
+                        </div>
+
                     </div>
                 </div>
 

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
+import Tooltip from "./ToolTip";
 
 export default function ToggleField(props) {
 
@@ -11,14 +12,17 @@ export default function ToggleField(props) {
     return (
         <div className="m-2">
             <div className="mb-2 text-white flex items-center justify-between">
-                <div className="flex items-center">
+                <div className="flex-none items-center">
                     <h3>{String(props.filterName).charAt(0).toUpperCase() + String(props.filterName).slice(1)}</h3>
-                    <div>
-                        <p className="text-sm opacity-50"> - filter description</p>
-                    </div>
+                </div>
+                <div className="flex-auto pl-3 pt-2">
+                    <Tooltip
+                        text={props.description}
+                        position={"right"}
+                    />
                 </div>
                 <FilterEnableCheckbox
-                    onToggle={() => { setFilterEnabled(!filterEnabled);props.HandleFilterEnable([props.filterName, !filterEnabled]);}}
+                    onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]); }}
                 />
             </div>
 

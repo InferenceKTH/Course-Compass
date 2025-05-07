@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
+import Tooltip from "./ToolTip";
 
 const CollapsibleCheckboxes = (props) => {
   const [expanded, setExpanded] = useState({});
@@ -44,18 +45,17 @@ const CollapsibleCheckboxes = (props) => {
   return (
     <div className="m-2">
       <div className="mb-2 text-white flex items-center justify-between">
-        <div className="flex flex-col">
-          <h3>
-            {String(props.filterName).charAt(0).toUpperCase() +
-              String(props.filterName).slice(1)}
-          </h3>
-          <p className="text-sm opacity-50">- filter description</p>
+        <div className="flex-none items-center">
+          <h3>{String(props.filterName).charAt(0).toUpperCase() + String(props.filterName).slice(1)}</h3>
+        </div>
+        <div className="flex-auto pl-3 pt-2">
+          <Tooltip
+            text={props.description}
+            position={"right"}
+          />
         </div>
         <FilterEnableCheckbox
-          onToggle={() => {
-            setFilterEnabled(!filterEnabled);
-            props.HandleFilterEnable([props.filterName, !filterEnabled]);
-          }}
+          onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]);}}
         />
       </div>
       <div
@@ -74,7 +74,7 @@ const CollapsibleCheckboxes = (props) => {
                   checked={expanded[row.id] || false}
                   onChange={() => toggleExpand(row.id, row.subItems)}
                   className="accent-violet-500 z-10"
-                />
+                  />
                 <label htmlFor={`checkbox-${row.id}`} className="cursor-pointer font-semibold">
                   {row.label}
                 </label>
@@ -86,7 +86,8 @@ const CollapsibleCheckboxes = (props) => {
                 viewBox={`0 0 40 ${expanded[row.id] ? (row.subItems.length) * 24 + 34 : 30}`}
                 preserveAspectRatio="none"
                 className="absolute left-[-25px] top-[-5px]"
-              >
+                >
+                {/*big horizontal line */ }
                 <path
                   d={`M20 0 V${(row.subItems.length) * 24 + 34}`}
                   stroke="white"
@@ -94,6 +95,7 @@ const CollapsibleCheckboxes = (props) => {
                   fill="none"
                   className=""
                 />
+                {/*top vertical line */ }
                 {row.id === 1 && (
                   <path
                   d={`M20 2 H33`}
@@ -103,9 +105,10 @@ const CollapsibleCheckboxes = (props) => {
                   className=""
                 />
                 )}
+                {/*bottom vertical line */ }
                 {row.id === rows.length && (
                   <path
-                  d={`M20 ${(expanded[row.id]? row.subItems.length:1) * 30 -3} H33`}
+                  d={`M20 ${(expanded[row.id]? row.subItems.length:1) * 34 -8} H33`}
                   stroke="white"
                   strokeWidth={strokeWidth}
                   fill="none"
@@ -117,6 +120,7 @@ const CollapsibleCheckboxes = (props) => {
 
               {expanded[row.id] && (
                 <div className="mt-2 relative ">
+                  {/*vertical line */ }
                   <svg
                     width="40"
                     height={`${(row.subItems.length) * 24}`}

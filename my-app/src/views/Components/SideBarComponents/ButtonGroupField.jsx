@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ToolTip from './ToolTip';
 
 export default function ButtonGroupField(props) {
 
@@ -34,6 +35,12 @@ export default function ButtonGroupField(props) {
               onClick={() => handleClick(index)}
             >
               {item}
+              
+        <ToolTip
+                text={`select this option to filter courses using the ${item} filtering option`}
+                position={index == props.items.length - 1 ? "left" : "right"}
+                hiddenIcon={true}
+        />
             </button>
           ))}
         </div>
