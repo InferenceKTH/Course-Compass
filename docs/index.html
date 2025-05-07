@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" type="image/x-icon" href="/assets/images/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="dark_logo.svg">
     <title>Course Compass | By Inference</title>
     <meta name="description" content="A web application designed to help students explore KTH’s course offerings with ease and precision.">
     <meta name="keywords" content="KTH, course selection, academic planning, web application, InferenceKTH">
@@ -49,9 +49,11 @@
             backdrop-filter: blur(10px);
         }
         .navbar.scrolled {
-            background-color: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+    background-color: rgba(0, 0, 0, 0.7); /* dark translucent background */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* optional: darker shadow */
+    backdrop-filter: blur(10px); /* keep the blur */
+}
+        
         .team-card, .cta-button, .demo-button {
             transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
         }
@@ -169,7 +171,7 @@
     <nav class="navbar fixed top-0 w-full z-50 bg-transparent">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
             <div class="flex items-center space-x-4">
-                <img src="/assets/images/favicon.png" alt="Logo" class="h-10 w-10">
+                <img src="logo.svg" alt="Logo" class="h-10 w-10">
                 <a href="/" class="text-2xl font-bold text-white">Course Compass</a>
             </div>
             <div class="hidden md:flex space-x-8">
@@ -200,7 +202,7 @@
     <header id="home" class="hero-section py-24 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div class="flex justify-center items-center space-x-4 animate-slide-in">
-                <img src="/assets/images/favicon.png" alt="Logo" class="h-16 w-16">
+                <img src="logo.svg" alt="Logo" class="h-16 w-16">
                 <div>
                     <h1 class="text-5xl font-bold text-white">Course Compass</h1>
                     <p class="text-xl text-white">By Inference</p>
@@ -211,8 +213,8 @@
             </p>
             <div class="mt-8 space-x-4 animate-slide-in">
                 <div class="relative inline-block">
-                    <a href="https://findmynextcourse.web.app/" 
-                       class="demo-button inline-block px-8 py-4 bg-gold-400 text-nav-800 font-semibold rounded-lg shadow-md">
+                    <a href="https://github.com/InferenceKTH/Find-My-Next-Course" 
+                    class="cta-button inline-block px-6 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-gold-400 hover:text-nav-800">
                         Try the App Now!
                     </a>
                     <span class="tooltip absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 bg-nav-800 text-white text-sm rounded px-2 py-1">
@@ -330,7 +332,7 @@
                         <a href="https://github.com/emyemy89" class="text-nav-800 hover:text-gold-400 social-icon">
                             <i class="fab fa-github"></i>
                         </a>
-                        <a href="emapar@kth.se" class="text-nav-800 hover:text-gold-400 social-icon">
+                        <a href="mailto:emapar@kth.se" class="text-nav-800 hover:text-gold-400 social-icon">
                             <i class="fas fa-envelope"></i>
                         </a>
                     </div>
@@ -343,7 +345,7 @@
                         <a href="https://github.com/Dinoxh" class="text-nav-800 hover:text-gold-400 social-icon">
                             <i class="fab fa-github"></i>
                         </a>
-                        <a href="samias@kth.se" class="text-nav-800 hover:text-gold-400 social-icon">
+                        <a href="mailto:samias@kth.se" class="text-nav-800 hover:text-gold-400 social-icon">
                             <i class="fas fa-envelope"></i>
                         </a>
                     </div>
@@ -356,7 +358,7 @@
                         <a href="https://github.com/boldizsarbenedek" class="text-nav-800 hover:text-gold-400 social-icon">
                             <i class="fab fa-github"></i>
                         </a>
-                        <a href="benedekb@kth.se" class="text-nav-800 hover:text-gold-400 social-icon">
+                        <a href="mailto:benedekb@kth.se" class="text-nav-800 hover:text-gold-400 social-icon">
                             <i class="fas fa-envelope"></i>
                         </a>
                     </div>
@@ -369,7 +371,7 @@
                         <a href="https://github.com/jkluge" class="text-nav-800 hover:text-gold-400 social-icon">
                             <i class="fab fa-github"></i>
                         </a>
-                        <a href="jkluge@kth.se" class="text-nav-800 hover:text-gold-400 social-icon">
+                        <a href="mailto:jkluge@kth.se" class="text-nav-800 hover:text-gold-400 social-icon">
                             <i class="fas fa-envelope"></i>
                         </a>
                     </div>
@@ -382,7 +384,7 @@
                         <a href="https://github.com/re1entlessly" class="text-nav-800 hover:text-gold-400 social-icon">
                             <i class="fab fa-github"></i>
                         </a>
-                        <a href="chenny@kth.se" class="text-nav-800 hover:text-gold-400 social-icon">
+                        <a href="mailto:chenny@kth.se" class="text-nav-800 hover:text-gold-400 social-icon">
                             <i class="fas fa-envelope"></i>
                         </a>
                     </div>
@@ -395,7 +397,7 @@
                         <a href="https://github.com/daDevBoat" class="text-nav-800 hover:text-gold-400 social-icon">
                             <i class="fab fa-github"></i>
                         </a>
-                        <a href="mailto:elias@example.com" class="text-nav-800 hover:text-gold-400 social-icon">
+                        <a href="mailto:ernass@kth.se" class="text-nav-800 hover:text-gold-400 social-icon">
                             <i class="fas fa-envelope"></i>
                         </a>
                     </div>
@@ -408,7 +410,7 @@
                         <a href="https://github.com/Sailet03" class="text-nav-800 hover:text-gold-400 social-icon">
                             <i class="fab fa-github"></i>
                         </a>
-                        <a href="mailto:elias.t@example.com" class="text-nav-800 hover:text-gold-400 social-icon">
+                        <a href="mailto:eliasto@kth.se" class="text-nav-800 hover:text-gold-400 social-icon">
                             <i class="fas fa-envelope"></i>
                         </a>
                     </div>
@@ -421,7 +423,7 @@
                         <a href="https://github.com/kexana" class="text-nav-800 hover:text-gold-400 social-icon">
                             <i class="fab fa-github"></i>
                         </a>
-                        <a href="tsankov@kth.se" class="text-nav-800 hover:text-gold-400 social-icon">
+                        <a href="mailto:tsankov@kth.se" class="text-nav-800 hover:text-gold-400 social-icon">
                             <i class="fas fa-envelope"></i>
                         </a>
                     </div>
@@ -467,7 +469,6 @@
                 <div class="glass-card p-8 animate-slide-in">
                     <h3 class="text-xl font-semibold text-purple-800 mb-4">Contact Us</h3>
                     <p class="text-nav-800 mb-6">Have questions or feedback? Reach out to us, and we’ll get back to you as soon as possible.</p>
-                    <!-- <div class="space-y-4"> -->
                         <form action="https://formspree.io/f/movdqzvq" method="POST" class="space-y-4">
                             <div>
                               <label class="block text-sm font-medium text-nav-800">Name</label>
@@ -483,56 +484,46 @@
                             </div>
                             <button type="submit" class="cta-button w-full px-6 py-3 bg-gold-400 text-nav-800 font-semibold rounded-lg hover:bg-gold-500">Send Message</button>
                           </form>
-                    <!-- </div> -->
                 </div>
                 <div class="glass-card p-8 animate-slide-in">
-                    <h3 class="text-xl font-semibold text-purple-800 mb-4">Stay Connected</h3>
-                    <p class="text-nav-800 mb-6">Join our newsletter for updates on new features and expansions.</p>
-                    <div class="flex space-x-2">
-                        <input type="email" class="newsletter-input w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none" placeholder="Enter your email">
-                        <button class="cta-button px-6 py-2 bg-gold-400 text-nav-800 font-semibold rounded-lg hover:bg-gold-500">Subscribe</button>
-                    </div>
-                    <div class="mt-8">
-                        <h4 class="text-lg font-semibold text-purple-800 mb-4">Follow Us</h4>
-                        <div class="flex justify-center space-x-6">
-                            <a href="https://twitter.com/InferenceKTH" class="text-nav-800 hover:text-gold-400 social-icon">
-                                <i class="fab fa-twitter fa-2x"></i>
-                            </a>
-                            <a href="https://linkedin.com/company/InferenceKTH" class="text-nav-800 hover:text-gold-400 social-icon">
-                                <i class="fab fa-linkedin fa-2x"></i>
-                            </a>
-                            <a href="https://github.com/InferenceKTH" class="text-nav-800 hover:text-gold-400 social-icon">
-                                <i class="fab fa-github fa-2x"></i>
-                            </a>
-                        </div>
+                    <h3 class="text-xl font-semibold text-purple-800 mb-4">Join Our Feedback Session</h3>
+                    <p class="text-nav-800 mb-6">
+                        Be part of shaping <em>Course Compass</em> ! Join our live Zoom session to test the app, share feedback, and talk with the team.
+                    </p>
+                    <div class="flex justify-center">
+                        <a href="https://kth-se.zoom.us/j/66751872438" target="_blank" class="cta-button px-6 py-2 bg-gold-400 text-nav-800 font-semibold rounded-lg hover:bg-gold-500 border-2 border-nav-800 hover:border-gold-400">
+                            Join Zoom Meeting
+                        </a>
                     </div>
                 </div>
+                
+                
             </div>
         </section>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-nav-800 text-white py-12">
+    <footer class="bg-nav-800 text-black py-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
-                    <img src="/assets/images/favicon.png" alt="Logo" class="h-12 w-12 mb-4">
+                    <img src="dark_logo.svg" alt="Logo" class="h-12 w-12 mb-4">
                     <h3 class="text-xl font-semibold">Course Compass</h3>
                     <p class="text-sm mt-2">Empowering students to plan their academic journey with ease and precision.</p>
                 </div>
                 <div>
-                    <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
+                    <!-- <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
                     <ul class="space-y-2">
                         <li><a href="#home" class="hover:text-gold-400">Home</a></li>
                         <li><a href="#about" class="hover:text-gold-400">About</a></li>
                         <li><a href="#features" class="hover:text-gold-400">Features</a></li>
                         <li><a href="#contact" class="hover:text-gold-400">Contact</a></li>
-                    </ul>
+                    </ul> -->
                 </div>
                 <div>
                     <h3 class="text-xl font-semibold mb-4">Contact Info</h3>
-                    <p class="text-sm">Email: <a href="mailto:support@findmynextcourse.com" class="hover:text-gold-400">support@findmynextcourse.com</a></p>
-                    <p class="text-sm mt-2">Address: KTH Royal Institute of Technology, Stockholm, Sweden</p>
+                    <p class="text-sm">Email: <a href="mailto:support@course-compass.se" class="hover:text-gold-400">support@course-compass.se</a></p>
+                    <p class="text-sm mt-2">Location: Stockholm, Sweden</p>
                 </div>
             </div>
             <div class="mt-8 text-center">
@@ -567,6 +558,7 @@
                 navbar.classList.remove('scrolled');
             }
         });
+
 
         // Mobile menu toggle
         document.getElementById('menu-toggle').addEventListener('click', () => {
