@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile
       args:
         - CI=${CI:-false}
+        - LINT=${LINT:-false}
     container_name: my-app
     ports:
       - "5173:5173" 

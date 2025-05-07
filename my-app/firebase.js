@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
 import { get, getDatabase, ref, set, onValue, push } from "firebase/database";
 import { reaction, toJS } from "mobx";
-import throttle from "lodash.throttle";
+// import throttle from "lodash.throttle";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -27,6 +27,24 @@ let noUpload = false;
 
 export function connectToFirebase(model) {
 	loadCoursesFromCacheOrFirebase(model);
+
+	// setting missing
+	// also save filters to local storage
+	// 
+	const options = JSON.parse(localStorage.getItem("filterOptions"));
+		if (options) {
+			model.setFilterOptions(options);
+			console.log("Restore options from local storage");
+		}
+
+	reaction(
+		() => ({filterOptions: JSON.stringify(model.filterOptions)}),
+		// eslint-disable-next-line no-unused-vars
+		({filterOptions}) => {
+			localStorage.setItem("filterOptions", filterOptions);
+		}
+	);
+
 	onAuthStateChanged(auth, (user) => {
 		if (user) {
 			model.setUser(user); // Set the user ID once authenticated
@@ -41,7 +59,6 @@ export function connectToFirebase(model) {
 
 // fetches all relevant information to create the model
 async function firebaseToModel(model) {
-	if (!model.user) return;
 	const userRef = ref(db, `users/${model.user.uid}`);
 	onValue(userRef, (snapshot) => {
 		if (!snapshot.exists()) return;
@@ -50,10 +67,9 @@ async function firebaseToModel(model) {
 		if (data.favourites) model.setFavourite(data.favourites);
 		if (data.currentSearchText)
 			model.setCurrentSearchText(data.currentSearchText);
-		if (data.scrollPosition) 
-			model.setScrollPosition(data.scrollPosition);
-		// if (data.currentSearch)
-		//     model.setCurrentSearch(data.currentSearch);
+		// if (data.scrollPosition)
+		// 	model.setScrollPosition(data.scrollPosition);
+		// if (data.filterOptions) model.setFilterOptions(data.filterOptions);
 		noUpload = false;
 	});
 }
@@ -64,16 +80,17 @@ export function syncModelToFirebase(model) {
 			userId: model?.user.uid,
 			favourites: toJS(model.favourites),
 			currentSearchText: toJS(model.currentSearchText),
-			// currentSearch: toJS(model.currentSearch),
+			// filterOptions: toJS(model.filterOptions),
 			// Add more per-user attributes here
 		}),
 		// eslint-disable-next-line no-unused-vars
-		({ userId, favourites, currentSearchText }) => {
+		({ userId, favourites, currentSearchText, filterOptions }) => {
 			if (noUpload || !userId) return;
 			const userRef = ref(db, `users/${userId}`);
 			const dataToSync = {
 				favourites,
 				currentSearchText,
+				// filterOptions,
 			};
 
 			set(userRef, dataToSync)
@@ -86,40 +103,60 @@ export function syncModelToFirebase(model) {
 export function syncScrollPositionToFirebase(model, containerRef) {
 	if (!containerRef?.current) return;
 	let lastSavedPosition = 0;
-	
-    // const throttledSet = throttle((scrollPixel) => {
-    //     if (model?.user?.uid) {
-    //         const userRef = ref(db, `users/${model.user.uid}/scrollPosition`);
-    //         set(userRef, scrollPixel).catch(console.error);
-    //     }
-    // }, 500);
 
-    const handleScroll = () => {
-        const scrollTop = containerRef.current.scrollTop;
+	// const throttledSet = throttle((scrollPixel) => {
+	//     if (model?.user?.uid) {
+	//         const userRef = ref(db, `users/${model.user.uid}/scrollPosition`);
+	//         set(userRef, scrollPixel).catch(console.error);
+	//     }
+	// }, 500);
+
+	const handleScroll = () => {
+		const scrollTop = containerRef.current.scrollTop;
 		// make a 100px threshold
-		if (Math.abs(scrollTop - lastSavedPosition) < 100)
-			return;
+		if (Math.abs(scrollTop - lastSavedPosition) < 100) return;
 
 		lastSavedPosition = scrollTop;
-        model.setScrollPosition(scrollTop);
-        localStorage.setItem("scrollPosition", scrollTop);
-        // throttledSet(scrollTop);
-    };
+		model.setScrollPosition(scrollTop);
+		localStorage.setItem("scrollPosition", scrollTop);
+		// throttledSet(scrollTop);
+	};
 
-    containerRef.current.addEventListener('scroll', handleScroll);
-    return () => containerRef.current?.removeEventListener('scroll', handleScroll);
+	containerRef.current.addEventListener("scroll", handleScroll);
+	return () =>
+		containerRef.current?.removeEventListener("scroll", handleScroll);
 }
 
+function saveCoursesToCache(courses, timestamp) {
+	const request = indexedDB.open("CourseDB", 1);
 
-function saveCoursesInChunks(courses, timestamp) {
-	const parts = 3; // Adjust this based on course size
-	const chunkSize = Math.ceil(courses.length / parts);
+	request.onupgradeneeded = (event) => {
+		const db = event.target.result;
+		if (!db.objectStoreNames.contains("courses")) {
+			db.createObjectStore("courses", { keyPath: "id" });
+		}
+		if (!db.objectStoreNames.contains("metadata")) {
+			db.createObjectStore("metadata", { keyPath: "key" });
+		}
+	};
 
-	for (let i = 0; i < parts; i++) {
-		const chunk = courses.slice(i * chunkSize, (i + 1) * chunkSize);
-		localStorage.setItem(`coursesPart${i}`, JSON.stringify(chunk));
-	}
-	localStorage.setItem("coursesMetadata", JSON.stringify({ parts, timestamp }));
+	request.onsuccess = (event) => {
+		const db = event.target.result;
+		const tx = db.transaction(["courses", "metadata"], "readwrite");
+		const courseStore = tx.objectStore("courses");
+		const metaStore = tx.objectStore("metadata");
+
+		courseStore.clear();
+		courses.forEach((course) => courseStore.put(course));
+		metaStore.put({ key: "timestamp", value: timestamp });
+
+		tx.oncomplete = () => console.log("Saved courses to IndexedDB");
+		tx.onerror = (e) => console.error("IndexedDB save error", e);
+	};
+
+	request.onerror = (e) => {
+		console.error("Failed to open IndexedDB", e);
+	};
 }
 
 async function updateLastUpdatedTimestamp() {
@@ -155,27 +192,58 @@ export async function fetchAllCourses() {
 }
 
 async function loadCoursesFromCacheOrFirebase(model) {
-	// Load metadata from localStorage
-	const cachedMetadata = JSON.parse(localStorage.getItem("coursesMetadata"));
 	const firebaseTimestamp = await fetchLastUpdatedTimestamp();
-	// check if up to date
-	if (cachedMetadata && cachedMetadata.timestamp === firebaseTimestamp) {
-		console.log("Using cached courses...");
-		let mergedCourses = [];
-		for (let i = 0; i < cachedMetadata.parts; i++) {
-			const part = JSON.parse(localStorage.getItem(`coursesPart${i}`));
-			if (part) mergedCourses = mergedCourses.concat(part);
+	const dbPromise = new Promise((resolve, reject) => {
+		const request = indexedDB.open("CourseDB", 1);
+		// check if courses and metadata dirs exist
+		request.onupgradeneeded = (event) => {
+			const db = event.target.result;
+			if (!db.objectStoreNames.contains("courses")) {
+				db.createObjectStore("courses", { keyPath: "id" });
+			}
+			if (!db.objectStoreNames.contains("metadata")) {
+				db.createObjectStore("metadata", { keyPath: "key" });
+			}
+		};
+
+		request.onsuccess = (event) => resolve(event.target.result);
+		request.onerror = (e) => reject(e);
+	});
+
+	try {
+		const db = await dbPromise;
+		const metaTx = db.transaction("metadata", "readonly");
+		const metaStore = metaTx.objectStore("metadata");
+		const metaReq = metaStore.get("timestamp");
+		const cachedTimestamp = await new Promise((resolve) => {
+			metaReq.onsuccess = () => resolve(metaReq.result?.value ?? 0);
+			metaReq.onerror = () => resolve(0);
+		});
+
+		if (cachedTimestamp === firebaseTimestamp) {
+			console.log("Using cached courses from IndexedDB...");
+			const courseTx = db.transaction("courses", "readonly");
+			const courseStore = courseTx.objectStore("courses");
+			const getAllReq = courseStore.getAll();
+			const cachedCourses = await new Promise((resolve) => {
+				getAllReq.onsuccess = () => resolve(getAllReq.result);
+				getAllReq.onerror = () => resolve([]);
+			});
+			model.setCourses(cachedCourses);
+			return;
 		}
-		model.setCourses(mergedCourses);
-		return;
+	} catch (err) {
+		console.warn("IndexedDB unavailable, falling back to Firebase:", err);
 	}
 
-	// Fetch if outdated or missing
+	// fallback: fetch from Firebase
 	console.log("Fetching courses from Firebase...");
 	const courses = await fetchAllCourses();
 	model.setCourses(courses);
-	saveCoursesInChunks(courses, firebaseTimestamp);
+	saveCoursesToCache(courses, firebaseTimestamp);
+
 }
+
 
 export async function saveJSONCoursesToFirebase(model, data) {
 	if (!data || !model) {
@@ -216,10 +284,10 @@ export async function getReviewsForCourse(courseCode) {
 	const snapshot = await get(reviewsRef);
 	if (!snapshot.exists()) return [];
 	const reviews = [];
-	snapshot.forEach(childSnapshot => {
+	snapshot.forEach((childSnapshot) => {
 		reviews.push({
 			id: childSnapshot.key,
-			...childSnapshot.val()
+			...childSnapshot.val(),
 		});
 	});
 	return reviews;

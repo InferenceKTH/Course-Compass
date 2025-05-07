@@ -54,8 +54,10 @@ function CoursePagePopup({
 
 	if (!isOpen || !course) return null;
 
+	console.log(course); ``
 	return (
 		<div
+
 			className="fixed backdrop-blur-sm inset-0 bg-transparent flex justify-end z-50"
 			onClick={onClose}
 		>
@@ -71,7 +73,16 @@ function CoursePagePopup({
 						{/* Course Title Section */}
 						<div>
 							<h2 className="text-5xl font-extrabold text-[#2e2e4f]">
-								<span className="text-violet-700">{course.code}</span> - {course.name}
+								<a
+									href={`https://www.kth.se/student/kurser/kurs/${course.code}`}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="hover:text-violet-600 transition-colors duration-300"
+								>
+									<span className="text-violet-700 ">{course.code}</span>
+									{' '}- {' '}
+									{course.name}
+								</a>
 								<span className="ml-4 text-lg text-violet-700 whitespace-nowrap">
                   ({course.credits} Credits)
                 </span>
@@ -81,13 +92,12 @@ function CoursePagePopup({
 						<div className="flex justify-between items-center">
 							<button
 								className={`inline-flex items-center px-4 py-2 gap-2 rounded-lg
-                  transition-all duration-300 ease-in-out
-                  font-semibold text-sm shadow-sm
-                  ${
-									favouriteCourses.some((fav) => fav.code === course.code)
-										? 'bg-yellow-400/90 hover:bg-yellow-500/90 border-2 border-yellow-600 hover:border-yellow-700 text-yellow-900'
+										   transition-all duration-300 ease-in-out
+										   font-semibold text-sm shadow-sm
+										   ${favouriteCourses.some((fav) => fav.code === course.code)
+										? 'bg-yellow-400 /90 hover:bg-yellow-500/90 border-2 border-yellow-600 hover:border-yellow-700 text-yellow-900'
 										: 'bg-yellow-200/90 hover:bg-yellow-300 border-2 border-yellow-400 hover:border-yellow-500 text-yellow-600 hover:text-yellow-700'
-								}`}
+									}`}
 								onClick={(e) => {
 									e.stopPropagation();
 									handleFavouriteClick(course);
@@ -142,13 +152,34 @@ function CoursePagePopup({
 						</div>
 
 						{/* Description Section */}
+						{course.description &&
+							course.description.trim() &&
+							course.description.trim() !== "null" && (
+								<div>
+									<h3 className="text-2xl font-bold text-[#2e2e4f] mb-0.5">Course Description</h3>
+									<div className="mb-3 h-0.5 w-full bg-violet-500"></div>
+									<div
+										className="text-lg leading-8 text-[#2e2e4f] font-semibold tracking-wide prose prose-slate max-w-full"
+										dangerouslySetInnerHTML={{ __html: course.description }}
+									/>
+								</div>
+							)}
+
+						{/* Learning outcomes */}
 						<div>
-							<h3 className="text-2xl font-bold text-[#2e2e4f] mb-0.5">Course Description</h3>
+							<h3 className="text-2xl font-bold text-[#2e2e4f] mb-0.5">Learning Outcomes:</h3>
 							<div className="mb-3 h-0.5 w-full bg-violet-500"></div>
-							<div
-								className="text-lg leading-8 text-[#2e2e4f] font-semibold tracking-wide prose prose-slate max-w-full"
-								dangerouslySetInnerHTML={{ __html: course.description }}
-							/>
+							{course.learning_outcomes && course.learning_outcomes.trim() &&
+								course.description.trim() !== "null" ? (
+								<div
+									className="text-lg leading-8 text-[#2e2e4f] font-semibold tracking-wide prose prose-slate max-w-full"
+									dangerouslySetInnerHTML={{ __html: course.learning_outcomes }}
+								/>
+							) : (
+								<p className="text-lg text-[#2e2e4f] font-semibold italic">
+									No learning outcomes information available
+								</p>
+							)}
 						</div>
 						{/* Prerequisite Graph Tree Section */}
 						<div>
@@ -157,12 +188,13 @@ function CoursePagePopup({
 							<div className="relative rounded-lg">
 								{showOverlay && (
 									<div
-										className="absolute inset-0 z-10 bg-indigo-200/10 rounded-lg cursor-pointer flex items-center justify-center z-51"
+										className="absolute inset-0 z-10 bg-indigo-200/10  rounded-lg cursor-pointer flex items-center justify-center z-51"
 										onClick={(e) => {
 											e.stopPropagation();
 											setShowOverlay(false);
 										}}
-									></div>
+									>
+									</div>
 								)}
 								<div
 									className="bg-indigo-300/50 outline-none focus:outline-none focus:ring-2 focus:ring-violet-600 rounded-lg transition-shadow"
@@ -173,6 +205,22 @@ function CoursePagePopup({
 									{prerequisiteTree}
 								</div>
 							</div>
+						</div>
+						{/* Prereq Section */}
+						<div>
+							<h3 className="text-2xl font-bold text-[#2e2e4f] mb-0.5">Prerequisites:</h3>
+							<div className="mb-3 h-0.5 w-full bg-violet-500"></div>
+							{course.prerequisites_text && course.prerequisites_text.trim() &&
+								course.description.trim() !== "null" ? (
+								<div
+									className="text-lg leading-8 text-[#2e2e4f] font-semibold tracking-wide prose prose-slate max-w-full"
+									dangerouslySetInnerHTML={{ __html: course.prerequisites_text }}
+								/>
+							) : (
+								<p className="text-lg text-[#2e2e4f] font-semibold italic">
+									Prerequisites information not available
+								</p>
+							)}
 						</div>
 						{/* Reviews Section (optional) */}
 						{reviewPresenter && (
