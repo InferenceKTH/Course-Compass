@@ -194,40 +194,40 @@ export function ReviewView(props) {
                       readOnly={true}
                     /> */}
 										{rev.overallRating > 0 ? (
-  <RatingComponent
-    className="flex space-x-1 text-sm"
-    value={rev.overallRating}
-    readOnly={true}
-  />
-) : (
-  <p className="text-sm text-gray-600">N/A</p>
-)}
+										<RatingComponent
+											className="flex space-x-1 text-sm"
+											value={rev.overallRating}
+											readOnly={true}
+										/>
+									) : (
+										<p className="text-sm text-gray-600">N/A</p>
+									)}
 
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-700">Difficulty Rating</p>
                     {rev.difficultyRating > 0 ? (
-  <RatingComponent
-    className="flex space-x-1 text-sm"
-    value={rev.difficultyRating}
-    readOnly={true}
-  />
-) : (
-  <p className="text-sm text-gray-600">N/A</p>
-)}
+										<RatingComponent
+											className="flex space-x-1 text-sm"
+											value={rev.difficultyRating}
+											readOnly={true}
+										/>
+									) : (
+										<p className="text-sm text-gray-600">N/A</p>
+									)}
 
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-700">Professor Rating</p>
                     {rev.professorRating > 0 ? (
-  <RatingComponent
-    className="flex space-x-1 text-sm"
-    value={rev.professorRating}
-    readOnly={true}
-  />
-) : (
-  <p className="text-sm text-gray-600">N/A</p>
-)}
+									<RatingComponent
+										className="flex space-x-1 text-sm"
+										value={rev.professorRating}
+										readOnly={true}
+									/>
+								) : (
+									<p className="text-sm text-gray-600">N/A</p>
+								)}
 
                   </div>
                   <div>
