@@ -26,15 +26,15 @@ export function ReviewView(props) {
   }, []);
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <div className="mt-6">
-        <div className="bg-white shadow-md rounded-lg p-6 mb-6">
-          <div className="flex flex-wrap justify-center gap-4">
+    <div className="max-w-5xl mx-auto">
+      <div className="mt-12">
+        <div className="bg-white shadow-lg rounded-2xl p-12 mb-12">
+          <div className="flex flex-wrap justify-center gap-8">
             {/* Overall Rating */}
             <div className="text-center">
-              <p className="font-semibold text-gray-700 text-sm mb-1">Overall Rating</p>
+              <p className="font-semibold text-gray-700 text-lg mb-2">Overall Rating</p>
               <RatingComponent
-                className="flex gap-1 text-base justify-center"
+                className="flex gap-2 text-2xl justify-center"
                 value={formData.overallRating}
                 onChange={(val) => setFormData({ ...formData, overallRating: val })}
               />
@@ -42,20 +42,19 @@ export function ReviewView(props) {
 
             {/* Difficulty Rating */}
             <div className="text-center">
-              <p className="font-semibold text-gray-700 text-sm mb-1">Difficulty Rating</p>
+              <p className="font-semibold text-gray-700 text-lg mb-2">Difficulty Rating</p>
               <RatingComponent
-                className="flex gap-1 text-base justify-center"
+                className="flex gap-2 text-2xl justify-center"
                 value={formData.difficultyRating}
                 onChange={(val) => setFormData({ ...formData, difficultyRating: val })}
               />
             </div>
 
-
             {/* Professor Rating */}
             <div className="text-center">
-              <p className="font-semibold text-gray-700 text-sm mb-1">Professor Rating</p>
+              <p className="font-semibold text-gray-700 text-lg mb-2">Professor Rating</p>
               <RatingComponent
-                className="flex gap-1 text-base justify-center"
+                className="flex gap-2 text-2xl justify-center"
                 value={formData.professorRating}
                 onChange={(val) => setFormData({ ...formData, professorRating: val })}
               />
@@ -63,17 +62,17 @@ export function ReviewView(props) {
 
             {/* Grade Section */}
             <div className="relative" ref={gradeRef}>
-              <div className="flex items-center justify-center gap-2">
-                <p className="font-semibold text-gray-700 text-sm">Grade:</p>
+              <div className="flex items-center justify-center gap-4">
+                <p className="font-semibold text-gray-700 text-lg">Grade:</p>
                 <div className="relative">
                   <div
-                    className="px-3 py-1.5 border border-gray-300 rounded-md text-sm cursor-pointer text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200"
+                    className="px-6 py-3 border border-gray-300 rounded-lg text-lg cursor-pointer text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200"
                     onClick={() => setShowGradeOptions((prev) => !prev)}
                   >
                     {formData.grade || "Select"}
                   </div>
                   {showGradeOptions && (
-                    <div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-white p-2 rounded-md shadow-lg Disturbance shadow-lg z-10 flex space-x-2 animate-fadeIn">
+                    <div className="absolute left-1/2 -translate-x-1/2 mt-4 bg-white p-4 rounded-xl shadow-xl z-10 flex space-x-4 animate-fadeIn">
                       {grades.map((grade) => (
                         <button
                           key={grade}
@@ -81,7 +80,7 @@ export function ReviewView(props) {
                             setFormData({ ...formData, grade });
                             setShowGradeOptions(false);
                           }}
-                          className={`px-3 py-1 rounded-md text-sm ${
+                          className={`px-6 py-2 rounded-lg text-lg ${
                             formData.grade === grade
                               ? "bg-blue-600 text-white"
                               : "bg-gray-100 hover:bg-gray-200"
@@ -98,23 +97,23 @@ export function ReviewView(props) {
 
             {/* Recommend Section */}
             <div className="relative" ref={recommendRef}>
-              <div className="flex items-center justify-center gap-2">
-                <p className="font-semibold text-gray-700 text-sm">Recommend?</p>
+              <div className="flex items-center justify-center gap-4">
+                <p className="font-semibold text-gray-700 text-lg">Recommend?</p>
                 <div className="relative">
                   <div
-                    className="px-3 py-1.5 border border-gray-300 rounded-md text-sm cursor-pointer text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200"
+                    className="px-6 py-3 border border-gray-300 rounded-lg text-lg cursor-pointer text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200"
                     onClick={() => setShowRecommendOptions((prev) => !prev)}
                   >
                     {formData.recommend === null ? "Select" : formData.recommend ? "Yes" : "No"}
                   </div>
                   {showRecommendOptions && (
-                    <div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-white p-2 rounded-md shadow-lg z-10 flex space-x-2 animate-fadeIn">
+                    <div className="absolute left-1/2 -translate-x-1/2 mt-4 bg-white p-4 rounded-xl shadow-xl z-10 flex space-x-4 animate-fadeIn">
                       <button
                         onClick={() => {
                           setFormData({ ...formData, recommend: true });
                           setShowRecommendOptions(false);
                         }}
-                        className={`px-3 py-1 rounded-md text-sm ${
+                        className={`px-6 py-2 rounded-lg text-lg ${
                           formData.recommend ? "bg-blue-600 text-white" : "bg-gray-100 hover:bg-gray-200"
                         } transition-colors duration-200`}
                       >
@@ -125,7 +124,7 @@ export function ReviewView(props) {
                           setFormData({ ...formData, recommend: false });
                           setShowRecommendOptions(false);
                         }}
-                        className={`px-3 py-1 rounded-md text-sm ${
+                        className={`px-6 py-2 rounded-lg text-lg ${
                           formData.recommend === false ? "bg-blue-600 text-white" : "bg-gray-100 hover:bg-gray-200"
                         } transition-colors duration-200`}
                       >
@@ -138,47 +137,46 @@ export function ReviewView(props) {
             </div>
           </div>
 
-          <div className="mt-4">
-					<input
-						type="text"
-						placeholder="Enter professor name"
-						maxLength={100}
-						className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
-						value={formData.professorName}
-						onChange={(e) => setFormData({ ...formData, professorName: e.target.value })}
-					/>
+          <div className="mt-8">
+            <input
+              type="text"
+              placeholder="Enter professor name"
+              maxLength={100}
+              className="w-full border border-gray-300 rounded-lg p-4 text-lg focus:outline-none focus:ring-4 focus:ring-blue-500 transition-colors duration-200"
+              value={formData.professorName}
+              onChange={(e) => setFormData({ ...formData, professorName: e.target.value })}
+            />
           </div>
 
-          <div className="relative mt-4">
+          <div className="relative mt-8">
             <textarea
               value={formData.text}
               onChange={(e) => setFormData({ ...formData, text: e.target.value })}
               placeholder="Write your review here..."
               maxLength={2500}
-              className="w-full border border-gray-300 rounded-md p-2 text-sm h-32 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-colors duration-200"
+              className="w-full border border-gray-300 rounded-lg p-4 text-lg h-64 focus:outline-none focus:ring-4 focus:ring-blue-500 resize-none transition-colors duration-200"
             />
-            <span className="absolute bottom-2 right-3 text-xs text-gray-500">
+            <span className="absolute bottom-4 right-5 text-sm text-gray-500">
               {formData.text.length}/2500
             </span>
           </div>
 
           <button
-            className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
+            className="mt-8 w-full bg-blue-600 text-white py-4 px-8 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500 transition-colors duration-200 text-xl"
             onClick={props.handleReviewSubmit}
           >
             Submit Review
           </button>
         </div>
 
-        <div className="mt-6">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Previous Reviews</h3>
-          <div className="space-y-6">
-            {/* {props.reviews.map((rev, i) => ( */}
-							{[...props.reviews].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map((rev, i) => (
-              <div key={i} className="bg-white shadow-md rounded-lg p-4">
-                <div className="flex justify-between items-center mb-2">
-                  <p className="font-semibold text-gray-800">{rev.userName}</p>
-                  <p className="text-sm text-gray-500">
+        <div className="mt-12">
+          <h3 className="text-2xl font-semibold text-gray-800 mb-8">Previous Reviews</h3>
+          <div className="space-y-12">
+            {[...props.reviews].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map((rev, i) => (
+              <div key={i} className="bg-white shadow-lg rounded-2xl p-10">
+                <div className="flex justify-between items-center mb-4">
+                  <p className="font-semibold text-gray-800 text-xl">{rev.userName}</p>
+                  <p className="text-lg text-gray-500">
                     Posted on {new Date(rev.timestamp).toLocaleDateString("en-US", {
                       month: "long",
                       day: "numeric",
@@ -186,79 +184,65 @@ export function ReviewView(props) {
                     })}
                   </p>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-2">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-4 text-lg">
                   <div>
-                    <p className="text-sm font-semibold text-gray-700">Overall Rating</p>
-                    {/* <RatingComponent
-                      className="flex space-x-1 text-sm"
-                      value={rev.overallRating}
-                      readOnly={true}
-                    /> */}
-										{rev.overallRating > 0 ? (
-										<RatingComponent
-											className="flex space-x-1 text-sm"
-											value={rev.overallRating}
-											readOnly={true}
-										/>
-									) : (
-										<p className="text-sm text-gray-600">N/A</p>
-									)}
-
+                    <p className="font-semibold text-gray-700">Overall Rating</p>
+                    {rev.overallRating > 0 ? (
+                      <RatingComponent
+                        className="flex space-x-2 text-xl"
+                        value={rev.overallRating}
+                        readOnly={true}
+                      />
+                    ) : (
+                      <p className="text-gray-600">N/A</p>
+                    )}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-gray-700">Difficulty Rating</p>
+                    <p className="font-semibold text-gray-700">Difficulty Rating</p>
                     {rev.difficultyRating > 0 ? (
-										<RatingComponent
-											className="flex space-x-1 text-sm"
-											value={rev.difficultyRating}
-											readOnly={true}
-										/>
-									) : (
-										<p className="text-sm text-gray-600">N/A</p>
-									)}
-
+                      <RatingComponent
+                        className="flex space-x-2 text-xl"
+                        value={rev.difficultyRating}
+                        readOnly={true}
+                      />
+                    ) : (
+                      <p className="text-gray-600">N/A</p>
+                    )}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-gray-700">Professor Rating</p>
+                    <p className="font-semibold text-gray-700">Professor Rating</p>
                     {rev.professorRating > 0 ? (
-									<RatingComponent
-										className="flex space-x-1 text-sm"
-										value={rev.professorRating}
-										readOnly={true}
-									/>
-								) : (
-									<p className="text-sm text-gray-600">N/A</p>
-								)}
-
+                      <RatingComponent
+                        className="flex space-x-2 text-xl"
+                        value={rev.professorRating}
+                        readOnly={true}
+                      />
+                    ) : (
+                      <p className="text-gray-600">N/A</p>
+                    )}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-gray-700">Professor</p>
-                    {/* <p className="text-sm text-gray-600">{rev.professorName}</p> */}
-										<p className="text-sm text-gray-600">{rev.professorName || "N/A"}</p>
-
+                    <p className="font-semibold text-gray-700">Professor</p>
+                    <p className="text-gray-600">{rev.professorName || "N/A"}</p>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-gray-700">Grade</p>
-                    {/* <p className="text-sm text-gray-600">{rev.grade}</p> */}
-										<p className="text-sm text-gray-600">{rev.grade || "N/A"}</p>
-
+                    <p className="font-semibold text-gray-700">Grade</p>
+                    <p className="text-gray-600">{rev.grade || "N/A"}</p>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-gray-700">Recommended</p>
-                    {/* <p className="text-sm text-gray-600">{rev.recommend ? "Yes" : "No"}</p> */}
-										<p className="text-sm text-gray-600">
-											{rev.recommend === true ? "Yes" : rev.recommend === false ? "No" : "N/A"}
-										</p>
-
+                    <p className="font-semibold text-gray-700">Recommended</p>
+                    <p className="text-gray-600">
+                      {rev.recommend === true ? "Yes" : rev.recommend === false ? "No" : "N/A"}
+                    </p>
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-gray-700">Review</p>
-                  <p className="text-sm text-gray-600">{rev.text}</p>
+                  <p className="font-semibold text-gray-700 text-lg mb-1">Review</p>
+                  <p className="text-gray-600 text-lg">{rev.text}</p>
                 </div>
               </div>
             ))}
-            {props.reviews.length === 0 && <p className="text-gray-600">No reviews yet.</p>}
+            {props.reviews.length === 0 && <p className="text-lg text-gray-600">No reviews yet.</p>}
           </div>
         </div>
       </div>
