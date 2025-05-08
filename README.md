@@ -1,9 +1,6 @@
-Project Structure Draft:
-
-
 # Course-Compass 
-## by team Inference
-//explanation of project
+## by team [Inference](https://inferencekth.github.io/Course-Compass/)
+Course-Compass is a webpage for interacting with the kth courses via the kth api. It allows for searching and filtering through all active courses.
 
 ## How to run
 
@@ -38,6 +35,13 @@ The project uses the **[Model–view–presenter (MVP)](https://en.wikipedia.org
 │   ├── _config.yml
 │   └── index.md
 ├── my-app
+│   ├── dist
+│   │   ├── assets
+│   │   │   ├── index-BNDm07oX.js
+│   │   │   ├── index-Bwi9_b9d.css
+│   │   │   ├── pdf.worker-CKnUz2wA.mjs
+│   │   │   └── project_icon-CgaTQWFX.png
+│   │   └── index.html
 │   ├── eslint.config.js
 │   ├── firebase.js
 │   ├── firebase.json
@@ -46,10 +50,27 @@ The project uses the **[Model–view–presenter (MVP)](https://en.wikipedia.org
 │   ├── package.json
 │   ├── package-lock.json
 │   ├── postcss.config.js
-│   ├── README.md
+│   ├── public
+│   │   ├── favicons-dark
+│   │   │   ├── android-chrome-192x192.png
+│   │   │   ├── android-chrome-512x512.png
+│   │   │   ├── apple-touch-icon.png
+│   │   │   ├── favicon-16x16.png
+│   │   │   ├── favicon-32x32.png
+│   │   │   ├── favicon.ico
+│   │   │   └── site.webmanifest
+│   │   └── favicons-light
+│   │       ├── android-chrome-192x192.png
+│   │       ├── android-chrome-512x512.png
+│   │       ├── apple-touch-icon.png
+│   │       ├── favicon-16x16.png
+│   │       ├── favicon-32x32.png
+│   │       ├── favicon.ico
+│   │       └── site.webmanifest
 │   ├── src
 │   │   ├── assets
 │   │   │   ├── example.json
+│   │   │   ├── project_icon1.png
 │   │   │   ├── project_icon.png
 │   │   │   └── share_icon.png
 │   │   ├── dev
@@ -95,13 +116,13 @@ The project uses the **[Model–view–presenter (MVP)](https://en.wikipedia.org
 │   │       │   ├── RatingComponent.jsx
 │   │       │   ├── SideBarComponents
 │   │       │   │   ├── ButtonGroupField.jsx
+│   │       │   │   ├── ButtonGroupFullComponent.jsx
 │   │       │   │   ├── CollapsibleCheckboxes.jsx
 │   │       │   │   ├── CourseTranscriptList.jsx
 │   │       │   │   ├── DropDownField.jsx
 │   │       │   │   ├── FilterEnableCheckbox.jsx
 │   │       │   │   ├── SliderField.jsx
 │   │       │   │   ├── ToggleField.jsx
-│   │       │   │   ├── ToolTipIcon.jsx
 │   │       │   │   ├── ToolTip.jsx
 │   │       │   │   └── UploadField.jsx
 │   │       │   └── StarComponent.jsx
@@ -116,10 +137,8 @@ The project uses the **[Model–view–presenter (MVP)](https://en.wikipedia.org
 │   └── vite.config.js
 └── README.md
 
-16 directories, 68 files
+21 directories, 87 files
 ```
-
-
 
 
 ## Other branches
@@ -128,35 +147,4 @@ The **[docs](https://github.com/InferenceKTH/Course-Compass/tree/kth-api)** bran
 
 The **[kth-api](https://github.com/InferenceKTH/Course-Compass/tree/kth-api)** contains most of the tools used for gathering and processing the course info.
 
-
-
-
-// the other README.md To be removed
-
-
-
-Project Structure Draft:
-
-```
-.
-├── firebase.js      // handles fetching and saving to the realtime database on firebase
-├── firebase.json    // used for firebase deploy
-├── index.html       // the main index page - contains header and loads the index.jsx
-├── package.json     // used for nodejs (npm) packages
-├── package-lock.json    // used for nodejs (npm) packages
-├── README.md        // this file ^^
-├── src              // contains all source filed
-│   ├── assets       //  content, e.g. pictures, ressources etc.
-│   │   └── react.svg
-│   ├── index.jsx    // the react router - routes between pages, all pages are inserted here
-│   ├── model.js     // the model - handles prog. logic, that is either global or account specific
-│   ├── pages        // pages combine the presenters to a webpage. mby obsolete for 1 page project
-│   │   └── App.jsx  // The future homepage?
-│   ├── presenters   // Presenters link views and the model. 
-│   |                   Hooks to modify the model & component  state is defined here
-│   │   └── HandleSearchPresenter.jsx  // An example presenter
-│   ├── styles.css   // a style document - mby one for each view?
-│   └── views        // views define parts of pages cosmetically. 
-│       └── DummyView.jsx
-└── vite.config.js
-```
+![team Inference logo](/my-app/src/assets/project_icon.png)
