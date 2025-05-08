@@ -320,9 +320,8 @@ async function loadCoursesFromCacheOrFirebase(model) {
 
 export async function addReviewForCourse(courseCode, review) {
 	try {
-		const reviewsRef = ref(db, `reviews/${courseCode}`);
-		const newReviewRef = push(reviewsRef);
-		await set(newReviewRef, review);
+		const reviewsRef = ref(db, `reviews/${courseCode}/${review.uid}`);
+		await set(reviewsRef, review);
 	} catch (error) {
 		console.error("Error when adding a course to firebase:", error);
 	}
