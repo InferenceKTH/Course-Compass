@@ -6,6 +6,7 @@ export function ReviewView(props) {
   const { formData, setFormData } = props;
   const [showGradeOptions, setShowGradeOptions] = useState(false);
   const [showRecommendOptions, setShowRecommendOptions] = useState(false);
+  const [expandedReviews, setExpandedReviews] = useState({});
   const gradeRef = useRef(null);
   const recommendRef = useRef(null);
 
@@ -24,6 +25,14 @@ export function ReviewView(props) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  // Function to toggle expanded state for a review
+  const toggleExpanded = (index) => {
+    setExpandedReviews((prev) => ({
+      ...prev,
+      [index]: !prev[index],
+    }));
+  };
 
   return (
     <div className="max-w-3xl mx-auto">
@@ -50,7 +59,6 @@ export function ReviewView(props) {
               />
             </div>
 
-
             {/* Professor Rating */}
             <div className="text-center">
               <p className="font-semibold text-gray-700 text-sm mb-1">Professor Rating</p>
@@ -73,7 +81,7 @@ export function ReviewView(props) {
                     {formData.grade || "Select"}
                   </div>
                   {showGradeOptions && (
-                    <div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-white p-2 rounded-md shadow-lg Disturbance shadow-lg z-10 flex space-x-2 animate-fadeIn">
+                    <div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-white p-2 rounded-md shadow-lg z-10 flex space-x-2 animate-fadeIn">
                       {grades.map((grade) => (
                         <button
                           key={grade}
@@ -139,14 +147,14 @@ export function ReviewView(props) {
           </div>
 
           <div className="mt-4">
-					<input
-						type="text"
-						placeholder="Enter professor name"
-						maxLength={100}
-						className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
-						value={formData.professorName}
-						onChange={(e) => setFormData({ ...formData, professorName: e.target.value })}
-					/>
+            <input
+              type="text"
+              placeholder="Enter professor name"
+              maxLength={100}
+              className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
+              value={formData.professorName}
+              onChange={(e) => setFormData({ ...formData, professorName: e.target.value })}
+            />
           </div>
 
           <div className="relative mt-4">
@@ -173,92 +181,102 @@ export function ReviewView(props) {
         <div className="mt-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Previous Reviews</h3>
           <div className="space-y-6">
-            {/* {props.reviews.map((rev, i) => ( */}
-							{[...props.reviews].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map((rev, i) => (
-              <div key={i} className="bg-white shadow-md rounded-lg p-4">
-                <div className="flex justify-between items-center mb-2">
-                  <p className="font-semibold text-gray-800">{rev.userName}</p>
-                  <p className="text-sm text-gray-500">
-                    Posted on {new Date(rev.timestamp).toLocaleDateString("en-US", {
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
-                  </p>
-                </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-2">
-                  <div>
-                    <p className="text-sm font-semibold text-gray-700">Overall Rating</p>
-                    {/* <RatingComponent
-                      className="flex space-x-1 text-sm"
-                      value={rev.overallRating}
-                      readOnly={true}
-                    /> */}
-										{rev.overallRating > 0 ? (
-										<RatingComponent
-											className="flex space-x-1 text-sm"
-											value={rev.overallRating}
-											readOnly={true}
-										/>
-									) : (
-										<p className="text-sm text-gray-600">N/A</p>
-									)}
+            {[...props.reviews]
+              .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+              .map((rev, i) => {
+                const maxLength = 200;
+                const isLongReview = rev.text.length > maxLength;
+                const isExpanded = expandedReviews[i] || false;
 
+                return (
+                  <div key={i} className="bg-white shadow-md rounded-lg p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <p className="font-semibold text-gray-800">{rev.userName}</p>
+                      <p className="text-sm text-gray-500">
+                        Posted on{" "}
+                        {new Date(rev.timestamp).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-2">
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">Overall Rating</p>
+                        {rev.overallRating > 0 ? (
+                          <RatingComponent
+                            className="flex space-x-1 text-sm"
+                            value={rev.overallRating}
+                            readOnly={true}
+                          />
+                        ) : (
+                          <p className="text-sm text-gray-600">N/A</p>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">Difficulty Rating</p>
+                        {rev.difficultyRating > 0 ? (
+                          <RatingComponent
+                            className="flex space-x-1 text-sm"
+                            value={rev.difficultyRating}
+                            readOnly={true}
+                          />
+                        ) : (
+                          <p className="text-sm text-gray-600">N/A</p>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">Professor Rating</p>
+                        {rev.professorRating > 0 ? (
+                          <RatingComponent
+                            className="flex space-x-1 text-sm"
+                            value={rev.professorRating}
+                            readOnly={true}
+                          />
+                        ) : (
+                          <p className="text-sm text-gray-600">N/A</p>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">Professor</p>
+                        <p className="text-sm text-gray-600">{rev.professorName || "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">Grade</p>
+                        <p className="text-sm text-gray-600">{rev.grade || "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">Recommended</p>
+                        <p className="text-sm text-gray-600">
+                          {rev.recommend === true ? "Yes" : rev.recommend === false ? "No" : "N/A"}
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-700">Review</p>
+                      <div
+                        className={`text-sm text-gray-600 transition-all duration-300 ${
+                          isExpanded || !isLongReview ? "" : "max-h-10 overflow-hidden"
+                        }`}
+                      >
+                        {isExpanded || !isLongReview
+                          ? rev.text
+                          : `${rev.text.slice(0, maxLength)}...`}
+                      </div>
+                      {isLongReview && (
+                        <button
+                          onClick={() => toggleExpanded(i)}
+                          className="mt-1 text-blue-600 hover:text-blue-800 text-sm font-semibold focus:outline-none"
+                        >
+                          {isExpanded ? "Read Less" : "Read More"}
+                        </button>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-700">Difficulty Rating</p>
-                    {rev.difficultyRating > 0 ? (
-										<RatingComponent
-											className="flex space-x-1 text-sm"
-											value={rev.difficultyRating}
-											readOnly={true}
-										/>
-									) : (
-										<p className="text-sm text-gray-600">N/A</p>
-									)}
-
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-700">Professor Rating</p>
-                    {rev.professorRating > 0 ? (
-									<RatingComponent
-										className="flex space-x-1 text-sm"
-										value={rev.professorRating}
-										readOnly={true}
-									/>
-								) : (
-									<p className="text-sm text-gray-600">N/A</p>
-								)}
-
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-700">Professor</p>
-                    {/* <p className="text-sm text-gray-600">{rev.professorName}</p> */}
-										<p className="text-sm text-gray-600">{rev.professorName || "N/A"}</p>
-
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-700">Grade</p>
-                    {/* <p className="text-sm text-gray-600">{rev.grade}</p> */}
-										<p className="text-sm text-gray-600">{rev.grade || "N/A"}</p>
-
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-700">Recommended</p>
-                    {/* <p className="text-sm text-gray-600">{rev.recommend ? "Yes" : "No"}</p> */}
-										<p className="text-sm text-gray-600">
-											{rev.recommend === true ? "Yes" : rev.recommend === false ? "No" : "N/A"}
-										</p>
-
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-700">Review</p>
-                  <p className="text-sm text-gray-600">{rev.text}</p>
-                </div>
-              </div>
-            ))}
-            {props.reviews.length === 0 && <p className="text-gray-600">No reviews yet.</p>}
+                );
+              })}
+            {props.reviews.length === 0 && <p className="text-sm text-gray-600">No reviews yet.</p>}
           </div>
         </div>
       </div>
