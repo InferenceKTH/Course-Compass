@@ -22,3 +22,11 @@
 .react-flow__node.no-handles .react-flow__handle {
     display: none;
   }
+
+.bm-burger-button {
+    position: absolute;
+    width: 36px;
+    height: 36px;
+    left: 36px;
+    top: 36px;
+}

@@ -188,7 +188,9 @@ const UploadTranscriptPresenter = observer((props) => {
             HandleFilterEnable={props.HandleFilterEnable}
             HandleFilterChange={props.HandleFilterChange}
             filterName={props.filterName}
-            reApplyFilter = {props.reApplyFilter}
+            reApplyFilter={props.reApplyFilter}
+            filterEnable={props.filterEnable}
+            initialValue={props.initialValue}
         />);
 });
 

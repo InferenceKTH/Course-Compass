@@ -50,6 +50,7 @@ export function ReviewView(props) {
               />
             </div>
 
+
             {/* Professor Rating */}
             <div className="text-center">
               <p className="font-semibold text-gray-700 text-sm mb-1">Professor Rating</p>

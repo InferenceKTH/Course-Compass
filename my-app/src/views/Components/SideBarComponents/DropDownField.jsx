@@ -1,20 +1,19 @@
 import { useState } from "react";
 import { useRef, useEffect } from "react";
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
+import Tooltip from "./ToolTip";
 
 export default function DropDownField(props) {
 
 
   let paramFieldType = "dropdown";
-  const [filterEnabled, setFilterEnabled] = useState(true);
+  const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState(props.initialValues.map(
+    (item) => item.charAt(0).toUpperCase() + item.slice(1).toLowerCase()
+  ));
 
   const items = props.options;
-
-  useEffect(() => {
-    setSelectedItems(items);
-  }, [items]);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -44,14 +43,18 @@ export default function DropDownField(props) {
   return (
     <div className="m-2">
       <div className="mb-2 text-white flex items-center justify-between">
-        <div className="flex items-center">
+        <div className="flex-none items-center">
           <h3>{String(props.filterName).charAt(0).toUpperCase() + String(props.filterName).slice(1)}</h3>
-          <div>
-            <p className="text-sm opacity-50"> - filter description</p>
-          </div>
+        </div>
+        <div className="flex-auto pl-3 pt-2">
+          <Tooltip
+            text={props.description}
+            position={"right"}
+          />
         </div>
         <FilterEnableCheckbox
-          onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]);}}
+          initialValue={filterEnabled}
+          onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]); }}
         />
       </div>
       <div className={`opacity-${filterEnabled ? "100" : "50"} ${filterEnabled ? "pointer-events-auto" : "pointer-events-none user-select-none"
