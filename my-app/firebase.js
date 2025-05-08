@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
+import { getFunctions, httpsCallable } from 'firebase/functions';
 import { get, getDatabase, ref, set, onValue, push } from "firebase/database";
 import { reaction, toJS } from "mobx";
 
@@ -17,6 +18,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const functions = getFunctions(app);
 export const auth = getAuth(app);
 export const db = getDatabase(app);
 export const googleProvider = new GoogleAuthProvider();
@@ -291,8 +293,13 @@ export async function addReviewForCourse(courseCode, review) {
 		const reviewsRef = ref(db, `reviews/${courseCode}`);
 		const newReviewRef = push(reviewsRef);
 		await set(newReviewRef, review);
+
+		const updateCourseAvgRating = httpsCallable(functions, 'updateCourseAvgRating');
+   		const result = await updateCourseAvgRating({ courseCode });
+		
+		console.log('Average rating updated:', result.data.avgRating);
 	} catch (error) {
-		console.error("Error when adding a course to firebase:", error);
+		console.error("Error when adding a course to firebase or updating the average:", error);
 	}
 }
 
