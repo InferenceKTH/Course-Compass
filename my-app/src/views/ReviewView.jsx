@@ -50,6 +50,7 @@ export function ReviewView(props) {
               />
             </div>
 
+
             {/* Professor Rating */}
             <div className="text-center">
               <p className="font-semibold text-gray-700 text-sm mb-1">Professor Rating</p>
@@ -138,13 +139,14 @@ export function ReviewView(props) {
           </div>
 
           <div className="mt-4">
-            <input
-              type="text"
-              placeholder="Enter professor name"
-              className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
-              value={formData.professorName}
-              onChange={(e) => setFormData({ ...formData, professorName: e.target.value })}
-            />
+					<input
+						type="text"
+						placeholder="Enter professor name"
+						maxLength={100}
+						className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
+						value={formData.professorName}
+						onChange={(e) => setFormData({ ...formData, professorName: e.target.value })}
+					/>
           </div>
 
           <div className="relative mt-4">
@@ -171,7 +173,8 @@ export function ReviewView(props) {
         <div className="mt-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Previous Reviews</h3>
           <div className="space-y-6">
-            {props.reviews.map((rev, i) => (
+            {/* {props.reviews.map((rev, i) => ( */}
+							{[...props.reviews].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map((rev, i) => (
               <div key={i} className="bg-white shadow-md rounded-lg p-4">
                 <div className="flex justify-between items-center mb-2">
                   <p className="font-semibold text-gray-800">{rev.userName}</p>
@@ -186,39 +189,67 @@ export function ReviewView(props) {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-2">
                   <div>
                     <p className="text-sm font-semibold text-gray-700">Overall Rating</p>
-                    <RatingComponent
+                    {/* <RatingComponent
                       className="flex space-x-1 text-sm"
                       value={rev.overallRating}
                       readOnly={true}
-                    />
+                    /> */}
+										{rev.overallRating > 0 ? (
+										<RatingComponent
+											className="flex space-x-1 text-sm"
+											value={rev.overallRating}
+											readOnly={true}
+										/>
+									) : (
+										<p className="text-sm text-gray-600">N/A</p>
+									)}
+
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-700">Difficulty Rating</p>
-                    <RatingComponent
-                      className="flex space-x-1 text-sm"
-                      value={rev.difficultyRating}
-                      readOnly={true}
-                    />
+                    {rev.difficultyRating > 0 ? (
+										<RatingComponent
+											className="flex space-x-1 text-sm"
+											value={rev.difficultyRating}
+											readOnly={true}
+										/>
+									) : (
+										<p className="text-sm text-gray-600">N/A</p>
+									)}
+
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-700">Professor Rating</p>
-                    <RatingComponent
-                      className="flex space-x-1 text-sm"
-                      value={rev.professorRating}
-                      readOnly={true}
-                    />
+                    {rev.professorRating > 0 ? (
+									<RatingComponent
+										className="flex space-x-1 text-sm"
+										value={rev.professorRating}
+										readOnly={true}
+									/>
+								) : (
+									<p className="text-sm text-gray-600">N/A</p>
+								)}
+
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-700">Professor</p>
-                    <p className="text-sm text-gray-600">{rev.professorName}</p>
+                    {/* <p className="text-sm text-gray-600">{rev.professorName}</p> */}
+										<p className="text-sm text-gray-600">{rev.professorName || "N/A"}</p>
+
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-700">Grade</p>
-                    <p className="text-sm text-gray-600">{rev.grade}</p>
+                    {/* <p className="text-sm text-gray-600">{rev.grade}</p> */}
+										<p className="text-sm text-gray-600">{rev.grade || "N/A"}</p>
+
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-700">Recommended</p>
-                    <p className="text-sm text-gray-600">{rev.recommend ? "Yes" : "No"}</p>
+                    {/* <p className="text-sm text-gray-600">{rev.recommend ? "Yes" : "No"}</p> */}
+										<p className="text-sm text-gray-600">
+											{rev.recommend === true ? "Yes" : rev.recommend === false ? "No" : "N/A"}
+										</p>
+
                   </div>
                 </div>
                 <div>
