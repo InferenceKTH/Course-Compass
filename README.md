@@ -4,6 +4,14 @@ Course-Compass is a webpage for interacting with the kth courses via the kth api
 
 ## How to run
 
+Running this project locally can be done via docker or by building and running it with npm. 
+
+### Running via docker
+
+Executing ´docker compose up´ or ´docker-compose up´ builds and starts the container. 
+
+
+### Building with NPM
 After downloading the repository navigate to the folder my-app and install the dependencies with 
 
 ```bash
