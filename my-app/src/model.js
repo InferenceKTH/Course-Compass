@@ -7,6 +7,8 @@ export const model = {
     //instead of passing searchcouses lambda function down into the searchbarview.
     /* courses returned from SearchbarPresenter (search is applied on top of filteredCourses[]) to be shown in the ListView */
     currentSearch: [],
+
+    sidebarIsOpen: true,
     /* current query text */
     currentSearchText: "",
     scrollPosition: 0,
@@ -238,4 +240,19 @@ export const model = {
         // cache the result
         return avgRtg;
     },
+
+    setSidebarState(state) {
+        this.sidebarIsOpen = state;
+    },
+
+    getSidebarState() {
+        return this.sidebarIsOpen;
+    },
+
+    toggleSidebarIsOpen() {
+        this.sidebarIsOpen = !this.sidebarIsOpen;
+    }
+
+
+
 };
