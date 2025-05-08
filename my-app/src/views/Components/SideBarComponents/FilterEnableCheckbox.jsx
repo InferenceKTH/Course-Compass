@@ -6,7 +6,7 @@ const FilterEnableCheckbox = (props) => {
             <input
                 type="checkbox"
                 onChange={props.onToggle}
-                defaultChecked={true}
+                defaultChecked={props.initialValue}
                 className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded-sm accent-violet-600"
             />
         </div>

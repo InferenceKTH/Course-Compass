@@ -1,5 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
+import Tooltip from "./ToolTip";
 
 export default function UploadField(props) {
     let paramFieldType = "slider";
@@ -12,8 +13,19 @@ export default function UploadField(props) {
 
     const [minIndex, setMinIndex] = useState(0);
     const [maxIndex, setMaxIndex] = useState(values.length - 1);
-    const [filterEnabled, setFilterEnabled] = useState(true);
+    const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
     const sliderRef = useRef(null);
+
+    useEffect(() => {
+        for (let i = 0; i < values.length; i++) {
+            if (values[i] === props.initialValues[0]) {
+                setMinIndex(i);
+            }
+            if (values[i] === props.initialValues[1]) {
+                setMaxIndex(i);
+            }
+        }
+    }, []); // Empty dependency array ensures this runs only once
 
     const handleDrag = (e, thumbType) => {
         const slider = sliderRef.current;
@@ -41,13 +53,17 @@ export default function UploadField(props) {
     return (
         <div className="m-2">
             <div className="mb-2 text-white flex items-center justify-between">
-                <div className="flex items-center">
+                <div className="flex-none items-center">
                     <h3>{String(props.filterName).charAt(0).toUpperCase() + String(props.filterName).slice(1)}</h3>
-                    <div>
-                        <p className="text-sm opacity-50"> - filter description</p>
-                    </div>
+                </div>
+                <div className="flex-auto pl-3 pt-2">
+                    <Tooltip
+                        text={props.description}
+                        position={"right"}
+                    />
                 </div>
                 <FilterEnableCheckbox
+                    initialValue={filterEnabled}
                     onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]); }}
                 />
             </div>
