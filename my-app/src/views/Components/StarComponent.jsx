@@ -20,7 +20,7 @@ const StarComponent = ({ index, rating, onRatingChange, onHover, readOnly = fals
             onMouseLeave={() => !readOnly && onHover && onHover(0)}
         >
             <i
-                className={`bx ${starClass} text-xl text-violet-500 transition-transform duration-200 ${!readOnly && 'group-hover:scale-110'}`}
+                className={`bx ${starClass} text-3xl text-violet-500 transition-transform duration-200 ${!readOnly && 'group-hover:scale-110'}`}
             ></i>
             {!readOnly && (
                 <>

@@ -6,9 +6,17 @@ export function ReviewView(props) {
   const { formData, setFormData } = props;
   const [showGradeOptions, setShowGradeOptions] = useState(false);
   const [showRecommendOptions, setShowRecommendOptions] = useState(false);
-  const [expandedReviews, setExpandedReviews] = useState({}); // New state for expanded reviews
+  const [expandedReviews, setExpandedReviews] = useState({});
   const gradeRef = useRef(null);
   const recommendRef = useRef(null);
+
+  // Function to get user initials from their name
+  const getInitials = (name) => {
+    if (!name) return "N/A";
+    const words = name.trim().split(" ");
+    if (words.length === 1) return words[0][0]?.toUpperCase() || "N/A";
+    return `${words[0][0]?.toUpperCase() || ""}${words[words.length - 1][0]?.toUpperCase() || ""}`;
+  };
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -30,19 +38,19 @@ export function ReviewView(props) {
   const toggleExpanded = (index) => {
     setExpandedReviews((prev) => ({
       ...prev,
-      [index]: !prev[index], // Toggle the state for the specific review
+      [index]: !prev[index],
     }));
   };
 
   return (
     <div className="mt-12">
-      <div className="bg-white shadow-lg rounded-2xl p-12 mb-12">
-        <div className="flex flex-wrap justify-center gap-8">
+      <div className="bg-white shadow-lg rounded-2xl p-8 mb-20">
+        <div className="flex flex-wrap justify-center gap-14">
           {/* Overall Rating */}
           <div className="text-center">
-            <p className="font-semibold text-gray-700 text-lg mb-2">Overall Rating</p>
+            <p className="font-semibold text-gray-700 text-xl mb-2">Overall Rating</p>
             <RatingComponent
-              className="flex gap-2 text-2xl justify-center"
+              className="flex gap-4 text-2xl justify-center"
               value={formData.overallRating}
               onChange={(val) => setFormData({ ...formData, overallRating: val })}
             />
@@ -50,7 +58,7 @@ export function ReviewView(props) {
 
           {/* Difficulty Rating */}
           <div className="text-center">
-            <p className="font-semibold text-gray-700 text-lg mb-2">Difficulty Rating</p>
+            <p className="font-semibold text-gray-700 text-xl mb-2">Difficulty Rating</p>
             <RatingComponent
               className="flex gap-2 text-2xl justify-center"
               value={formData.difficultyRating}
@@ -60,7 +68,7 @@ export function ReviewView(props) {
 
           {/* Professor Rating */}
           <div className="text-center">
-            <p className="font-semibold text-gray-700 text-lg mb-2">Professor Rating</p>
+            <p className="font-semibold text-gray-700 text-xl mb-2">Professor Rating</p>
             <RatingComponent
               className="flex gap-2 text-2xl justify-center"
               value={formData.professorRating}
@@ -71,7 +79,7 @@ export function ReviewView(props) {
           {/* Grade Section */}
           <div className="relative" ref={gradeRef}>
             <div className="flex items-center justify-center gap-4">
-              <p className="font-semibold text-gray-700 text-lg">Grade:</p>
+              <p className="font-semibold text-gray-700 text-xl">Grade:</p>
               <div className="relative">
                 <div
                   className="px-6 py-3 border border-gray-300 rounded-lg text-lg cursor-pointer text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200"
@@ -106,7 +114,7 @@ export function ReviewView(props) {
           {/* Recommend Section */}
           <div className="relative" ref={recommendRef}>
             <div className="flex items-center justify-center gap-4">
-              <p className="font-semibold text-gray-700 text-lg">Recommend?</p>
+              <p className="font-semibold text-gray-700 text-xl">Recommend?</p>
               <div className="relative">
                 <div
                   className="px-6 py-3 border border-gray-300 rounded-lg text-lg cursor-pointer text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200"
@@ -190,7 +198,12 @@ export function ReviewView(props) {
               return (
                 <div key={i} className="bg-white shadow-lg rounded-2xl p-6">
                   <div className="flex justify-between items-center mb-4">
-                    <p className="font-semibold text-gray-800 text-xl">{rev.userName}</p>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center text-lg font-semibold">
+                        {getInitials(rev.userName)}
+                      </div>
+                      <p className="font-semibold text-gray-800 text-xl">{rev.userName}</p>
+                    </div>
                     <p className="text-lg text-gray-500">
                       Posted on{" "}
                       {new Date(rev.timestamp).toLocaleDateString("en-US", {
@@ -201,11 +214,11 @@ export function ReviewView(props) {
                     </p>
                   </div>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-4 text-lg">
-                    <div>
-                      <p className="font-semibold text-gray-700">Overall Rating</p>
+                    <div className="text-center">
+                      <p className="font-semibold text-gray-700 mb-2">Overall Rating</p>
                       {rev.overallRating > 0 ? (
                         <RatingComponent
-                          className="flex space-x-2 text-xl"
+                          className="flex space-x-2 text-xl justify-center"
                           value={rev.overallRating}
                           readOnly={true}
                         />
@@ -213,11 +226,11 @@ export function ReviewView(props) {
                         <p className="text-gray-600">N/A</p>
                       )}
                     </div>
-                    <div>
-                      <p className="font-semibold text-gray-700">Difficulty Rating</p>
-                      {rev.overallRating > 0 ? (
+                    <div className="text-center">
+                      <p className="font-semibold text-gray-700 mb-2">Difficulty Rating</p>
+                      {rev.difficultyRating > 0 ? (
                         <RatingComponent
-                          className="flex space-x-2 text-xl"
+                          className="flex space-x-2 text-xl justify-center"
                           value={rev.difficultyRating}
                           readOnly={true}
                         />
@@ -225,11 +238,11 @@ export function ReviewView(props) {
                         <p className="text-gray-600">N/A</p>
                       )}
                     </div>
-                    <div>
-                      <p className="font-semibold text-gray-700">Professor Rating</p>
+                    <div className="text-center">
+                      <p className="font-semibold text-gray-700 mb-2">Professor Rating</p>
                       {rev.professorRating > 0 ? (
                         <RatingComponent
-                          className="flex space-x-2 text-xl"
+                          className="flex space-x-2 text-xl justify-center"
                           value={rev.professorRating}
                           readOnly={true}
                         />
@@ -237,16 +250,16 @@ export function ReviewView(props) {
                         <p className="text-gray-600">N/A</p>
                       )}
                     </div>
-                    <div>
-                      <p className="font-semibold text-gray-700">Professor</p>
+                    <div className="text-center">
+                      <p className="font-semibold text-gray-700 mb-2">Professor</p>
                       <p className="text-gray-600">{rev.professorName || "N/A"}</p>
                     </div>
-                    <div>
-                      <p className="font-semibold text-gray-700">Grade</p>
+                    <div className="text-center">
+                      <p className="font-semibold text-gray-700 mb-2">Grade</p>
                       <p className="text-gray-600">{rev.grade || "N/A"}</p>
                     </div>
-                    <div>
-                      <p className="font-semibold text-gray-700">Recommended</p>
+                    <div className="text-center">
+                      <p className="font-semibold text-gray-700 mb-2">Recommended</p>
                       <p className="text-gray-600">
                         {rev.recommend === true ? "Yes" : rev.recommend === false ? "No" : "N/A"}
                       </p>
