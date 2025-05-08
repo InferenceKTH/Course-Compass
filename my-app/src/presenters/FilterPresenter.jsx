@@ -149,7 +149,7 @@ const FilterPresenter = observer(({ model }) => {
             try {
                 return (locations.includes(course?.location.toUpperCase()));
             } catch (error) {
-                console.log("for some reason course?.location is: ", course?.location.toUpperCase(), error);
+                console.log("for some reason course?.location is: ", course, error);
                 return false;
             }
 
