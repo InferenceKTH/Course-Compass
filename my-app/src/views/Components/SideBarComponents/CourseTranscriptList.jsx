@@ -39,7 +39,7 @@ export default function CourseTranscriptList(props) {
             {items.length > 0 && (
                 <div className="flex justify-between">
 
-                    <h3 className="text-lg flex-10">Taken courses:</h3>
+                    <h3 className="flex-10">Taken courses:</h3>
                     <button
                         onClick={() => removeAllItems()}
                         className="text-red-500 hover:text-red-700 font-bold text-sm hover:bg-red-300 rounded-lg flex-auto h-5"
@@ -50,7 +50,10 @@ export default function CourseTranscriptList(props) {
             )}
 
             {/* Container for multiple items per row */}
-            <div className="grid grid-cols-3 w-full max-[1200px]:grid-cols-2 max-[700px]:grid-cols-1 gap-1 sm:gap-2">
+            <div className="grid grid-cols-3 w-full max-[1200px]:grid-cols-2 max-[700px]:grid-cols-1 gap-1 sm:gap-2 overflow-y-auto max-h-[180px] "style={{
+                scrollbarWidth: "thin",
+                scrollbarColor: "#888 #f1f1f1",
+            }}>
                 {items.map((item, index) => (
                     <div
                         key={index}
