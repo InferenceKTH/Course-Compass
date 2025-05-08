@@ -8,6 +8,7 @@ import { UploadTranscriptPresenter } from '../presenters/UploadTranscriptPresent
 import CollapsibleCheckboxes from './Components/SideBarComponents/CollapsibleCheckboxes.jsx';
 
 
+
 function SidebarView(props) {
     return (
         <div className='object-center text-white p-3 pt-2  flex-col h-screen

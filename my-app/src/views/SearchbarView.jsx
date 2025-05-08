@@ -53,7 +53,7 @@ function SearchbarView(props) {
         type="text"
         placeholder="What course are you looking for?"
         value={searchQuery}
-        onChange={(e) => 
+        onChange={(e) =>
                     handleSearch(e.target.value)}
                 onClick={(e)=>e.stopPropagation()}  //TODO decide if we want to close the fav list after clicking the searchbar
         className="w-[400px] h-[44px] pl-14 pr-4 bg-white text-black rounded-full"
@@ -69,7 +69,7 @@ function SearchbarView(props) {
         </button>
 
                 <div className="relative favourites-container">
-                    <button 
+                    <button
                         onClick={(e) => {
                             e.stopPropagation();
                             setShowFavourites(!showFavourites);
@@ -85,7 +85,7 @@ function SearchbarView(props) {
                     </button>
                     {showFavourites && (
                         <FavouritesDropdown
-                            {...props}  
+                            {...props}
                             onClick={(e) => e.stopPropagation()}
                         />
                     )}

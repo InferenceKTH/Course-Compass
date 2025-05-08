@@ -13,7 +13,7 @@ function CoursePagePopup({
 						 }) {
 
 	const treeRef = useRef(null);
-	const [showOverlay, setShowOverlay] = useState(true);
+	const [showOverlay, setShowOverlay] = useState(false);
 	const [averageRating, setAverageRating] = useState(null);
 
 
@@ -59,10 +59,10 @@ function CoursePagePopup({
 		<div
 
 			className="fixed backdrop-blur-sm inset-0 bg-transparent flex justify-end z-50"
-			onClick={onClose}
+
 		>
 			<div
-				className="bg-indigo-300/75 backdrop-blur-lg h-full w-3/4 flex flex-col overflow-auto"
+				className="bg-indigo-300/75 backdrop-blur-lg h-full w-full flex flex-col overflow-auto"
 				onClick={(e) => {
 					e.stopPropagation();
 					setShowOverlay(true);
@@ -82,7 +82,16 @@ function CoursePagePopup({
 									<span className="text-violet-700 ">{course.code}</span>
 									{' '}- {' '}
 									{course.name}
+
 								</a>
+
+								<button
+									onClick={onClose}
+										className="absolute top-3 right-3 text-violet-700 hover:text-violet-900"
+								>
+									X
+								</button>
+
 								<span className="ml-4 text-lg text-violet-700 whitespace-nowrap">
                   ({course.credits} Credits)
                 </span>
