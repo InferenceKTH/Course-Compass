@@ -30,3 +30,15 @@
     left: 36px;
     top: 36px;
 }
+
+/* Hide scrollbars everywhere but allow scrolling */
+html, body {
+    overflow: auto;
+    scrollbar-width: none;        /* Firefox */
+    -ms-overflow-style: none;     /* Internet Explorer 10+ */
+  }
+  
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none;                /* Chrome, Safari, Edge */
+  }

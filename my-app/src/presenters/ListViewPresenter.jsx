@@ -124,8 +124,6 @@ const ListViewPresenter = observer(({ model }) => {
         reviewPresenter={reviewPresenter}/>
 
 
-
-
     return <ListView
         // courses={model.courses}
         // searchResults={model.currentSearch}
