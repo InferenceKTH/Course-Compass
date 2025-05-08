@@ -26,6 +26,27 @@ function ListView(props) {
         }
     };
 
+    const handlePeriods = (periods) => {
+        let ret_string = "";
+        if (periods) {
+            let keys = Object.keys(periods);
+            console.log(periods["P1"])
+            for (let key of keys) {
+                if (periods[key]) {
+                    ret_string += key + " | ";
+                }
+            }
+            return ret_string.slice(0, -2);
+        } else {
+            return;
+        }
+    };
+
+    const handlePeriods2 = (course) => {
+        return "Test";
+    }
+
+
     useEffect(() => {
         setIsLoading(true);
         const initialCourses = props.sortedCourses.slice(0, 10);
@@ -145,8 +166,11 @@ function ListView(props) {
                                 className="p-5 mb-3 hover:bg-blue-100 flex items-center border border-b-black border-solid w-full rounded-lg cursor-pointer"
                             >
                                 <div>
+                                    <div className="codeNameContainer" style={{ display: 'flex' }}>
                                     <p className="font-bold text-[#000061]">{course.code}</p>
-                                    <p className="font-bold">{course.name}</p>
+                                    <p className="font-bold text-[#000061]" style={{color: "GrayText", opacity: 0.5, marginLeft: "0.5em"}}>{handlePeriods(course?.periods)}</p>
+                                    </div>
+                                    <p className="font-bold">{course.name} </p>
                                     <p
                                         className="text-gray-600"
                                         dangerouslySetInnerHTML={{
