@@ -1,4 +1,4 @@
-import { addCourse, addReviewForCourse, getReviewsForCourse } from "../firebase";
+import { addCourse, addReviewForCourse, getReviewsForCourse, uploadDepartmentsAndLocations } from "../firebase";
 
 
 export const model = {
@@ -12,7 +12,8 @@ export const model = {
     scrollPosition: 0,
     /* list of all course objects downloaded from the Firebase realtime database and stored locally as JSON object in this array */
     courses: [],
-    /* courses the user selected as their favourite */
+    departments : [],
+    locations: [],
     favourites: [],
     isReady: false,
     /* this is a boolean flag showing that filtering options in the UI have changed, triggering the FilterPresenter to recalculate the filteredCourses[] */
@@ -38,10 +39,6 @@ export const model = {
         creditMin: 0,
         creditMax: 45,
         applyDepartmentFilter: true,
-        department: ["EECS/Computational Science and  Technology", "EECS/Theoretical Computer Science", "EECS/Electric Power and Energy Systems", "EECS/Network and Systems Engineering",
-        "ITM/Learning in Engineering Sciences", "ITM/Industrial Economics and Management", "ITM/Energy Systems", "ITM/Integrated Product Development and Design", "ITM/SKD GRU",
-        "SCI/Mathematics", "SCI/Applied Physics", "SCI/Mechanics", "SCI/Aeronautical and Vehicle Engineering", 
-        "ABE/Sustainability and Environmental Engineering", "ABE/Concrete Structures", "ABE/Structural Design & Bridges", "ABE/History of Science, Technology and Environment", ],
         applyRemoveNullCourses: false,
         period: [true, true, true, true],
         applyPeriodFilter: true
@@ -76,6 +73,12 @@ export const model = {
             console.error("Error adding course:", error);
         }
     },
+    setDepartments(departments){
+        this.departments = departments;
+    },
+    setLocations(locations){
+        this.locations = locations;
+    },
     setFavourite(favorites){
         this.favourites = favorites;
     },
@@ -107,6 +110,8 @@ export const model = {
             console.log("no model or data");
             return;
         }
+        const dep = new Set();
+        const loc = new Set();
         const entries = Object.entries(data);
         entries.forEach(entry => {
             const course = {
@@ -124,7 +129,13 @@ export const model = {
                 learning_outcomes: entry[1]?.learning_outcomes ?? null
             };
             this.addCourse(course);
+            dep.add(course.department);
+            loc.add(course.location);
         });
+        this.departments = Array.from(dep);
+        this.locations = Array.from(loc);
+        uploadDepartmentsAndLocations(this.departments, this.locations);
+        
     },
     //for reviews
     async addReview(courseCode, review) {
@@ -223,6 +234,8 @@ export const model = {
         const reviews = await getReviewsForCourse(courseCode);
         if (!reviews || reviews.length === 0) return null;
         const total = reviews.reduce((sum, review) => sum + (review.overallRating || 0), 0);
-        return (total / reviews.length).toFixed(1);
+        const avgRtg = (total / reviews.length).toFixed(1);
+        // cache the result
+        return avgRtg;
     },
 };
