@@ -138,13 +138,14 @@ export function ReviewView(props) {
           </div>
 
           <div className="mt-4">
-            <input
-              type="text"
-              placeholder="Enter professor name"
-              className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
-              value={formData.professorName}
-              onChange={(e) => setFormData({ ...formData, professorName: e.target.value })}
-            />
+					<input
+  type="text"
+  placeholder="Enter professor name"
+  maxLength={100}
+  className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
+  value={formData.professorName}
+  onChange={(e) => setFormData({ ...formData, professorName: e.target.value })}
+/>
           </div>
 
           <div className="relative mt-4">
