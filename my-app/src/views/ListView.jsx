@@ -162,8 +162,7 @@ function ListView(props) {
                             <div
                                 onClick={() => {
                                     props.setSelectedCourse(course);
-                                    props.setIsPopupOpen(true);
-                                    //handleClickBackArrow(course.code);
+                                    props.handlePopupOpen(true);
                                 }}
                                 key={course.code}
                                 className="p-5 mb-3 hover:bg-blue-100 flex items-center border border-b-black border-solid w-full rounded-lg cursor-pointer"

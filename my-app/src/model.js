@@ -7,6 +7,8 @@ export const model = {
     //instead of passing searchcouses lambda function down into the searchbarview.
     /* courses returned from SearchbarPresenter (search is applied on top of filteredCourses[]) to be shown in the ListView */
     currentSearch: [],
+
+    sidebarIsOpen: true,
     /* current query text */
     currentSearchText: "",
     scrollPosition: 0,
@@ -15,6 +17,7 @@ export const model = {
     departments : [],
     locations: [],
     favourites: [],
+    searchHistory:[],
     isReady: false,
     /* this is a boolean flag showing that filtering options in the UI have changed, triggering the FilterPresenter to recalculate the filteredCourses[] */
     filtersChange: false, 
@@ -43,6 +46,8 @@ export const model = {
         period: [true, true, true, true],
         applyPeriodFilter: true
     },
+    isPopupOpen: false,
+    selectedCourse: null,
 
     setUser(user) {
         if (!this.user)
@@ -71,6 +76,13 @@ export const model = {
             this.courses = [...this.courses, course];
         } catch (error) {
             console.error("Error adding course:", error);
+        }
+    },
+    addHistoryItem(course_id) {
+        try {
+            this.searchHistory = [...this.searchHistory, course_id];
+        } catch (error) {
+            console.error("Error adding course code to the history:", error);
         }
     },
     setDepartments(departments){
@@ -238,4 +250,26 @@ export const model = {
         // cache the result
         return avgRtg;
     },
+
+    setPopupOpen(isOpen) {
+        if (isOpen && this.selectedCourse) {
+            this.addHistoryItem(this.selectedCourse.code);
+        }
+        this.isPopupOpen = isOpen;
+    },
+
+    setSelectedCourse(course) {
+        this.selectedCourse = course;
+    },
+    setSidebarState(state) {
+        this.sidebarIsOpen = state;
+    },
+
+    getSidebarState() {
+        return this.sidebarIsOpen;
+    },
+
+    toggleSidebarIsOpen() {
+        this.sidebarIsOpen = !this.sidebarIsOpen;
+    }
 };
