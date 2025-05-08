@@ -132,7 +132,7 @@ export const PrerequisitePresenter = observer((props) => {
                 let inner_code = arr[1] + arr[2];
                 let course_name_inner = model.getCourse(inner_code)?.name;
                 if (!course_name_inner) {
-                    course_name_inner = "Course discontinued"
+                    course_name_inner = "Course discontinued";
                 }
                 course_name += "<li>" + inner_code + ": " + course_name_inner + "</li>"
             }
@@ -141,7 +141,11 @@ export const PrerequisitePresenter = observer((props) => {
         else if (node.data.label === "More Info...") {
             course_name = input_text_obj[node["id"]];
         } else {
-            course_name = model.getCourse(course_id).name;
+            if (model.getCourse(course_id)) {
+                course_name = model.getCourse(course_id).name;
+            } else {
+                course_name = "Course discontinued";
+            }
         }
 
         hover_popup.innerHTML = course_name;
