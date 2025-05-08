@@ -183,6 +183,7 @@ export const model = {
 
     updateLevelFilter(level) {
         this.filterOptions.level = level;
+        console.log(level);
     },
 
     updateDepartmentFilter(department) {

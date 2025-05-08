@@ -62,7 +62,7 @@ function SidebarView(props) {
                     />
 
                     <DropDownField
-                        options={["Kista", "Valhalavagen", "Sodetalje", "T-centralen"]}
+                        options={props.LocationFilterField}
                         HandleFilterChange={props.HandleFilterChange}
                         filterName="location"
                         initialValues={props.initialLocationFilterOptions}

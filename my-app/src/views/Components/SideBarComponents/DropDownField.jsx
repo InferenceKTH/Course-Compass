@@ -9,19 +9,18 @@ export default function DropDownField(props) {
   let paramFieldType = "dropdown";
   const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedItems, setSelectedItems] = useState(props.initialValues.map(
-    (item) => item.charAt(0).toUpperCase() + item.slice(1).toLowerCase()
-  ));
+  const [selectedItems, setSelectedItems] = useState(props.initialValues.map(t => t?.toUpperCase()));
 
-  const items = props.options;
+  console.log(selectedItems);
+
+  const items = props.options.map(t => t?.toUpperCase());
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
   const handleCheckboxChange = (item) => {
     setSelectedItems((prev) =>
-      prev.includes(item) ? prev.filter((i) => i !== item) : [...prev, item]
+      prev.includes(item?.toUpperCase()) ? prev.filter((i) => i !== item) : [...prev, item]
     );
-    console.log(item);
     props.HandleFilterChange([paramFieldType, props.filterName, item]);
   };
 
@@ -82,7 +81,7 @@ export default function DropDownField(props) {
 
                       <input
                         type="checkbox"
-                        checked={selectedItems.includes(item)}
+                        checked={selectedItems.includes(item?.toUpperCase())}
                         onChange={() => handleCheckboxChange(item)}
                         className="mr-2 sr-only peer"
                       />

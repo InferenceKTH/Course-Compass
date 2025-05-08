@@ -19,12 +19,12 @@ function MainAppLayout({ model }) {
 			/* The sidebar styling(under the menu)*/
 		<div className=" flex h-screen w-screen bg-gradient-to-t from-[#4f3646] to-[#6747c0] overflow-hidden">
 			{	/* If sidebar is open, set length to 400px, else it should not be visible  */}
-			<div className={`${sidebarIsOpen ? 'w-[400px]' : 'w-0'}`}>
+			<div className={`${sidebarIsOpen ? 'w-[400px] min-w-[300px]' : 'w-[50px]'}`}>
 				<Menu
-					width={400} // menu width
+					width={window.innerWidth<700?'100%':Math.max(window.innerWidth * 0.26, 300)} // menu width follows the size of the parent div
 					isOpen={sidebarIsOpen}
 					onStateChange={(state) => setSidebarIsOpen(state.isOpen)}
-					className="bg-gradient-to-t from-[#4f3646] to-[#6747c0] z-0 h-screen" // The menu styling
+					className="bg-gradient-to-t from-[#4f3646] to-[#6747c0] z-0 " // The menu styling
 					noOverlay
 					styles={{
 						bmMenuWrap: {

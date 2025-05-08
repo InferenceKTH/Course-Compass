@@ -12,12 +12,8 @@ const SidebarPresenter = observer(({ model }) => {
     let currentLanguageSet = model.filterOptions.language;
     let currentLevelSet = model.filterOptions.level;
     let currentPeriodSet = model.filterOptions.period;
-    let currentDepartmentSet = [
-        "EECS/Computational Science and  Technology", "EECS/Theoretical Computer Science", "EECS/Electric Power and Energy Systems", "EECS/Network and Systems Engineering",
-        "ITM/Learning in Engineering Sciences", "ITM/Industrial Economics and Management", "ITM/Energy Systems", "ITM/Integrated Product Development and Design", "ITM/SKD GRU",
-        "SCI/Mathematics", "SCI/Applied Physics", "SCI/Mechanics", "SCI/Aeronautical and Vehicle Engineering",
-        "ABE/Sustainability and Environmental Engineering", "ABE/Concrete Structures", "ABE/Structural Design & Bridges", "ABE/History of Science, Technology and Environment",
-    ]
+    let currentDepartmentSet = model.filterOptions.department;
+    let currentLocationSet = model.filterOptions.location
 
     function handleLanguageFilterChange(param) {
         if (param === "English") {
@@ -58,26 +54,11 @@ const SidebarPresenter = observer(({ model }) => {
         model.updateLanguageFilter(currentLanguageSet);
     }
     function handleLevelFilterChange(param) {
-        let properParam;
-        switch (param) {
-            case "Preparatory":
-                properParam = "PREPARATORY";
-                break;
-            case "Basic":
-                properParam = "BASIC";
-                break;
-            case "Advanced":
-                properParam = "ADVANCED";
-                break;
-            case "Research":
-                properParam = "RESEARCH";
-                break;
-        }
 
-        if (!currentLevelSet.includes(properParam)) {
-            currentLevelSet.push(properParam);
+        if (!currentLevelSet.includes(param)) {
+            currentLevelSet.push(param);
         } else {
-            const index = currentLevelSet.indexOf(properParam);
+            const index = currentLevelSet.indexOf(param);
             if (index > -1) {
                 currentLevelSet.splice(index, 1);
             }
@@ -104,6 +85,19 @@ const SidebarPresenter = observer(({ model }) => {
         model.setFiltersChange();
     }
 
+    function handleLocationFilterChange(param) {
+        if (currentLocationSet.includes(param)) {
+            const index = currentLocationSet.indexOf(param);
+            if (index > -1) {
+                currentLocationSet.splice(index, 1);
+            }
+        } else {
+            currentLocationSet.push(param);
+        }
+        model.updateLocationFilter(currentLocationSet);
+        model.setFiltersChange();
+    }
+
     /*HandleFilterChange param is structured as such
         [
             type of the field: (toggle, slider, dropdown, buttongroup)
@@ -120,7 +114,7 @@ const SidebarPresenter = observer(({ model }) => {
                 handleLevelFilterChange(param[2]);
                 break;
             case "location":
-                console.log("location filter set to: " + param[2]);
+                handleLocationFilterChange(param[2]);
                 break;
             case "credits":
                 model.updateCreditsFilter(param[2]);
@@ -194,20 +188,30 @@ const SidebarPresenter = observer(({ model }) => {
             HandleFilterEnable={HandleFilterEnable}
             reApplyFilter={reApplyFilter}
             toggleRemoveNull={setApplyRemoveNullCourses}
+
             initialApplyTranscriptFilter={model.filterOptions.applyTranscriptFilter}
-            initialTranscriptElegiblityValue = {model.filterOptions.eligibility}
+            initialTranscriptElegiblityValue={model.filterOptions.eligibility}
+            
             initialLanguageFilterOptions={currentLanguageSet}
             initialLanguageFilterEnable={model.filterOptions.applyLanguageFilter}
+
             initialLevelFilterOptions={currentLevelSet}
             initialLevelFilterEnable={model.filterOptions.applyLevelFilter}
+
             initialPeriodFilterOptions={currentPeriodSet}
             initialPeriodFilterEnable={model.filterOptions.applyPeriodFilter}
+
             initialDepartmentFilterOptions={currentDepartmentSet}
             initialDepartmentFilterEnable={model.filterOptions.applyDepartmentFilter}
-            initialLocationFilterOptions={[]}
+            DepartmentFilterField = {model.departments}
+
+            initialLocationFilterOptions={currentLocationSet}
             initialLocationFilterEnable={model.filterOptions.applyLocationFilter}
+            LocationFilterField = {model.locations}
+
             initialCreditsFilterOptions={[model.filterOptions.creditMin, model.filterOptions.creditMax]}
             initialCreditsFilterEnable={model.filterOptions.applyCreditsFilter}
+
             initialApplyNullFilterEnable={model.filterOptions.applyRemoveNullCourses }
         />
     );
