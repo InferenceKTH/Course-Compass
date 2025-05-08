@@ -10,6 +10,14 @@ export function ReviewView(props) {
   const gradeRef = useRef(null);
   const recommendRef = useRef(null);
 
+  // Function to get user initials from their name
+  const getInitials = (name) => {
+    if (!name) return "N/A";
+    const words = name.trim().split(" ");
+    if (words.length === 1) return words[0][0]?.toUpperCase() || "N/A";
+    return `${words[0][0]?.toUpperCase() || ""}${words[words.length - 1][0]?.toUpperCase() || ""}`;
+  };
+
   useEffect(() => {
     function handleClickOutside(event) {
       if (gradeRef.current && !gradeRef.current.contains(event.target)) {
@@ -191,7 +199,12 @@ export function ReviewView(props) {
                 return (
                   <div key={i} className="bg-white shadow-md rounded-lg p-4">
                     <div className="flex justify-between items-center mb-2">
-                      <p className="font-semibold text-gray-800">{rev.userName}</p>
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-semibold">
+                          {getInitials(rev.userName)}
+                        </div>
+                        <p className="font-semibold text-gray-800">{rev.userName}</p>
+                      </div>
                       <p className="text-sm text-gray-500">
                         Posted on{" "}
                         {new Date(rev.timestamp).toLocaleDateString("en-US", {
