@@ -1,5 +1,6 @@
 {
   "hosting": {
+    "site": "course-compass-inference",
     "public": "dist",
     "ignore": [
       "firebase.json",
