@@ -22,3 +22,8 @@
 .react-flow__node.no-handles .react-flow__handle {
     display: none;
   }
+.bxs-star {
+    overflow: hidden;
+    display: inline-block;
+    white-space: nowrap;
+  }

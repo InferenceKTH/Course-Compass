@@ -1,36 +1,39 @@
 import React from 'react';
 
 const StarComponent = ({ index, rating, onRatingChange, onHover, readOnly = false }) => {
-    const handleLeftClick = () => {
-        if (!readOnly) onRatingChange(index, true);
-    };
-
-    const handleRightClick = () => {
-        if (!readOnly) onRatingChange(index, false);
-    };
-
-    const isFullStar = rating >= index + 1;
-    const isHalfStar = rating >= index + 0.5 && rating < index + 1;
-    const starClass = isFullStar ? "bxs-star" : isHalfStar ? "bxs-star-half" : "bx-star";
+    const isInteractive = !readOnly && onRatingChange;
+    const fillPercentage = Math.max(0, Math.min(1, rating - index)) * 100;
 
     return (
         <div
-            className={`relative group leading-none ${readOnly ? 'cursor-default' : 'cursor-pointer'}`}
-            onMouseEnter={() => !readOnly && onHover && onHover(index + 1)}
-            onMouseLeave={() => !readOnly && onHover && onHover(0)}
+            className={`relative inline-block w-5 h-5 ${readOnly ? 'cursor-default' : 'cursor-pointer'}`}
+            onMouseEnter={() => isInteractive && onHover?.(index + 1)}
+            onMouseLeave={() => isInteractive && onHover?.(0)}
         >
+            {/* Empty star as background */}
+            <i className={`bx bx-star absolute top-0 left-0 text-xl text-violet-500`} />
+
+            {/* Filled portion of the star */}
             <i
-                className={`bx ${starClass} text-xl text-violet-500 transition-transform duration-200 ${!readOnly && 'group-hover:scale-110'}`}
-            ></i>
-            {!readOnly && (
+                className={`bx bxs-star absolute top-0 left-0 text-xl text-violet-500`}
+                style={{
+                    width: `${fillPercentage}%`,
+                    overflow: 'hidden',
+                    display: 'inline-block',
+                    whiteSpace: 'nowrap'
+                }}
+            />
+
+            {/* Click handlers for interactive stars */}
+            {isInteractive && (
                 <>
                     <button
                         className="absolute top-0 right-1/2 w-1/2 h-full cursor-pointer"
-                        onClick={handleLeftClick}
+                        onClick={() => onRatingChange(index, true)}
                     />
                     <button
                         className="absolute top-0 left-1/2 w-1/2 h-full cursor-pointer"
-                        onClick={handleRightClick}
+                        onClick={() => onRatingChange(index, false)}
                     />
                 </>
             )}
