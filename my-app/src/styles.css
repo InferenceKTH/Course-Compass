@@ -26,7 +26,15 @@
 .bm-burger-button {
     position: absolute;
     width: 36px;
-    height: 36px;
-    left: 36px;
-    top: 36px;
+    height: 30px;
+    left: 20px;
+    top: 20px;
 }
+
+
+.bm-menu-wrap {
+    position: fixed;
+    height: 100%;
+    z-index: 10;
+}
+
