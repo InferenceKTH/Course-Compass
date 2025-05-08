@@ -175,7 +175,6 @@ export const model = {
 
     updatePeriodFilter(period) {
         this.filterOptions.period = period;
-        console.log(period);
     },
 
     setApplyTranscriptFilter(transcriptFilterState) {

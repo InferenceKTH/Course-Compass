@@ -9,15 +9,16 @@ const SidebarPresenter = observer(({ model }) => {
         model.setFiltersChange();
     })
 
-    let currentLanguageSet = 'none';
-    let currentLevelSet = ["PREPARATORY", "BASIC", "ADVANCED", "RESEARCH"];
-    let currentPeriodSet = [true,true,true,true]//model.filterOptions.period;
+    let currentLanguageSet = model.filterOptions.language;
+    let currentLevelSet = model.filterOptions.level;
+    let currentPeriodSet = model.filterOptions.period;
     let currentDepartmentSet = [
         "EECS/Computational Science and  Technology", "EECS/Theoretical Computer Science", "EECS/Electric Power and Energy Systems", "EECS/Network and Systems Engineering",
         "ITM/Learning in Engineering Sciences", "ITM/Industrial Economics and Management", "ITM/Energy Systems", "ITM/Integrated Product Development and Design", "ITM/SKD GRU",
         "SCI/Mathematics", "SCI/Applied Physics", "SCI/Mechanics", "SCI/Aeronautical and Vehicle Engineering",
         "ABE/Sustainability and Environmental Engineering", "ABE/Concrete Structures", "ABE/Structural Design & Bridges", "ABE/History of Science, Technology and Environment",
     ]
+
     function handleLanguageFilterChange(param) {
         if (param === "English") {
             switch (currentLanguageSet) {
@@ -193,6 +194,21 @@ const SidebarPresenter = observer(({ model }) => {
             HandleFilterEnable={HandleFilterEnable}
             reApplyFilter={reApplyFilter}
             toggleRemoveNull={setApplyRemoveNullCourses}
+            initialApplyTranscriptFilter={model.filterOptions.applyTranscriptFilter}
+            initialTranscriptElegiblityValue = {model.filterOptions.eligibility}
+            initialLanguageFilterOptions={currentLanguageSet}
+            initialLanguageFilterEnable={model.filterOptions.applyLanguageFilter}
+            initialLevelFilterOptions={currentLevelSet}
+            initialLevelFilterEnable={model.filterOptions.applyLevelFilter}
+            initialPeriodFilterOptions={currentPeriodSet}
+            initialPeriodFilterEnable={model.filterOptions.applyPeriodFilter}
+            initialDepartmentFilterOptions={currentDepartmentSet}
+            initialDepartmentFilterEnable={model.filterOptions.applyDepartmentFilter}
+            initialLocationFilterOptions={[]}
+            initialLocationFilterEnable={model.filterOptions.applyLocationFilter}
+            initialCreditsFilterOptions={[model.filterOptions.creditMin, model.filterOptions.creditMax]}
+            initialCreditsFilterEnable={model.filterOptions.applyCreditsFilter}
+            initialApplyNullFilterEnable={model.filterOptions.applyRemoveNullCourses }
         />
     );
 });

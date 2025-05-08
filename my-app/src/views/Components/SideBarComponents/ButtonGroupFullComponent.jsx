@@ -4,18 +4,15 @@ import FilterEnableCheckbox from "./FilterEnableCheckbox";
 import Tooltip from "./ToolTip";
 
 export default function ButtonGroupFullComponent(props) {
-    const [filterEnabled, setFilterEnabled] = useState(true);
-    const [selectedItems, setSelectedItems] = useState(props.items);
+    const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
+    const [selectedItems, setSelectedItems] = useState(props.initialValues);
 
-    const [activeIndex, setActiveIndex] = useState([]);
     const handleClick = (index) => {
         const selectedItem = props.items[index];
         setSelectedItems((prevSelectedItems) => {
-            if (prevSelectedItems.includes(selectedItem)) {
-                return prevSelectedItems.filter((item) => item !== selectedItem);
-            } else {
-                return [...prevSelectedItems, selectedItem];
-            }
+            return prevSelectedItems.map((item, idx) =>
+                idx === index ? !item : item
+            );
         });
         props.HandleFilterChange(["buttongroup", "period", index]);
     };
@@ -24,7 +21,7 @@ export default function ButtonGroupFullComponent(props) {
         const baseClasses = `flex-auto py-1 px-4 inline-flex items-center gap-x-2 text-sm 
       font-medium focus:z-10 border border-gray-200 shadow-2xs hover:bg-[#8785ac]
       focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none pl-8`;
-        const activeClass = selectedItems.includes(props.items[index]) ? "bg-violet-500" : "bg-transparent";
+        const activeClass = selectedItems[index] ? "bg-violet-500" : "bg-transparent";
         const roundedClasses =
             index === 0
                 ? "rounded-l-lg"
@@ -47,6 +44,7 @@ export default function ButtonGroupFullComponent(props) {
                     />
                 </div>
                 <FilterEnableCheckbox
+                    initialValue={filterEnabled}
                     onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]); }}
                 />
             </div>

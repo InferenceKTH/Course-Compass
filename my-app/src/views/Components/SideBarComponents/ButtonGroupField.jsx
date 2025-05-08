@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ToolTip from './ToolTip';
 
 export default function ButtonGroupField(props) {
-
+  
   const [activeIndex, setActiveIndex] = useState(0);
+  
+  useEffect(() => {
+    const normalizedInitialValue = props.initialValue.toLowerCase();
+    const normalizedItems = props.items.map(item => item.toLowerCase());
+    setActiveIndex(normalizedItems.findIndex(item => item === normalizedInitialValue));
+  }, [props.initialValue, props.items]);
 
 
   const handleClick = (index) => {

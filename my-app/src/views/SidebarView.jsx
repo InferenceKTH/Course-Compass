@@ -5,7 +5,6 @@ import DropDownField from "./Components/SideBarComponents/DropDownField.jsx";
 import { UploadTranscriptPresenter } from '../presenters/UploadTranscriptPresenter.jsx';
 import CollapsibleCheckboxes from './Components/SideBarComponents/CollapsibleCheckboxes.jsx';
 import Tooltip from './Components/SideBarComponents/ToolTip.jsx';
-import ButtonGroupField from './Components/SideBarComponents/ButtonGroupField.jsx';
 import ButtonGroupFullComponent from './Components/SideBarComponents/ButtonGroupFullComponent.jsx';
 
 
@@ -26,28 +25,37 @@ function SidebarView(props) {
                 filterName="transcript"
                 HandleFilterEnable={props.HandleFilterEnable}
                 reApplyFilter={props.reApplyFilter}
+                filterEnable={props.initialApplyTranscriptFilter}
+                initialValue={props.initialTranscriptElegiblityValue}
             />
-            <div className='flex-auto justify-center h-100 max-h-100 '>
+            <div className='flex-auto justify-center '>
                 <div className="z-10 w-100% rounded-lg justify-center pb-10" >
 
                     <DropDownField
                         options={["Preparatory", "Basic", "Advanced", "Research"]}
                         HandleFilterChange={props.HandleFilterChange}
                         filterName="level"
+                        initialValues={props.initialLevelFilterOptions}
+                        filterEnable = {props.initialLevelFilterEnable}
                         HandleFilterEnable={props.HandleFilterEnable}
                         description="Filter by the level of the courses. Basic courses correspond to bachelor courses, Advanced to master courses."
-                    />
-                    
-                    <ButtonGroupFullComponent
-                        items={["P1", "P2", "P3", "P4"]}
-                        HandleFilterChange={props.HandleFilterChange}
-                        filterName="period"
-                        HandleFilterEnable={props.HandleFilterEnable}
                     />
                     <ToggleField
                         fields={["English", "Swedish"]}
                         HandleFilterChange={props.HandleFilterChange}
                         filterName="language"
+                        initialValues={props.initialLanguageFilterOptions}
+                        filterEnable = {props.initialLanguageFilterEnable}
+                        HandleFilterEnable={props.HandleFilterEnable}
+                    />
+
+
+                    <ButtonGroupFullComponent
+                        items={["P1", "P2", "P3", "P4"]}
+                        HandleFilterChange={props.HandleFilterChange}
+                        filterName="period"
+                        initialValues={props.initialPeriodFilterOptions}
+                        filterEnable = {props.initialPeriodFilterEnable}
                         HandleFilterEnable={props.HandleFilterEnable}
                     />
 
@@ -55,16 +63,22 @@ function SidebarView(props) {
                         options={["Kista", "Valhalavagen", "Sodetalje", "T-centralen"]}
                         HandleFilterChange={props.HandleFilterChange}
                         filterName="location"
+                        initialValues={props.initialLocationFilterOptions}
+                        filterEnable = {props.initialLocationFilterEnable}
                         HandleFilterEnable={props.HandleFilterEnable}
                     />
                     <SliderField
                         HandleFilterChange={props.HandleFilterChange}
                         filterName="credits"
+                        initialValues={props.initialCreditsFilterOptions}
+                        filterEnable = {props.initialCreditsFilterEnable}
                         HandleFilterEnable={props.HandleFilterEnable}
                     />
                     <CollapsibleCheckboxes
                         HandleFilterChange={props.HandleFilterChange}
                         filterName="department"
+                        initialValues={props.initialDepartmentFilterOptions}
+                        filterEnable = {props.initialDepartmentFilterEnable}
                         HandleFilterEnable={props.HandleFilterEnable}
                         fields={
                             [
@@ -116,6 +130,7 @@ function SidebarView(props) {
                         <input
                             id="excludeNullCheckbox"
                             type="checkbox"
+                            defaultChecked = {props.initialApplyNullFilterEnable}
                             onChange={props.toggleRemoveNull}
                             className="mx-2 w-4 h-4 pt-4 text-purple-600 bg-gray-100 border-gray-300 rounded-sm accent-violet-600"
                         />

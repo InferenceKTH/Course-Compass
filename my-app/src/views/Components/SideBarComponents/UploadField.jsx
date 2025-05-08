@@ -9,7 +9,7 @@ import ToolTip from './ToolTip';
 export default function UploadField(props) {
 
     const [isDragging, setIsDragging] = useState(false);
-    const [filterEnabled, setFilterEnabled] = useState(true);
+    const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
 
     const handleDragOver = (event) => {
         event.preventDefault(); // Prevent default behavior (to allow drop)
@@ -38,6 +38,7 @@ export default function UploadField(props) {
                 <div className='pt-1 flex-none'>
 
                     <FilterEnableCheckbox
+                        initialValue={filterEnabled}
                         onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable(["transcript", !filterEnabled]); }}
                     />
                 </div>
@@ -68,7 +69,8 @@ export default function UploadField(props) {
             </div>
             <ButtonGroupField
                 items={["Weak", "Moderate", "Strong"]}
-                HandleFilterChange={props.HandleFilterChange}
+                    HandleFilterChange={props.HandleFilterChange}
+                    initialValue = {props.initialValue}
                 />
             </div>
             <div className='max-w-70'>

@@ -7,15 +7,13 @@ export default function DropDownField(props) {
 
 
   let paramFieldType = "dropdown";
-  const [filterEnabled, setFilterEnabled] = useState(true);
+  const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState(props.initialValues.map(
+    (item) => item.charAt(0).toUpperCase() + item.slice(1).toLowerCase()
+  ));
 
   const items = props.options;
-
-  useEffect(() => {
-    setSelectedItems(items);
-  }, [items]);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -55,7 +53,8 @@ export default function DropDownField(props) {
           />
         </div>
         <FilterEnableCheckbox
-          onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]);}}
+          initialValue={filterEnabled}
+          onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]); }}
         />
       </div>
       <div className={`opacity-${filterEnabled ? "100" : "50"} ${filterEnabled ? "pointer-events-auto" : "pointer-events-none user-select-none"

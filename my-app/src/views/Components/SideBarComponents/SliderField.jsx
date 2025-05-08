@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
 import Tooltip from "./ToolTip";
 
@@ -13,8 +13,19 @@ export default function UploadField(props) {
 
     const [minIndex, setMinIndex] = useState(0);
     const [maxIndex, setMaxIndex] = useState(values.length - 1);
-    const [filterEnabled, setFilterEnabled] = useState(true);
+    const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
     const sliderRef = useRef(null);
+
+    useEffect(() => {
+        for (let i = 0; i < values.length; i++) {
+            if (values[i] === props.initialValues[0]) {
+                setMinIndex(i);
+            }
+            if (values[i] === props.initialValues[1]) {
+                setMaxIndex(i);
+            }
+        }
+    }, []); // Empty dependency array ensures this runs only once
 
     const handleDrag = (e, thumbType) => {
         const slider = sliderRef.current;
@@ -52,6 +63,7 @@ export default function UploadField(props) {
                     />
                 </div>
                 <FilterEnableCheckbox
+                    initialValue={filterEnabled}
                     onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]); }}
                 />
             </div>

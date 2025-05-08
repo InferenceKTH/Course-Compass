@@ -4,7 +4,7 @@ import Tooltip from "./ToolTip";
 
 const CollapsibleCheckboxes = (props) => {
   const [expanded, setExpanded] = useState({});
-  const [filterEnabled, setFilterEnabled] = useState(true);
+  const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
   const [checkedSubItems, setCheckedSubItems] = useState({});
   const [stupidLines, setStupidLines] = useState(0);
 
@@ -55,6 +55,7 @@ const CollapsibleCheckboxes = (props) => {
           />
         </div>
         <FilterEnableCheckbox
+          initialValue={filterEnabled}
           onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]);}}
         />
       </div>
