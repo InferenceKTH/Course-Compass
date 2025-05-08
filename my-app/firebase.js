@@ -2,7 +2,6 @@ import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
 import { get, getDatabase, ref, set, onValue, push } from "firebase/database";
 import { reaction, toJS } from "mobx";
-// import throttle from "lodash.throttle";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -27,20 +26,20 @@ let noUpload = false;
 
 export function connectToFirebase(model) {
 	loadCoursesFromCacheOrFirebase(model);
-
+	fetchDepartmentsAndLocations(model);
 	// setting missing
 	// also save filters to local storage
-	// 
+	//
 	const options = JSON.parse(localStorage.getItem("filterOptions"));
-		if (options) {
-			model.setFilterOptions(options);
-			console.log("Restore options from local storage");
-		}
+	if (options) {
+		model.setFilterOptions(options);
+		console.log("Restore options from local storage");
+	}
 
 	reaction(
-		() => ({filterOptions: JSON.stringify(model.filterOptions)}),
+		() => ({ filterOptions: JSON.stringify(model.filterOptions) }),
 		// eslint-disable-next-line no-unused-vars
-		({filterOptions}) => {
+		({ filterOptions }) => {
 			localStorage.setItem("filterOptions", filterOptions);
 		}
 	);
@@ -64,8 +63,8 @@ async function firebaseToModel(model) {
 		if (!snapshot.exists()) return;
 		const data = snapshot.val();
 		noUpload = true;
-		if (data.favourites) model.setFavourite(data.favourites);
-		if (data.currentSearchText)
+		if (data?.favourites) model.setFavourite(data.favourites);
+		if (data?.currentSearchText)
 			model.setCurrentSearchText(data.currentSearchText);
 		// if (data.scrollPosition)
 		// 	model.setScrollPosition(data.scrollPosition);
@@ -84,18 +83,15 @@ export function syncModelToFirebase(model) {
 			// Add more per-user attributes here
 		}),
 		// eslint-disable-next-line no-unused-vars
-		({ userId, favourites, currentSearchText, filterOptions }) => {
+		({ userId, favourites, currentSearchText }) => {
 			if (noUpload || !userId) return;
-			const userRef = ref(db, `users/${userId}`);
+			const userRef = ref(db, "users/${userId}");
 			const dataToSync = {
 				favourites,
 				currentSearchText,
 				// filterOptions,
 			};
-
-			set(userRef, dataToSync)
-				.then(() => console.log("User model synced to Firebase"))
-				.catch(console.error);
+			set(userRef, dataToSync).catch(console.error);
 		}
 	);
 }
@@ -191,6 +187,53 @@ export async function fetchAllCourses() {
 	return courses;
 }
 
+export async function uploadDepartmentsAndLocations(departments, locations) {
+	if (departments) {
+		const departmentsRef = ref(db, "departments");
+		try {
+			await set(departmentsRef, departments);
+			console.log("Uploaded Departments");
+		} catch (error) {
+			console.error("Failed to upload departments:", error);
+			return false;
+		}
+	}
+	if (locations) {
+		const locationsRef = ref(db, "locations");
+		try {
+			await set(locationsRef, locations);
+			console.log("Uploaded Locations");
+		} catch (error) {
+			console.error("Failed to upload locations:", error);
+			return false;
+		}
+	}
+	return true;
+}
+
+export async function fetchDepartmentsAndLocations(model) {
+	const departmentsRef = ref(db, "departments");
+	const locationsRef = ref(db, "locations");
+	let snapshot = await get(departmentsRef);
+	if (snapshot.exists()) {
+		const value = snapshot.val();
+		const set = new Set();
+		for (const id of Object.keys(value)) {
+			set.add(value[id]);
+		}
+		model.setDepartments(Array.from(set));
+	}
+	snapshot = await get(locationsRef);
+	if (snapshot.exists()) {
+		const value = snapshot.val();
+		const set = new Set();
+		for (const id of Object.keys(value)) {
+			set.add(value[id]);
+		}
+		model.setLocations(Array.from(set));
+	}
+}
+
 async function loadCoursesFromCacheOrFirebase(model) {
 	const firebaseTimestamp = await fetchLastUpdatedTimestamp();
 	const dbPromise = new Promise((resolve, reject) => {
@@ -241,32 +284,6 @@ async function loadCoursesFromCacheOrFirebase(model) {
 	const courses = await fetchAllCourses();
 	model.setCourses(courses);
 	saveCoursesToCache(courses, firebaseTimestamp);
-
-}
-
-
-export async function saveJSONCoursesToFirebase(model, data) {
-	if (!data || !model) {
-		console.log("no model or data");
-		return;
-	}
-	const entries = Object.entries(data);
-	entries.forEach((entry) => {
-		const course = {
-			code: entry[1].code,
-			name: entry[1]?.name ?? "",
-			location: entry[1]?.location ?? "",
-			department: entry[1]?.department ?? "",
-			language: entry[1]?.language ?? "",
-			description: entry[1]?.description ?? "",
-			academicLevel: entry[1]?.academic_level ?? "",
-			period: entry[1]?.period ?? "",
-			credits: entry[1]?.credits ?? 0,
-			//lectureCount:entry[1].courseLectureCount,
-			//prerequisites:entry.coursePrerequisites
-		};
-		model.addCourse(course);
-	});
 }
 
 export async function addReviewForCourse(courseCode, review) {

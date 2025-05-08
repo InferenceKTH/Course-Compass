@@ -5,8 +5,8 @@ import Tooltip from "./ToolTip";
 
 export default function ButtonGroupFullComponent(props) {
     const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
-    const [selectedItems, setSelectedItems] = useState(props.initialValues);
-
+    const [selectedItems, setSelectedItems] = useState(props.initialValues || []);
+    
     const handleClick = (index) => {
         const selectedItem = props.items[index];
         setSelectedItems((prevSelectedItems) => {
@@ -18,7 +18,15 @@ export default function ButtonGroupFullComponent(props) {
     };
 
     const getButtonClasses = (index) => {
-        const baseClasses = `flex-auto py-1 px-4 inline-flex items-center gap-x-2 text-sm 
+        if (!selectedItems || !Array.isArray(selectedItems)) {
+            return "default-button-class"; // Fallback class if selectedItems is invalid
+        }
+
+        if (index < 0 || index >= selectedItems.length) {
+            return "default-button-class"; // Fallback class for invalid index
+        }
+
+        const baseClasses = `flex-auto py-1 px-4 inline-flex items-center gap-x-2 text-sm
       font-medium focus:z-10 border border-gray-200 shadow-2xs hover:bg-[#8785ac]
       focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none pl-8`;
         const activeClass = selectedItems[index] ? "bg-violet-500" : "bg-transparent";
