@@ -50,6 +50,7 @@ export function connectToFirebase(model) {
 			firebaseToModel(model); // Set up listeners for user-specific data
 			syncModelToFirebase(model); // Start syncing changes to Firebase
 			syncScrollPositionToFirebase(model);
+			startAverageRatingListener(model);
 		} else {
 			model.setUser(null); // If no user, clear user-specific data
 		}
@@ -122,6 +123,37 @@ export function syncScrollPositionToFirebase(model, containerRef) {
 	return () =>
 		containerRef.current?.removeEventListener("scroll", handleScroll);
 }
+
+function startAverageRatingListener(model) {
+	const reviewsRef = ref(db, "reviews");
+
+	onValue(reviewsRef, (snapshot) => {
+		if (!snapshot.exists()) return;
+
+		const ratingsMap = {};
+
+		snapshot.forEach((courseSnapshot) => {
+			const courseCode = courseSnapshot.key;
+			let sum = 0;
+			let count = 0;
+
+			courseSnapshot.forEach((reviewSnapshot) => {
+				const review = reviewSnapshot.val();
+				if (typeof review.rating === "number") {
+					sum += review.rating;
+					count++;
+				}
+			});
+
+			if (count > 0) {
+				ratingsMap[courseCode] = sum / count;
+			}
+		});
+
+		model.setAverageRatings(ratingsMap);
+	});
+}
+
 
 function saveCoursesToCache(courses, timestamp) {
 	const request = indexedDB.open("CourseDB", 1);
