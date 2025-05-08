@@ -7,6 +7,8 @@ export const model = {
     //instead of passing searchcouses lambda function down into the searchbarview.
     /* courses returned from SearchbarPresenter (search is applied on top of filteredCourses[]) to be shown in the ListView */
     currentSearch: [],
+
+    sidebarIsOpen: true,
     /* current query text */
     currentSearchText: "",
     scrollPosition: 0,
@@ -225,4 +227,19 @@ export const model = {
         const total = reviews.reduce((sum, review) => sum + (review.overallRating || 0), 0);
         return (total / reviews.length).toFixed(1);
     },
+
+    setSidebarState(state) {
+        this.sidebarIsOpen = state;
+    },
+
+    getSidebarState() {
+        return this.sidebarIsOpen;
+    },
+
+    toggleSidebarIsOpen() {
+        this.sidebarIsOpen = !this.sidebarIsOpen;
+    }
+
+
+
 };
