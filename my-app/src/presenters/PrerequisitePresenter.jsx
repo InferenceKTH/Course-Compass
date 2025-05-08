@@ -132,7 +132,7 @@ export const PrerequisitePresenter = observer((props) => {
                 let inner_code = arr[1] + arr[2];
                 let course_name_inner = model.getCourse(inner_code)?.name;
                 if (!course_name_inner) {
-                    course_name_inner = "Course discontinued"
+                    course_name_inner = "Course discontinued";
                 }
                 course_name += "<li>" + inner_code + ": " + course_name_inner + "</li>"
             }
@@ -141,7 +141,11 @@ export const PrerequisitePresenter = observer((props) => {
         else if (node.data.label === "More Info...") {
             course_name = input_text_obj[node["id"]];
         } else {
-            course_name = model.getCourse(course_id).name;
+            if (model.getCourse(course_id)) {
+                course_name = model.getCourse(course_id).name;
+            } else {
+                course_name = "Course discontinued";
+            }
         }
 
         hover_popup.innerHTML = course_name;
@@ -459,8 +463,7 @@ export const PrerequisitePresenter = observer((props) => {
         let key = Object.keys(prereqs);
         if (prereqs[key] === true) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
 
@@ -479,18 +482,12 @@ export const PrerequisitePresenter = observer((props) => {
             try {
                 let root = createNode(props.selectedCourse.code, props.selectedCourse.code, "input");
                 let copy = JSON.parse(JSON.stringify(props.selectedCourse.prerequisites));
-                let courses_taken = JSON.parse(localStorage.getItem("completedCourses"));
+                let courses_taken = [];
+                if (localStorage.getItem("completedCourses") != null) {
+                    courses_taken = localStorage.getItem("completedCourses");
+                }
                 code_to_name = model.getCourseNames(courses_taken);
-                //console.log(JSON.stringify(code_to_name, null, 4));
-                //console.log(Array.isArray(courses_taken));
-                //courses_taken.push("DD1380");
-                //courses_taken.push("DD1310");
-                //courses_taken.push("SF1674");
-                //courses_taken.push("SF1915");
-                //courses_taken.push("A11P1B");
-                //courses_taken.push("DD1321");
-                //console.log(localStorage.getItem("completedCourses"));
-                //courses_taken.push
+                
                 let eligible = generateTree(courses_taken, copy);
                 if (eligible) {
                     root["style"]["backgroundColor"] = "lightgreen";

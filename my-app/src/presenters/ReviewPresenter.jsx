@@ -4,6 +4,8 @@ import { ReviewView } from '../views/ReviewView.jsx';
 
 export const ReviewPresenter = observer(({ model, course }) => {
     const [reviews, setReviews] = useState([]);
+    const [postAnonymous, setAnonymous] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     const [formData, setFormData] = useState({
         text: "",
         overallRating: 0,
@@ -24,13 +26,24 @@ export const ReviewPresenter = observer(({ model, course }) => {
     }, [course.code, model]);
 
     const handleReviewSubmit = async () => {
+        if(model?.user){
+            setErrorMessage("You need to be logged in to post a comment - Posting anonymously is possible.");
+            return;
+        }
         if (formData.text.trim()) {
             const review = {
-                userName: model.user?.displayName || "Anonymous",
+                userName: postAnonymous ? "Anonymous" : model.user?.displayName,
+                userID: model?.user?.userid,
                 timestamp: Date.now(),
                 ...formData,
+
             };
-            await model.addReview(course.code, review);
+            if(!await model.addReview(course.code, review)){
+                if(model.getReviews(course.code).filter((review)=>{review.userid == model.user.userid}))
+                    setErrorMessage("Everyone can only post once. Edit your comment instead.");
+                setErrorMessage("Something went wrong when posting. Are you logged in?")
+                return;
+            }
             const updatedReviews = await model.getReviews(course.code);
             setReviews(updatedReviews);
             setFormData({
@@ -53,6 +66,9 @@ export const ReviewPresenter = observer(({ model, course }) => {
             formData={formData}
             setFormData={setFormData}
             handleReviewSubmit={handleReviewSubmit}
+            errorMessage={errorMessage}
+            postAnonymous={postAnonymous}
+            setAnonymous={setAnonymous}
         />
 
     );
