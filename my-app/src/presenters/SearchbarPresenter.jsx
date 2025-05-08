@@ -18,7 +18,7 @@ const SearchbarPresenter = observer(({ model }) => {
             { name: 'name', weight: 0.3 },  
             { name: 'description', weight: 0.1 }, 
         ],
-        threshold: 0.3,           // adjust this for sensitivity
+        threshold: 0.4,           // adjust this for sensitivity
         ignoreLocation: true,
         minMatchCharLength: 2,
     };
