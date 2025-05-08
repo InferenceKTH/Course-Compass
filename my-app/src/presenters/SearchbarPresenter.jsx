@@ -70,17 +70,18 @@ const SearchbarPresenter = observer(({ model }) => {
         course={model.selectedCourse} 
     />;
 
-    const popup = <CoursePagePopup
-        favouriteCourses={model.favourites}
-        addFavourite={addFavourite}
-        removeFavourite={removeFavourite}
-        handleFavouriteClick={handleFavouriteClick}
-        isOpen={model.isPopupOpen}
-        onClose={() => model.setPopupOpen(false)}
-        course={model.selectedCourse}
-        reviewPresenter={reviewPresenter}
-        prerequisiteTree={preP}
-    />;
+    //Popup is displayed only in the list view now, to change the displayed course use model.setSelectedCourse(course)
+    // const popup = <CoursePagePopup
+    //     favouriteCourses={model.favourites}
+    //     addFavourite={addFavourite}
+    //     removeFavourite={removeFavourite}
+    //     handleFavouriteClick={handleFavouriteClick}
+    //     isOpen={model.isPopupOpen}
+    //     onClose={() => model.setPopupOpen(false)}
+    //     course={model.selectedCourse}
+    //     reviewPresenter={reviewPresenter}
+    //     prerequisiteTree={preP}
+    // />;
 
     if(model.filtersCalculated){
         searchCourses(searchQuery);
@@ -97,7 +98,7 @@ const SearchbarPresenter = observer(({ model }) => {
             isPopupOpen={model.isPopupOpen}
             setIsPopupOpen={(isOpen) => model.setPopupOpen(isOpen)}
             setSelectedCourse={(course) => model.setSelectedCourse(course)}
-            popup={popup}
+            // popup={popup}
             setSearchQuery={setSearchQuery}
             searchQuery={searchQuery}
             handleFavouriteClick={handleFavouriteClick}
