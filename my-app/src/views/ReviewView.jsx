@@ -188,39 +188,67 @@ export function ReviewView(props) {
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-2">
                   <div>
                     <p className="text-sm font-semibold text-gray-700">Overall Rating</p>
-                    <RatingComponent
+                    {/* <RatingComponent
                       className="flex space-x-1 text-sm"
                       value={rev.overallRating}
                       readOnly={true}
-                    />
+                    /> */}
+										{rev.overallRating > 0 ? (
+  <RatingComponent
+    className="flex space-x-1 text-sm"
+    value={rev.overallRating}
+    readOnly={true}
+  />
+) : (
+  <p className="text-sm text-gray-600">N/A</p>
+)}
+
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-700">Difficulty Rating</p>
-                    <RatingComponent
-                      className="flex space-x-1 text-sm"
-                      value={rev.difficultyRating}
-                      readOnly={true}
-                    />
+                    {rev.difficultyRating > 0 ? (
+  <RatingComponent
+    className="flex space-x-1 text-sm"
+    value={rev.difficultyRating}
+    readOnly={true}
+  />
+) : (
+  <p className="text-sm text-gray-600">N/A</p>
+)}
+
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-700">Professor Rating</p>
-                    <RatingComponent
-                      className="flex space-x-1 text-sm"
-                      value={rev.professorRating}
-                      readOnly={true}
-                    />
+                    {rev.professorRating > 0 ? (
+  <RatingComponent
+    className="flex space-x-1 text-sm"
+    value={rev.professorRating}
+    readOnly={true}
+  />
+) : (
+  <p className="text-sm text-gray-600">N/A</p>
+)}
+
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-700">Professor</p>
-                    <p className="text-sm text-gray-600">{rev.professorName}</p>
+                    {/* <p className="text-sm text-gray-600">{rev.professorName}</p> */}
+										<p className="text-sm text-gray-600">{rev.professorName || "N/A"}</p>
+
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-700">Grade</p>
-                    <p className="text-sm text-gray-600">{rev.grade}</p>
+                    {/* <p className="text-sm text-gray-600">{rev.grade}</p> */}
+										<p className="text-sm text-gray-600">{rev.grade || "N/A"}</p>
+
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-700">Recommended</p>
-                    <p className="text-sm text-gray-600">{rev.recommend ? "Yes" : "No"}</p>
+                    {/* <p className="text-sm text-gray-600">{rev.recommend ? "Yes" : "No"}</p> */}
+										<p className="text-sm text-gray-600">
+											{rev.recommend === true ? "Yes" : rev.recommend === false ? "No" : "N/A"}
+										</p>
+
                   </div>
                 </div>
                 <div>
