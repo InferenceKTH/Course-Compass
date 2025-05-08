@@ -40,10 +40,7 @@ export const model = {
         creditMin: 0,
         creditMax: 45,
         applyDepartmentFilter: true,
-        department: ["EECS/Computational Science and  Technology", "EECS/Theoretical Computer Science", "EECS/Electric Power and Energy Systems", "EECS/Network and Systems Engineering",
-        "ITM/Learning in Engineering Sciences", "ITM/Industrial Economics and Management", "ITM/Energy Systems", "ITM/Integrated Product Development and Design", "ITM/SKD GRU",
-        "SCI/Mathematics", "SCI/Applied Physics", "SCI/Mechanics", "SCI/Aeronautical and Vehicle Engineering", 
-        "ABE/Sustainability and Environmental Engineering", "ABE/Concrete Structures", "ABE/Structural Design & Bridges", "ABE/History of Science, Technology and Environment", ],
+        department: [],
         applyRemoveNullCourses: false,
         period: [true, true, true, true],
         applyPeriodFilter: true
