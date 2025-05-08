@@ -39,10 +39,6 @@ npm run build
 ## Project structure
 The project uses the **[Model–view–presenter (MVP)](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter)** paradime. The view displays the data. The presenter contains the logic. The model contains the data. 
 
-//Where everything is 
-
-//comments in file tree and files
-
 
 ```
 .
