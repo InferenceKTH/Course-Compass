@@ -7,7 +7,7 @@ Course-Compass is a webpage for interacting with the kth courses via the kth api
 After downloading the repository navigate to the folder my-app and install the dependencies with 
 
 ```bash
-npm install
+npm ci
 ```
 The website can run for developers with
 ```bash
