@@ -15,6 +15,7 @@ export default function UploadField(props) {
     const [maxIndex, setMaxIndex] = useState(values.length - 1);
     const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
     const sliderRef = useRef(null);
+    const checkboxRef = useRef(null);
 
     useEffect(() => {
         for (let i = 0; i < values.length; i++) {
@@ -63,12 +64,18 @@ export default function UploadField(props) {
                     />
                 </div>
                 <FilterEnableCheckbox
+                    ref={checkboxRef}
                     initialValue={filterEnabled}
                     onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]); }}
                 />
             </div>
 
-            <div className={`opacity-${filterEnabled ? "100" : "50"} pointer-events-${filterEnabled ? "auto" : "none"}`}>
+            <div className={`opacity-${filterEnabled ? "100" : "50"}`} onClick={() => {
+                    if (!filterEnabled && checkboxRef.current) {
+                        checkboxRef.current.click();
+                    }
+                    console.log(checkboxRef);
+                 }}>
                 <div className="bg-[#aba8e0] text-white p-4 rounded-lg shadow-lg border border-gray-300">
                     <div className="mb-2 text-sm font-bold">
                         Credits: {values[minIndex]} – {values[maxIndex]}

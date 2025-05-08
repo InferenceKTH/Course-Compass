@@ -7,6 +7,8 @@ export default function ButtonGroupFullComponent(props) {
     const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
     const [selectedItems, setSelectedItems] = useState(props.initialValues || []);
     
+    const checkboxRef = useRef(null);
+
     const handleClick = (index) => {
         const selectedItem = props.items[index];
         setSelectedItems((prevSelectedItems) => {
@@ -52,12 +54,17 @@ export default function ButtonGroupFullComponent(props) {
                     />
                 </div>
                 <FilterEnableCheckbox
+                    ref={checkboxRef}
                     initialValue={filterEnabled}
                     onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]); }}
                 />
             </div>
-            <div className={`opacity-${filterEnabled ? "100" : "50"} ${filterEnabled ? "pointer-events-auto" : "pointer-events-none user-select-none"
-                }`}>
+            <div className={`opacity-${filterEnabled ? "100" : "50"}`} onClick={() => {
+                if (!filterEnabled && checkboxRef.current) {
+                    checkboxRef.current.click();
+                }
+                console.log(checkboxRef);
+            }}>
 
                 <div className="my-1">
                     <div className="flex flex-col sm:inline-flex sm:flex-row rounded-lg shadow-2xs 

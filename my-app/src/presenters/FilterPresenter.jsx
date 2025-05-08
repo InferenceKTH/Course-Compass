@@ -147,9 +147,9 @@ const FilterPresenter = observer(({ model }) => {
 
         bestCourses = localFilteredCourses.filter(function (course) {
             try {
-                return (locations.includes(course?.location.toUppercase()));
+                return (locations.includes(course?.location.toUpperCase()));
             } catch (error) {
-                console.log("for some reason course?.location is: ", course?.location.toUppercase(), error);
+                console.log("for some reason course?.location is: ", course?.location.toUpperCase(), error);
                 return false;
             }
 

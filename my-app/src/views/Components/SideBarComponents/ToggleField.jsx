@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useRef } from "react";
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
 import Tooltip from "./ToolTip";
 
@@ -9,6 +9,8 @@ export default function ToggleField(props) {
     const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
     const [prop1Set, setprop1Set] = useState((props.initialValues=="both") || (props.initialValues==String(props.fields[0]).charAt(0).toLowerCase() + String(props.fields[0]).slice(1)));
     const [prop2Set, setprop2Set] = useState((props.initialValues=="both") || (props.initialValues==String(props.fields[1]).charAt(0).toLowerCase() + String(props.fields[1]).slice(1)));
+
+    const checkboxRef = useRef(null);
 
     return (
         <div className="m-2">
@@ -23,12 +25,18 @@ export default function ToggleField(props) {
                     />
                 </div>
                 <FilterEnableCheckbox
+                    ref={checkboxRef}
                     initialValue={filterEnabled}
                     onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]); }}
                 />
             </div>
 
-            <div className={`opacity-${filterEnabled ? "100" : "50"} pointer-events-${filterEnabled ? "auto" : "none"}`}>
+            <div className={`opacity-${filterEnabled ? "100" : "50"}`} onClick={() => {
+                    if (!filterEnabled && checkboxRef.current) {
+                        checkboxRef.current.click();
+                    }
+                    console.log(checkboxRef);
+            }}>
                 <div className="flex flex-col sm:flex-row md:flex-row rounded-lg shadow-2xs w-full items-center
              font-medium text-white bg-[#aba8e0] ">
                     <label className="flex-auto py-3 px-4 inline-flex gap-x-2 -mt-px -ms-px 

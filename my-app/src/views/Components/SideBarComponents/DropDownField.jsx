@@ -11,9 +11,9 @@ export default function DropDownField(props) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState(props.initialValues.map(t => t?.toUpperCase()));
 
-  console.log(selectedItems);
-
   const items = props.options.map(t => t?.toUpperCase());
+
+  const checkboxRef = useRef(null);
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
@@ -52,12 +52,17 @@ export default function DropDownField(props) {
           />
         </div>
         <FilterEnableCheckbox
+          ref={checkboxRef}
           initialValue={filterEnabled}
           onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]); }}
         />
       </div>
-      <div className={`opacity-${filterEnabled ? "100" : "50"} ${filterEnabled ? "pointer-events-auto" : "pointer-events-none user-select-none"
-        }`}>
+      <div className={`opacity-${filterEnabled ? "100" : "50"}`} onClick={() => {
+                    if (!filterEnabled && checkboxRef.current) {
+                        checkboxRef.current.click();
+                    }
+                    console.log(checkboxRef);
+                 }}>
 
         <div className="relative justify-center text-left w-full"ref={dropdownRef}>
           {/* Dropdown Button */}
@@ -65,7 +70,7 @@ export default function DropDownField(props) {
             onClick={toggleDropdown}
             className="bg-violet-500 text-white px-4 py-2 rounded-md shadow-md focus:outline-none hover:bg-[#aba8e0] w-full"
           >
-            {selectedItems.length? (selectedItems.join(", ").substring(0, 30) + ((selectedItems.join(", ").substring(0, 30).length>=30)? "...": "") ):"Select Options"}
+            {selectedItems.length? (selectedItems.map(i => String(i).charAt(0).toUpperCase() + String(i).slice(1).toLowerCase()).join(", ").substring(0, 30) + ((selectedItems.join(", ").substring(0, 30).length>=30)? "...": "") ):"Select Options"}
           </button>
 
           {/* Dropdown Menu */}
@@ -91,7 +96,7 @@ export default function DropDownField(props) {
                  peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px]
                  after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all
                  peer-checked:bg-violet-500 "></div>
-                      <span>{item}</span>
+                      <span>{String(item).charAt(0).toUpperCase() + String(item).slice(1).toLowerCase()}</span>
                     </label>
                   </li>
                 ))}
