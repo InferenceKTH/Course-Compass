@@ -14,16 +14,11 @@ const FavouritesDropdown = observer((props) => {
         navigator.clipboard.writeText(url)
             .then(() => {
                 setCopied(true);
-                setTimeout(() => setCopied(false), 2500); // revert after 2.5 seconds
+                setTimeout(() => setCopied(false), 2500);
             })
             .catch(err => {
                 console.error("Copy failed:", err);
             });
-    }
-
-    function handleCopy() {
-        navigator.clipboard.writeText(shareUrl)
-            .catch(err => console.error("Copy failed:", err));
     }
 
     return (
@@ -70,28 +65,35 @@ const FavouritesDropdown = observer((props) => {
                     )}
                 </div>
 
-                <div className="flex border-t border-solid border-violet-400">
-                    {props.favouriteCourses.length > 0 && (
-                        <>
-                            <button
-                                onClick={props.removeAllFavourites}
-                                className="w-1/2 p-3 cursor-pointer text-red-600 hover:bg-red-600 hover:text-white border-r border-solid border-violet-400 font-semibold transition-colors"
-                            >
-                                Clear All
-                            </button>
-
-                            <button
-                                onClick={handleShareCourses}
-                                className={`w-1/2 p-3 cursor-pointer ${copied ? "bg-violet-600 text-white" : "text-violet-700 hover:bg-blue-500 hover:text-white"
-                                    } flex items-center justify-center gap-2 font-semibold transition-colors duration-300`}
-                            >
-                                {copied ? "Copied to Clipboard!" : "Share Courses"}
-                            </button>
-                        </>
-                    )}
+                {/* Fixed Footer */}
+                <div className="sticky bottom-0 border-t border-solid border-violet-400 bg-indigo-300/75 backdrop-blur-lg">
+                    <div className='p-3 flex justify-between items-center bg-violet-400/30'>
+                        <p className='text-slate-900 font-bold w-1/2'>Total:</p>
+                        <p className='text-slate-900 font-bold w-1/4'></p>
+                        <p className='text-slate-900 font-bold w-1/4 text-center'>{props.totalCredits} hp</p>
+                        <div className="w-8"></div>
+                    </div>
+                    <div className="flex border-t border-solid border-violet-400">
+                        {props.favouriteCourses.length > 0 && (
+                            <>
+                                <button
+                                    onClick={props.removeAllFavourites}
+                                    className="w-1/2 p-3 cursor-pointer text-red-600 hover:bg-red-600 hover:text-white border-r border-solid border-violet-400 font-semibold transition-colors"
+                                >
+                                    Clear All
+                                </button>
+                                <button
+                                    onClick={handleShareCourses}
+                                    className={`w-1/2 p-3 cursor-pointer ${copied ? "bg-violet-600 text-white" : "text-violet-700 hover:bg-blue-500 hover:text-white"} flex items-center justify-center gap-2 font-semibold transition-colors duration-300`}
+                                >
+                                    {copied ? "Copied to Clipboard!" : "Share Courses"}
+                                </button>
+                            </>
+                        )}
+                    </div>
                 </div>
-
             </div>
+            
             {/* Optional course popup */}
             <div className="relative z-50">
                 {props.isPopupOpen && props.popup}

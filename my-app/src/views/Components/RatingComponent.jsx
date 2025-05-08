@@ -1,17 +1,20 @@
 import React from 'react';
 import StarComponent from "./StarComponent.jsx";
 
-const RatingComponent = ({ value = 0, onChange, readOnly = false }) => {
+const RatingComponent = ({ value = 0, onChange, readOnly = false, className = "" }) => {
     const handleRating = (starIndex, isLeftHalf) => {
-        if (readOnly) return; // if readOnly, do nothing
+        if (readOnly) return;
         const newRating = isLeftHalf ? starIndex + 0.5 : starIndex + 1;
         onChange(newRating);
-    }
+    };
 
     return (
-        <div className="font-kanit flex justify-center items-center bg-transparent">
-            <div className="flex justify-center mb-4 gap-1 sm:gap-2">
-                {Array.from({length: 5}, (_, index) => (
+        <div className={`font-kanit flex justify-center items-center bg-transparent ${className}`}>
+            {/* <div className="flex gap-1 sm:gap-2"> */}
+            <div className="flex gap-[1px] text-xs leading-none">
+
+
+                {Array.from({ length: 5 }, (_, index) => (
                     <StarComponent
                         key={index}
                         index={index}
@@ -23,6 +26,6 @@ const RatingComponent = ({ value = 0, onChange, readOnly = false }) => {
             </div>
         </div>
     );
-}
+};
 
 export default RatingComponent;

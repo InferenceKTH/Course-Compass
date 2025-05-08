@@ -4,11 +4,12 @@ import 'ldrs/react/Quantum.css';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 function ListView(props) {
-    const coursesToDisplay = props.searchResults;
     const [displayedCourses, setDisplayedCourses] = useState([]);
     const [hasMore, setHasMore] = useState(true);
     const [readMore, setReadMore] = useState({});
     const [isLoading, setIsLoading] = useState(true);
+    const [sortBy, setSortBy] = useState('relevance');
+    const [sortDirection, setSortDirection] = useState('asc');
    
     const toggleReadMore = (courseCode) => {
         setReadMore(prevState => ({
@@ -24,21 +25,30 @@ function ListView(props) {
             props.addFavourite(course);
         }
     };
-    
+
     useEffect(() => {
         setIsLoading(true);
-        const initialCourses = coursesToDisplay.slice(0, 10);
+        const initialCourses = props.sortedCourses.slice(0, 10);
         setDisplayedCourses(initialCourses);
-        setHasMore(coursesToDisplay.length > 10);
+        setHasMore(props.sortedCourses.length > 10);
         setIsLoading(false);
-    }, [props.courses, props.searchResults]);
+    }, [props.sortedCourses]);
 
     const fetchMoreCourses = useCallback(() => {
         if (!hasMore) return;
-        const nextItems = coursesToDisplay.slice(displayedCourses.length, displayedCourses.length + 50);
-        setDisplayedCourses(prevCourses => [...prevCourses, ...nextItems]);
-        setHasMore(displayedCourses.length + nextItems.length < coursesToDisplay.length);
-    }, [displayedCourses.length, coursesToDisplay, hasMore]);
+        
+        const nextItems = props.sortedCourses.slice(
+            displayedCourses.length, 
+            displayedCourses.length + 50
+        );
+        
+        if (nextItems.length > 0) {
+            setDisplayedCourses(prev => [...prev, ...nextItems]);
+            setHasMore(displayedCourses.length + nextItems.length < props.sortedCourses.length);
+        } else {
+            setHasMore(false);
+        }
+    }, [displayedCourses.length, props.sortedCourses, hasMore]);
 
     const [isRestoringScroll, setIsRestoringScroll] = useState(false);
     useEffect(() => {
@@ -55,7 +65,7 @@ function ListView(props) {
     }
 }, [props.targetScroll]);
 
-    if (!props.courses) {
+    if (!props.sortedCourses) {
         return (
             <div className="relative bg-white text-black p-2 flex flex-col gap-5 h-screen">
                 <div className="text-white p-4 text-center">
@@ -73,13 +83,43 @@ function ListView(props) {
                 </div>
             ) : (
                 <div className="overflow-y-auto h-full" id="scrollableDiv" ref={props.scrollContainerRef}>
-                    <p className="text-base font-semibold text-gray-600 mb-2">
-                        Found
-                        <span className="font-bold text-[#000061] mx-1">
-                            {props.currentSearchLenght}
-                        </span>
-                        courses
-                    </p>
+                    <div className="flex justify-between items-center mb-4">
+                        <p className="text-base font-semibold text-gray-600">
+                            Found
+                            <span className="font-bold text-[#000061] mx-1">
+                                {props.currentSearchLenght}
+                            </span>
+                            courses
+                        </p>
+                        
+                        <div className="flex items-center gap-2">
+                            <select
+                                value={props.sortBy}
+                                onChange={(e) => props.setSortBy(e.target.value)}
+                                className="bg-white border-2 border-[#000061] text-[#000061] font-semibold py-2 px-4 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
+                            >
+                                <option value="relevance">Sort by Relevance</option>
+                                <option value="name">Sort by Name</option>
+                                <option value="credits">Sort by Credits</option>
+                            </select>
+
+                            <button
+                                onClick={() => props.setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
+                                className="bg-white border-2 border-[#000061] text-[#000061] font-semibold p-2 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
+                                aria-label={`Sort ${props.sortDirection === 'asc' ? 'ascending' : 'descending'}`}
+                            >
+                                {props.sortDirection === 'desc' ? (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                    </svg>
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                    </svg>
+                                )}
+                            </button>
+                        </div>
+                    </div>
 
                     <InfiniteScroll
                         dataLength={displayedCourses.length}

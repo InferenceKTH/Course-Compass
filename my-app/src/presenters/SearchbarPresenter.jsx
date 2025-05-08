@@ -1,26 +1,38 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { observer } from "mobx-react-lite";
 import { useState } from 'react';
 import CoursePagePopup from '../views/Components/CoursePagePopup.jsx';
 import PrerequisitePresenter from './PrerequisitePresenter.jsx';
 import { ReviewPresenter } from "../presenters/ReviewPresenter.jsx";
 import SearchbarView from "../views/SearchbarView.jsx";
+import Fuse from 'fuse.js'
+import debounce from 'lodash.debounce';
 
 const SearchbarPresenter = observer(({ model }) => {
 
-    const searchCourses = (query) => {
-        //model.filteredCourses is essentially a smaller subset of model.courses, if theres no filters, it should be the same
-        console.log("---------------search recalculated");
-        console.log("filtered courses length: ", model.filteredCourses.length);
-        const searchResults = model.filteredCourses.filter(course =>
-            course.code.toLowerCase().includes(query.toLowerCase()) ||
-            course.name.toLowerCase().includes(query.toLowerCase()) ||
-            course.description?.toLowerCase().includes(query.toLowerCase())
-        );
-        model.setCurrentSearchText(query);
-        model.setCurrentSearch(searchResults);
-        console.log(model.currentSearch.length);
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const fuseOptions = {
+        keys: [
+            { name: 'code', weight: 0.6 },   
+            { name: 'name', weight: 0.3 },  
+            { name: 'description', weight: 0.1 }, 
+        ],
+        threshold: 0.3,           // adjust this for sensitivity
+        ignoreLocation: true,
+        minMatchCharLength: 2,
     };
+
+    // Debounced search function
+    const searchCourses = useCallback(debounce((query) => {
+        if (!query.trim()) {
+            model.setCurrentSearch(model.filteredCourses);
+        } else {
+            const fuse = new Fuse(model.filteredCourses, fuseOptions);
+            const results = fuse.search(query).map((r) => r.item);
+            model.setCurrentSearch(results);
+        }
+    }, 500), []);
 
     const addFavourite = (course) => {
         model.addFavourite(course);
@@ -69,7 +81,7 @@ const SearchbarPresenter = observer(({ model }) => {
     
 
     if(model.filtersCalculated){
-        searchCourses("");
+        searchCourses(searchQuery);
         model.filtersCalculated = false;
     }
 
@@ -84,6 +96,8 @@ const SearchbarPresenter = observer(({ model }) => {
             setIsPopupOpen={setIsPopupOpen}
             setSelectedCourse={setSelectedCourse}
             popup={popup}
+            setSearchQuery={setSearchQuery}
+            searchQuery={searchQuery}  // Add this line
             handleFavouriteClick={handleFavouriteClick}
             totalCredits={creditsSum(model.favourites)}
             resetScrollPosition={resetScoll}

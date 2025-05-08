@@ -1,39 +1,157 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
+
+
 import RatingComponent from "../views/Components/RatingComponent.jsx";
 
 export function ReviewView(props) {
 	const grades = ["🅰️", "B", "C", "D", "E", "F"];
 	const {formData, setFormData} = props;
+	const [showGradeOptions, setShowGradeOptions] = useState(false);
+	const [showRecommendOptions, setShowRecommendOptions] = useState(false);
+	const gradeRef = useRef(null);
+	const recommendRef = useRef(null);
+
+
+	useEffect(() => {
+		function handleClickOutside(event) {
+			if (gradeRef.current && !gradeRef.current.contains(event.target)) {
+				setShowGradeOptions(false);
+			}
+			if (recommendRef.current && !recommendRef.current.contains(event.target)) {
+				setShowRecommendOptions(false);
+			}
+		}
+	
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, []);
+	
 
 	return (
 		<div>
 			<div className="mt-4">
 				<div className="border border-black space-y-6 pb-4 mb-4">
 
-					<div className="center-align ">
-						<p className="font-bold font-kanit items-center text-center">
-							Overall rating
-							<RatingComponent
-								value={formData.overallRating}
-								onChange={(val) => setFormData({ ...formData, overallRating: val })}
-							/>
-						</p>
-					</div>
+				<div className="flex flex-wrap justify-center gap-6 mt-4">
+  {/* Overall Rating */}
+  <div className="text-center">
+    <p className="font-bold font-kanit mb-1">Overall rating</p>
+    <RatingComponent
+      className="flex gap-[2px] text-base justify-center"
+      value={formData.overallRating}
+      onChange={(val) => setFormData({ ...formData, overallRating: val })}
+    />
+  </div>
+
+  {/* Difficulty Rating */}
+  <div className="text-center">
+    <p className="font-bold font-kanit mb-1">Difficulty rating</p>
+    <RatingComponent
+      className="flex gap-[2px] text-[1.25rem] justify-center"
+      value={formData.difficultyRating}
+      onChange={(val) => setFormData({ ...formData, difficultyRating: val })}
+    />
+  </div>
+
+  {/* Professor Rating */}
+  <div className="text-center">
+    <p className="font-bold font-kanit mb-1">Professor rating</p>
+    <RatingComponent
+      className="flex gap-[2px] text-sm justify-center"
+      value={formData.professorRating}
+      onChange={(val) => setFormData({ ...formData, professorRating: val })}
+    />
+  </div>
+
+  {/* Grade Section */}
+  <div className="relative" ref={gradeRef}>
+    <div className="flex-1 flex items-center justify-center gap-2">
+      <p className="font-bold font-kanit text-center">Grade:</p>
+      <div className="relative">
+        <div
+          className="px-2 py-1 border border-gray-300 rounded-sm text-sm cursor-pointer text-center"
+          onClick={() => setShowGradeOptions((prev) => !prev)}
+        >
+          {formData.grade || "Select"}
+        </div>
+        {showGradeOptions && (
+          <div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-white p-2 rounded-md shadow-lg space-x-2 z-10 flex">
+            {grades.map((grade) => (
+              <button
+                key={grade}
+                onClick={() => {
+                  setFormData({ ...formData, grade });
+                  setShowGradeOptions(false);
+                }}
+                className={`px-4 py-2 rounded-md shadow-md ${
+                  formData.grade === grade
+                    ? "bg-violet-600 text-white"
+                    : "bg-violet-200 hover:bg-violet-300"
+                }`}
+              >
+                {grade}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+
+  {/* Recommend Section */}
+  <div className="relative" ref={recommendRef}>
+    <div className="flex-1 flex items-center justify-center gap-2">
+      <p className="font-bold font-kanit text-center">Recommend?</p>
+      <div className="relative">
+        <div
+          className="px-2 py-1 border border-gray-300 rounded-sm text-sm cursor-pointer text-center"
+          onClick={() => setShowRecommendOptions((prev) => !prev)}
+        >
+          {formData.recommend === null ? "Select" : formData.recommend ? "Yes" : "No"}
+        </div>
+        {showRecommendOptions && (
+          <div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-white p-2 rounded-md shadow-lg space-x-2 z-10 flex">
+            <button
+              onClick={() => {
+                setFormData({ ...formData, recommend: true });
+                setShowRecommendOptions(false);
+              }}
+              className={`px-4 py-2 rounded-md shadow-md ${
+                formData.recommend
+                  ? "bg-violet-600 text-white"
+                  : "bg-violet-200 hover:bg-violet-300"
+              }`}
+            >
+              Yes
+            </button>
+            <button
+              onClick={() => {
+                setFormData({ ...formData, recommend: false });
+                setShowRecommendOptions(false);
+              }}
+              className={`px-4 py-2 rounded-md shadow-md ${
+                formData.recommend === false
+                  ? "bg-violet-600 text-white"
+                  : "bg-violet-200 hover:bg-violet-300"
+              }`}
+            >
+              No
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 					<div>
-						<p className="font-bold font-kanit items-center text-center">
-							Difficulty rating
-							<RatingComponent
-								value={formData.difficultyRating}
-								onChange={(val) => setFormData({ ...formData, difficultyRating: val })}
-							/>
-						</p>
-					</div>
-
-					<div>
-						<p className="font-bold font-kanit items-center text-center">
+						{/* <p className="font-bold font-kanit items-center text-center">
 							Professor Name & Rating
-						</p>
+						</p> */}
 						<div className="font-kanit flex justify-center mt-2">
 							<input
 								type="text"
@@ -45,63 +163,20 @@ export function ReviewView(props) {
 						</div>
 					</div>
 
-					<div>
+					{/* <div>
 						<p className="font-bold font-kanit items-center text-center">
 							Professor Rating
 							<RatingComponent
+								className="flex gap-[2px] text-sm justify-center"
 								value={formData.professorRating}
 								onChange={(val) => setFormData({ ...formData, professorRating: val })}
 							/>
 						</p>
-					</div>
+					</div> */}
 
-					<div>
-						<p className="font-bold font-kanit items-center text-center">Grade</p>
-						<div className="flex font-kanit justify-center space-x-2 mt-2">
-							{grades.map((grade) => (
-								<button
-									key={grade}
-									onClick={() => setFormData({ ...formData, grade })}
-									className={`px-4 py-2 rounded-md shadow-md ${
-										formData.grade === grade
-											? "bg-violet-600 text-white"
-											: "bg-violet-200 hover:bg-violet-300"
-									}`}
-								>
-									{grade}
-								</button>
-							))}
-						</div>
-					</div>
+					
 
-					<div>
-						<p className="font-bold font-kanit items-center text-center">
-							Would you recommend this course?
-						</p>
-						<div className="flex font-kanit justify-center space-x-2 mt-2">
-							<button
-								onClick={() => setFormData({ ...formData, recommend: true })}
-								className={`px-4 py-2 rounded-md shadow-md ${
-									formData.recommend
-										? "bg-violet-600 text-white"
-										: "bg-violet-200 hover:bg-violet-300"
-								}`}
-							>
-								Yes
-							</button>
-							<button
-								onClick={() => setFormData({ ...formData, recommend: false })}
-								className={`px-4 py-2 rounded-md shadow-md ${
-									formData.recommend === false
-										? "bg-violet-600 text-white"
-										: "bg-violet-200 hover:bg-violet-300"
-								}`}
-							>
-								No
-							</button>
-						</div>
-
-					</div>
+				
 
 					<div className="relative flex justify-center mt-2">
 						<div className="w-3/4 relative">
@@ -146,6 +221,8 @@ export function ReviewView(props) {
 								<p className="font-bold font-kanit items-center text-center">
 									Overall Rating
 									<RatingComponent
+										//
+										className="flex space-x-1 text-sm justify-center mb-1"
 										value={rev.overallRating}
 										readOnly={true}
 									/>
