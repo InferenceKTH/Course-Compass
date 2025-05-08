@@ -13,6 +13,7 @@ import {
     useEdgesState,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import { model } from "../model";
 
 
 export const PrerequisitePresenter = observer((props) => {
@@ -20,13 +21,27 @@ export const PrerequisitePresenter = observer((props) => {
     let uniqueCounter = 0;
     let textCounter = 0;
     let codeCounter = 0;
+    let hover_popup = document.createElement("div");
+    hover_popup.setAttribute("id", "course_popup");
+    hover_popup.style.fontSize = 0.75 + "rem";
+    hover_popup.style.pointerEvents = "none";
+    hover_popup.style.position = "absolute";
+    hover_popup.style.backgroundColor = "white";
+    hover_popup.style.border = "1px solid black";
+    hover_popup.style.zIndex = "9999";
+    hover_popup.style.justifyContent = "center";
+    hover_popup.style.alignItems = "center";
+    hover_popup.style.textAlign = "center";
+    hover_popup.style.padding = "5px";
+    document.body.appendChild(hover_popup);
+
+
+    let code_to_name;
 
     let input_text_obj = {};
 
     const position = { x: 0, y: 0 };
     const edgeType = 'smoothstep';
-
-    
 
     let initialNodes = [];
     let initialEdges = [];
@@ -37,7 +52,7 @@ export const PrerequisitePresenter = observer((props) => {
     const nodeHeight = 36;
 
     loadTree();
-    console.log(initialNodes);
+    //console.log(initialNodes);
 
     const getLayoutedElements = (nodes, edges, direction = 'LR') => {
         const isHorizontal = direction === 'LR';
@@ -75,6 +90,69 @@ export const PrerequisitePresenter = observer((props) => {
         'LR' // force horizontal layout initially
     );
 
+    const getNodeAbsolutePosition = (nodeId) => {
+        const nodeElement = document.querySelector(`[data-id="${nodeId}"]`);
+        if (nodeElement) {
+          const rect = nodeElement.getBoundingClientRect();
+          return { x: rect.left, y: rect.top, width: rect.width, height: rect.height };
+        }
+        return null;
+      };
+      
+
+    function handleMouseEnter(event, node) {
+        if (node["data"]["label"] === "One of these" || node["data"]["label"] === "All of these" ||
+            node["data"]["label"] === "No Prerequisites" || node["data"]["label"] === "Unable to load") {return;}
+        let course_id = "";
+        let course_name = ""; 
+
+        const pos = getNodeAbsolutePosition(node.id);
+        const popupWidth = pos.width + 20;
+        const popupHeight = pos.height + 20;
+        hover_popup.style.minWidth = popupWidth + "px";
+        hover_popup.style.minHeight = popupHeight + "px";
+        hover_popup.style.maxWidth = pos.width * 3 + "px";
+       
+        hover_popup.style.fontSize = window.getComputedStyle(document.querySelector(`[data-id="${node.id}"]`)).fontSize;
+        hover_popup.style.display = "flex";
+
+
+        if (node.id.indexOf(" ") == -1) {
+            course_id = node.id;
+        } else {
+            course_id = node.id.split(" ")[0]
+        }
+        
+        if (node.data?.courses) {
+            //hover_popup.style.maxWidth = pos.width * 3 + "px";
+            let inner_courses = node.data.courses;
+            course_name = "<ul>";
+            
+            for (let arr of inner_courses) {
+                let inner_code = arr[1] + arr[2];
+                let course_name_inner = model.getCourse(inner_code)?.name;
+                if (!course_name_inner) {
+                    course_name_inner = "Course discontinued"
+                }
+                course_name += "<li>" + inner_code + ": " + course_name_inner + "</li>"
+            }
+            course_name += "</ul>";
+        }
+        else if (node.data.label === "More Info...") {
+            course_name = input_text_obj[node["id"]];
+        } else {
+            course_name = model.getCourse(course_id).name;
+        }
+
+        hover_popup.innerHTML = course_name;
+        hover_popup.style.left = pos.x + pos.width / 2 - hover_popup.offsetWidth / 2 + "px";
+        hover_popup.style.top = pos.y + pos.height / 2 - hover_popup.offsetHeight / 2 + "px";
+
+    }
+
+    function handleMouseLeave(event, node) {
+        hover_popup.style.display = "none";
+    }
 
     const Flow = () => {
         const [nodes, setNodes, onNodesChange] = useNodesState(layoutedNodes);
@@ -99,7 +177,8 @@ export const PrerequisitePresenter = observer((props) => {
                     onNodesChange={onNodesChange}
                     onEdgesChange={onEdgesChange}
                     onConnect={onConnect}
-                    onNodeClick={clicked}
+                    onNodeMouseEnter={handleMouseEnter}
+                    onNodeMouseLeave={handleMouseLeave}
                     connectionLineType={ConnectionLineType.SmoothStep}
                     fitView
                     style={{ backgroundColor: 'white', borderRadius: '10px'}}
@@ -116,33 +195,16 @@ export const PrerequisitePresenter = observer((props) => {
 
         );
 
-        function setLabel(id, label) {
-            setNodes((nodes) =>
-              nodes.map((n) =>
-                n.id === id ? { ...n, data: { ...n.data, label } } : n
-              )
-            );
-        }
-
-        function clicked(event, node) {
-            if (node["id"].split(" ")[0] === "text") {
-                if (node["data"]["label"] === "More Info...") {
-                    node["style"]["zIndex"] = 1;
-                    setLabel(node["id"], <span>{input_text_obj[node["id"]]} <br/> <b style={{ color: 'blue' }}>CLOSE</b></span>);
-                } else {
-                    node["style"]["zIndex"] = 0;
-                    setLabel(node["id"], "More Info...");
-                }  
-            } else if (node["data"]["label"] !== "One of these" && node["data"]["label"] !== "No Prerequisites" && node["id"] !== props.selectedCourse.code) {
-                // ADD FUNCTIONALITY FOR CLICKING COURSE CODE NODE (Tu eres muy retrasado y gordo)! :)
-                // ONCLICK HERE
-            }
-          }
     };
 
-
-
-
+    function setLabel(id, label) {
+        setNodes((nodes) =>
+          nodes.map((n) =>
+            n.id === id ? { ...n, data: { ...n.data, label } } : n
+          )
+        );
+    }
+    
     function createNode(id, name, node_type) {
         return {
             id: id,
@@ -157,6 +219,10 @@ export const PrerequisitePresenter = observer((props) => {
                 zIndex: 0 
             },
             position,
+            events: {
+                onMouseEnter: handleMouseEnter,
+                onMouseLeave: handleMouseLeave,
+            }
         };
     }
     function createEdge(s, t) {
@@ -174,17 +240,21 @@ export const PrerequisitePresenter = observer((props) => {
             let key = Object.keys(current_object)[0];
             //console.log("Len: " + current_object[key].length);
             //console.log("Type: " + typeof current_object[key]);
-            if (current_object[key].length == 1 && (typeof current_object[key][0] == "string" 
+            if (current_object[key] != null && current_object[key].length == 1 && (typeof current_object[key][0] == "string" 
             || (current_object[key][0].length == 1 && typeof current_object[key][0][0] == "string"))) {
                 prereq_convert(courses_taken, current_object[key], key, previous_node_id); 
             } else {
                 if (key == "or") {
-                    current_node = createNode(key + uniqueCounter, "One of these", "default")
-                    initialNodes.push(current_node);
-                    initialEdges.push(createEdge(previous_node_id, key + uniqueCounter));
-                    prereq_convert(courses_taken, current_object[key], key, key + uniqueCounter++);      
+                    if (previous_key == "or") {
+                        prereq_convert(courses_taken, current_object[key], key, previous_node_id); 
+                    } else {
+                        current_node = createNode(key + uniqueCounter, "One of these", "default")
+                        initialNodes.push(current_node);
+                        initialEdges.push(createEdge(previous_node_id, key + uniqueCounter));
+                        prereq_convert(courses_taken, current_object[key], key, key + uniqueCounter++);      
+                    }
                     } 
-                else if (key == "and") {
+                if (key == "and") {
                     if ((current_object[key].length == 1 && Object.keys(current_object[key][0])[0] == "or") || previous_key != "or") {
                         prereq_convert(courses_taken, current_object[key], key, previous_node_id); 
                     } else {
@@ -210,9 +280,9 @@ export const PrerequisitePresenter = observer((props) => {
                         if (!isNaN(course_number)) {course_number = parseInt(course_number);} 
                         
                         if (!started_compressing) {
-                            if (i < current_object.length - 2) {
+                            if (i < current_object.length - 2 && typeof current_object[i + 1] == "string" && typeof current_object[i + 2] == "string") {
                                 let next = current_object[i + 1]; let next_next = current_object[i + 2];
-                                
+                                //console.log(next)
                                 //console.log(course_number, next.slice(2), next_next.slice(2))
                                 if (next.slice(0, 2) === course_letters
                                 && next_next.slice(0, 2) === course_letters && !isNaN(next.slice(2))
@@ -269,6 +339,7 @@ export const PrerequisitePresenter = observer((props) => {
             for (let i = 0; i < refined_course_array.length; i++) {
                 let input_id = "";
                 let input_text = "";
+                let node_data = null;
                 let course_code;
                 let course_done = false;
                 if (refined_course_array[i][1] === "#") {   // Text requirement
@@ -289,12 +360,13 @@ export const PrerequisitePresenter = observer((props) => {
                     } else if (previous_key == "and" && compressed_done_count == compressed_length) {
                         course_done = true;
                     }
-                    console.log("Compressed:");
-                    console.log(refined_course_array[i][2]);
+                    //console.log("Compressed:");
+                    //console.log(refined_course_array[i][2]);
                     course_code = refined_course_array[i][2][0][1] + refined_course_array[i][2][0][2] +
                     "-" + refined_course_array[i][2][compressed_length - 1][1] + refined_course_array[i][2][compressed_length - 1][2];
                     input_text = course_code;
-                    input_id = course_code + " " + ++codeCounter; 
+                    input_id = course_code + " " + ++codeCounter;
+                    node_data = refined_course_array[i][2];
                     
                 } else {
                     course_code = refined_course_array[i][1] + refined_course_array[i][2];
@@ -307,7 +379,10 @@ export const PrerequisitePresenter = observer((props) => {
                 let new_node = createNode(input_id, input_text, "output");
                 if (course_done) {
                     new_node["style"]["backgroundColor"] = "lightgreen";
-                } 
+                }
+                if (node_data != null) {
+                    new_node["data"]["courses"] = node_data;
+                }
                 current_node = new_node;
                 initialNodes.push(new_node);
                 initialEdges.push(createEdge(previous_node_id, input_id, "output"));
@@ -320,9 +395,9 @@ export const PrerequisitePresenter = observer((props) => {
         if (typeof current_object == "object" && !Array.isArray(current_object)) {
             let key = Object.keys(current_object)[0];
             let object_array = current_object[key];
-            console.log("DEBUGGING  ")
-            console.log(current_node)
-            console.log(object_array)
+            //console.log("DEBUGGING  ")
+            //console.log(current_node)
+            //console.log(object_array)
             let num_of_matches = 0;
             for (let i = 0; i < object_array.length; i++) {
                 if (Array.isArray(object_array[i])) {
@@ -379,7 +454,7 @@ export const PrerequisitePresenter = observer((props) => {
 
     function generateTree(courses_taken, prereqs) {
         prereq_convert(courses_taken, prereqs, null, props.selectedCourse.code);
-        console.log(JSON.stringify(prereqs, null, 4));
+        //console.log(JSON.stringify(prereqs, null, 4));
         let key = Object.keys(prereqs);
         if (prereqs[key] === true) {
             return true;
@@ -403,6 +478,8 @@ export const PrerequisitePresenter = observer((props) => {
                 let root = createNode(props.selectedCourse.code, props.selectedCourse.code, "input");
                 let copy = JSON.parse(JSON.stringify(props.selectedCourse.prerequisites));
                 let courses_taken = JSON.parse(localStorage.getItem("completedCourses"));
+                code_to_name = model.getCourseNames(courses_taken);
+                //console.log(JSON.stringify(code_to_name, null, 4));
                 //console.log(Array.isArray(courses_taken));
                 //courses_taken.push("DD1380");
                 //courses_taken.push("DD1310");
