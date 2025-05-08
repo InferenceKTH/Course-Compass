@@ -8,7 +8,16 @@ Running this project locally can be done via docker or by building and running i
 
 ### Running via docker
 
-Executing ´docker compose up´ or ´docker-compose up´ builds and starts the container. 
+Executing
+
+```bash
+docker compose up
+```
+or
+```bash
+docker-compose up
+```
+builds and starts the container. 
 
 
 ### Building with NPM
