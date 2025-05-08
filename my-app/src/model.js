@@ -15,6 +15,7 @@ export const model = {
     departments : [],
     locations: [],
     favourites: [],
+    searchHistory:[],
     isReady: false,
     /* this is a boolean flag showing that filtering options in the UI have changed, triggering the FilterPresenter to recalculate the filteredCourses[] */
     filtersChange: false, 
@@ -43,6 +44,8 @@ export const model = {
         period: [true, true, true, true],
         applyPeriodFilter: true
     },
+    isPopupOpen: false,
+    selectedCourse: null,
 
     setUser(user) {
         if (!this.user)
@@ -71,6 +74,13 @@ export const model = {
             this.courses = [...this.courses, course];
         } catch (error) {
             console.error("Error adding course:", error);
+        }
+    },
+    addHistoryItem(course_id) {
+        try {
+            this.searchHistory = [...this.searchHistory, course_id];
+        } catch (error) {
+            console.error("Error adding course code to the history:", error);
         }
     },
     setDepartments(departments){
@@ -237,5 +247,16 @@ export const model = {
         const avgRtg = (total / reviews.length).toFixed(1);
         // cache the result
         return avgRtg;
+    },
+
+    setPopupOpen(isOpen) {
+        if (isOpen && this.selectedCourse) {
+            this.addHistoryItem(this.selectedCourse.code);
+        }
+        this.isPopupOpen = isOpen;
+    },
+
+    setSelectedCourse(course) {
+        this.selectedCourse = course;
     },
 };

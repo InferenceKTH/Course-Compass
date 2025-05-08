@@ -30,7 +30,7 @@ function ListView(props) {
         let ret_string = "";
         if (periods) {
             let keys = Object.keys(periods);
-            console.log(periods["P1"])
+            // console.log(periods["P1"])
             for (let key of keys) {
                 if (periods[key]) {
                     ret_string += key + " | ";
@@ -160,7 +160,7 @@ function ListView(props) {
                             <div
                                 onClick={() => {
                                     props.setSelectedCourse(course);
-                                    props.setIsPopupOpen(true);
+                                    props.handlePopupOpen(true);
                                 }}
                                 key={course.code}
                                 className="p-5 mb-3 hover:bg-blue-100 flex items-center border border-b-black border-solid w-full rounded-lg cursor-pointer"

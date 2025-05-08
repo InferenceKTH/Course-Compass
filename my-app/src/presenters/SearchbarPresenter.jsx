@@ -9,7 +9,6 @@ import Fuse from 'fuse.js'
 import debounce from 'lodash.debounce';
 
 const SearchbarPresenter = observer(({ model }) => {
-
     const [searchQuery, setSearchQuery] = useState("");
 
     const fuseOptions = {
@@ -62,23 +61,26 @@ const SearchbarPresenter = observer(({ model }) => {
         model.setFavourite([]);
     }
 
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
-    const [selectedCourse, setSelectedCourse] = useState(null);
-    const preP = <PrerequisitePresenter model={model} selectedCourse={selectedCourse} />;
-    const reviewPresenter = <ReviewPresenter model={model} course={selectedCourse} />;
+    const preP = <PrerequisitePresenter 
+        model={model}
+        selectedCourse={model.selectedCourse}
+    />;
+    const reviewPresenter = <ReviewPresenter 
+        model={model} 
+        course={model.selectedCourse} 
+    />;
 
     const popup = <CoursePagePopup
         favouriteCourses={model.favourites}
         addFavourite={addFavourite}
         removeFavourite={removeFavourite}
         handleFavouriteClick={handleFavouriteClick}
-        isOpen={isPopupOpen}
-        onClose={() => setIsPopupOpen(false)}
-        course={selectedCourse}
+        isOpen={model.isPopupOpen}
+        onClose={() => model.setPopupOpen(false)}
+        course={model.selectedCourse}
         reviewPresenter={reviewPresenter}
         prerequisiteTree={preP}
     />;
-    
 
     if(model.filtersCalculated){
         searchCourses(searchQuery);
@@ -92,12 +94,12 @@ const SearchbarPresenter = observer(({ model }) => {
             removeAllFavourites={removeAllFavourites}
             addFavourite={addFavourite}
             removeFavourite={removeFavourite}
-            isPopupOpen={isPopupOpen}
-            setIsPopupOpen={setIsPopupOpen}
-            setSelectedCourse={setSelectedCourse}
+            isPopupOpen={model.isPopupOpen}
+            setIsPopupOpen={(isOpen) => model.setPopupOpen(isOpen)}
+            setSelectedCourse={(course) => model.setSelectedCourse(course)}
             popup={popup}
             setSearchQuery={setSearchQuery}
-            searchQuery={searchQuery}  // Add this line
+            searchQuery={searchQuery}
             handleFavouriteClick={handleFavouriteClick}
             totalCredits={creditsSum(model.favourites)}
             resetScrollPosition={resetScoll}
