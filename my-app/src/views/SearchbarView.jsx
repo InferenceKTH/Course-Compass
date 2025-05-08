@@ -45,7 +45,7 @@ function SearchbarView(props) {
 
   return (
     <div className="w-full px-6 py-6 flex items-center justify-between" onClick={handleClickOutside}>
-      <a href="https://findmynextcourse.web.app/" className="flex items-center h-[90px] w-auto">
+      <a href="https://course-compass-inference.web.app/" className="flex items-center h-[90px] w-auto">
         <img src={project_logo} className="h-[90px] w-auto" alt="KTH Logo" />
       </a>
 
@@ -61,14 +61,17 @@ function SearchbarView(props) {
       <div className="flex gap-6 items-center">
         {props.share}
 
-        <button
-          className="w-[120px] h-[44px] bg-[#003399] text-white rounded-full border border-[#000061] cursor-pointer hover:bg-[#001a4d] transition-all duration-200"
-          onClick={() => window.location.href = "https://inferencekth.github.io/Find-My-Next-Course/"}>
+        <a
+          className="flex items-center justify-center w-[120px] h-[44px] bg-[#003399] text-white rounded-full border border-[#000061] cursor-pointer hover:bg-[#001a4d] transition-all duration-200"
+          href = "https://inferencekth.github.io/Course-Compass/"
+          target="_blank"
+          rel="noopener noreferrer"
+          >
           About us
-        </button>
+        </a>
 
                 <div className="relative favourites-container">
-                    <button 
+                    <button
                         onClick={(e) => {
                             e.stopPropagation();
                             setShowFavourites(!showFavourites);
@@ -84,7 +87,7 @@ function SearchbarView(props) {
                     </button>
                     {showFavourites && (
                         <FavouritesDropdown
-                            {...props}  
+                            {...props}
                             onClick={(e) => e.stopPropagation()}
                         />
                     )}
