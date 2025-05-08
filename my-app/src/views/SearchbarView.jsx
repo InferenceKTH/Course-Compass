@@ -5,7 +5,7 @@ import project_logo from "../assets/project_icon.png";
 import FavouritesDropdown from "./Components/FavouriteDropdown.jsx";
 
 function SearchbarView(props) {
-  const [searchQuery, setSearchQuery] = useState("");
+//   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState(null);
   const [showFavourites, setShowFavourites] = useState(false);
 
@@ -21,7 +21,7 @@ function SearchbarView(props) {
 
   const handleSearch = (query) => {
     props.resetScrollPosition();
-    setSearchQuery(query);
+    props.setSearchQuery(query);
     props.searchCourses(query);
   };
 
@@ -52,10 +52,9 @@ function SearchbarView(props) {
       <input
         type="text"
         placeholder="What course are you looking for?"
-        value={searchQuery}
-        onChange={(e) =>
-                    handleSearch(e.target.value)}
-                onClick={(e)=>e.stopPropagation()}  //TODO decide if we want to close the fav list after clicking the searchbar
+        value={props.searchQuery}  // Changed from searchQuery to props.searchQuery
+        onChange={(e) => handleSearch(e.target.value)}
+        onClick={(e) => e.stopPropagation()}
         className="w-[400px] h-[44px] pl-14 pr-4 bg-white text-black rounded-full"
       />
 

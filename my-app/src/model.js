@@ -79,6 +79,16 @@ export const model = {
         return this.courses.find(course => course.code === courseID);
     },
 
+    getCourseNames(courseID_array) {
+        let return_obj = {};
+        for (let course of this.courses) {
+            if (courseID_array.includes(course.code)) {
+                return_obj[course.code] = course.name;
+            }
+        }
+        return return_obj;
+    },
+
     populateDatabase(data) {
         if (!data || !this) {
             console.log("no model or data");
@@ -88,17 +98,17 @@ export const model = {
         entries.forEach(entry => {
             const course = {
                 code: entry[1].code,
-                name: entry[1]?.name ?? "null",
-                location: entry[1]?.location ?? "null",
-                department: entry[1]?.department ?? "null",
-                language: entry[1]?.language ?? "null",
-                description: entry[1]?.description ?? "null",
-                academicLevel: entry[1]?.academic_level ?? "null",
-                period: entry[1]?.period ?? "null",
+                name: entry[1]?.name ?? null,
+                location: entry[1]?.location ?? null,
+                department: entry[1]?.department ?? null,
+                language: entry[1]?.language ?? null,
+                description: entry[1]?.description ?? null,
+                academicLevel: entry[1]?.academic_level ?? null,
+                periods: entry[1]?.periods ?? null,
                 credits: entry[1]?.credits ?? 0,
-                prerequisites: entry[1]?.prerequisites ?? "null",
-                prerequisites_text: entry[1]?.prerequisites_text ?? "null",
-                learning_outcomes: entry[1]?.learning_outcomes ?? "null"
+                prerequisites: entry[1]?.prerequisites ?? null,
+                prerequisites_text: entry[1]?.prerequisites_text ?? null,
+                learning_outcomes: entry[1]?.learning_outcomes ?? null
             };
             this.addCourse(course);
         });

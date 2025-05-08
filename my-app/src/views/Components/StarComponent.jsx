@@ -15,12 +15,12 @@ const StarComponent = ({ index, rating, onRatingChange, onHover, readOnly = fals
 
     return (
         <div
-            className={`relative group ${readOnly ? 'cursor-default' : 'cursor-pointer'}`}
+            className={`relative group leading-none ${readOnly ? 'cursor-default' : 'cursor-pointer'}`}
             onMouseEnter={() => !readOnly && onHover && onHover(index + 1)}
             onMouseLeave={() => !readOnly && onHover && onHover(0)}
         >
             <i
-                className={`bx ${starClass} text-5xl text-violet-500 t-500 transition-transform duration-200 ${!readOnly && 'group-hover:scale-110'}`}
+                className={`bx ${starClass} text-xl text-violet-500 transition-transform duration-200 ${!readOnly && 'group-hover:scale-110'}`}
             ></i>
             {!readOnly && (
                 <>
