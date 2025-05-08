@@ -139,13 +139,13 @@ export function ReviewView(props) {
 
           <div className="mt-4">
 					<input
-  type="text"
-  placeholder="Enter professor name"
-  maxLength={100}
-  className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
-  value={formData.professorName}
-  onChange={(e) => setFormData({ ...formData, professorName: e.target.value })}
-/>
+						type="text"
+						placeholder="Enter professor name"
+						maxLength={100}
+						className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
+						value={formData.professorName}
+						onChange={(e) => setFormData({ ...formData, professorName: e.target.value })}
+					/>
           </div>
 
           <div className="relative mt-4">
@@ -172,7 +172,8 @@ export function ReviewView(props) {
         <div className="mt-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Previous Reviews</h3>
           <div className="space-y-6">
-            {props.reviews.map((rev, i) => (
+            {/* {props.reviews.map((rev, i) => ( */}
+							{[...props.reviews].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)).map((rev, i) => (
               <div key={i} className="bg-white shadow-md rounded-lg p-4">
                 <div className="flex justify-between items-center mb-2">
                   <p className="font-semibold text-gray-800">{rev.userName}</p>

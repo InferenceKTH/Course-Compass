@@ -37,7 +37,7 @@ export const ReviewPresenter = observer(({ model, course }) => {
                 text: "",
                 overallRating: 0,
                 difficultyRating: 0,
-                professor: "",
+                professorName: "",
                 grade: "",
                 recommended: false,
                 avgRating: 0,
