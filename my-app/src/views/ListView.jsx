@@ -4,7 +4,6 @@ import 'ldrs/react/Quantum.css';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 function ListView(props) {
-    const coursesToDisplay = props.searchResults;
     const [displayedCourses, setDisplayedCourses] = useState([]);
     const [hasMore, setHasMore] = useState(true);
     const [readMore, setReadMore] = useState({});
@@ -26,46 +25,30 @@ function ListView(props) {
             props.addFavourite(course);
         }
     };
-    
-    const sortCourses = (courses, sortType) => {
-        const sortedCourses = [...courses];
-        const direction = sortDirection === 'asc' ? 1 : -1;
-
-        switch (sortType) {
-            case 'name':
-                return sortedCourses.sort((a, b) => 
-                    direction * a.name.localeCompare(b.name));
-            case 'credits':
-                return sortedCourses.sort((a, b) => 
-                    direction * (parseFloat(a.credits) - parseFloat(b.credits)));
-            case 'relevance':
-            default:
-                return direction === 1 ? courses : [...courses].reverse();
-        }
-    };
 
     useEffect(() => {
         setIsLoading(true);
-        const sortedCourses = sortCourses(coursesToDisplay, sortBy);
-        const initialCourses = sortedCourses.slice(0, 10);
+        const initialCourses = props.sortedCourses.slice(0, 10);
         setDisplayedCourses(initialCourses);
-        setHasMore(sortedCourses.length > 10);
+        setHasMore(props.sortedCourses.length > 10);
         setIsLoading(false);
-    }, [props.courses, props.searchResults, sortBy, sortDirection]);
+    }, [props.sortedCourses]);
 
     const fetchMoreCourses = useCallback(() => {
         if (!hasMore) return;
         
-        // Get the next batch of unsorted courses
-        const nextItems = coursesToDisplay.slice(displayedCourses.length, displayedCourses.length + 50);
+        const nextItems = props.sortedCourses.slice(
+            displayedCourses.length, 
+            displayedCourses.length + 50
+        );
         
-        // Sort the combined courses (existing + new) to maintain consistency
-        const allCourses = [...displayedCourses, ...nextItems];
-        const sortedCourses = sortCourses(allCourses, sortBy);
-        
-        setDisplayedCourses(sortedCourses);
-        setHasMore(displayedCourses.length + nextItems.length < coursesToDisplay.length);
-    }, [displayedCourses.length, coursesToDisplay, hasMore, sortBy, sortDirection]);
+        if (nextItems.length > 0) {
+            setDisplayedCourses(prev => [...prev, ...nextItems]);
+            setHasMore(displayedCourses.length + nextItems.length < props.sortedCourses.length);
+        } else {
+            setHasMore(false);
+        }
+    }, [displayedCourses.length, props.sortedCourses, hasMore]);
 
     const [isRestoringScroll, setIsRestoringScroll] = useState(false);
     useEffect(() => {
@@ -82,7 +65,7 @@ function ListView(props) {
     }
 }, [props.targetScroll]);
 
-    if (!props.courses) {
+    if (!props.sortedCourses) {
         return (
             <div className="relative bg-white text-black p-2 flex flex-col gap-5 h-screen">
                 <div className="text-white p-4 text-center">
@@ -111,10 +94,8 @@ function ListView(props) {
                         
                         <div className="flex items-center gap-2">
                             <select
-                                value={sortBy}
-                                onChange={(e) => {
-                                    setSortBy(e.target.value);
-                                }}
+                                value={props.sortBy}
+                                onChange={(e) => props.setSortBy(e.target.value)}
                                 className="bg-white border-2 border-[#000061] text-[#000061] font-semibold py-2 px-4 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
                             >
                                 <option value="relevance">Sort by Relevance</option>
@@ -123,11 +104,11 @@ function ListView(props) {
                             </select>
 
                             <button
-                                onClick={() => setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
+                                onClick={() => props.setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
                                 className="bg-white border-2 border-[#000061] text-[#000061] font-semibold p-2 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
-                                aria-label={`Sort ${sortDirection === 'asc' ? 'ascending' : 'descending'}`}
+                                aria-label={`Sort ${props.sortDirection === 'asc' ? 'ascending' : 'descending'}`}
                             >
-                                {sortDirection === 'asc' ? (
+                                {props.sortDirection === 'desc' ? (
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                     </svg>
@@ -170,11 +151,13 @@ function ListView(props) {
                                         className="text-gray-600"
                                         dangerouslySetInnerHTML={{
                                             __html: readMore[course.code]
+
                                                 ? course?.description
                                                 : (course?.description?.slice(0, 200)+"..."),
                                         }}
                                     />
                                     {course?.description?.length > 150 && (
+
                                         <span
                                             className="text-blue-500 cursor-pointer"
                                             onClick={(e) => {
@@ -203,9 +186,9 @@ function ListView(props) {
 										   transition-all duration-300 ease-in-out
 										   font-semibold text-sm shadow-sm
 										   ${props.favouriteCourses.some((fav) => fav.code === course.code)
-                                                    ? 'bg-yellow-400 /90 hover:bg-yellow-500/90 border-2 border-yellow-600 hover:border-yellow-700 text-yellow-900'
-                                                    : 'bg-yellow-200/90 hover:bg-yellow-300 border-2 border-yellow-400 hover:border-yellow-500 text-yellow-600 hover:text-yellow-700'
-                                                }`}
+                                                ? 'bg-yellow-400 /90 hover:bg-yellow-500/90 border-2 border-yellow-600 hover:border-yellow-700 text-yellow-900'
+                                                : 'bg-yellow-200/90 hover:bg-yellow-300 border-2 border-yellow-400 hover:border-yellow-500 text-yellow-600 hover:text-yellow-700'
+                                            }`}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleFavouriteClick(course);
@@ -213,15 +196,21 @@ function ListView(props) {
                                         >
                                             {props.favouriteCourses.some((fav) => fav.code === course.code) ? (
                                                 <>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 fill-yellow-900" viewBox="0 0 20 20">
-                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                         className="h-5 w-5 fill-yellow-900" viewBox="0 0 20 20">
+                                                        <path
+                                                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
                                                     </svg>
                                                     Remove from Favourites
                                                 </>
                                             ) : (
                                                 <>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 stroke-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                         className="h-5 w-5 stroke-yellow-500" fill="none"
+                                                         viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round"
+                                                              strokeWidth={2}
+                                                              d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
                                                     </svg>
                                                     Add to Favourites
                                                 </>
@@ -235,9 +224,9 @@ function ListView(props) {
                 </div>
             )}
             {props.popup}
-            {!isLoading && props.targetScroll > 1000 &&(
-            <button
-                onClick={() => props.setTargetScroll(0)}
+            {!isLoading && props.targetScroll > 1000 && (
+                <button
+                    onClick={() => props.setTargetScroll(0)}
                 className="fixed bottom-6 right-6 z-50 bg-[#000061] text-white p-3 rounded-full shadow-lg hover:bg-[#1a1a80] transition-all"
                 title="Scroll to top"
             >

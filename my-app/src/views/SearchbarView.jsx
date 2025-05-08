@@ -71,7 +71,7 @@ function SearchbarView(props) {
         </a>
 
                 <div className="relative favourites-container">
-                    <button 
+                    <button
                         onClick={(e) => {
                             e.stopPropagation();
                             setShowFavourites(!showFavourites);
@@ -87,7 +87,7 @@ function SearchbarView(props) {
                     </button>
                     {showFavourites && (
                         <FavouritesDropdown
-                            {...props}  
+                            {...props}
                             onClick={(e) => e.stopPropagation()}
                         />
                     )}
