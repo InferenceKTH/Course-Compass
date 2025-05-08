@@ -57,6 +57,7 @@ function SidebarView(props) {
                         initialValues={props.initialPeriodFilterOptions}
                         filterEnable = {props.initialPeriodFilterEnable}
                         HandleFilterEnable={props.HandleFilterEnable}
+                        description="Filter language. If you select both, courses which are offered both in English and Swedish are going to be on the top."
                     />
 
                     <DropDownField
@@ -142,7 +143,8 @@ function SidebarView(props) {
                         </label>
                         <div className='flex-none'>
                             <Tooltip
-                                text={props.description}
+                                text={"Removes courses which have not available data in the fields you have applied filters on. \
+                                    Recommended to increase the quality of the search, and to remove discontinued courses."}
                                 position={"left"}
                             />
                         </div>

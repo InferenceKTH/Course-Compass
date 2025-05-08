@@ -3,14 +3,17 @@ import { observer } from "mobx-react-lite";
 import eligibility from "../scripts/eligibility_refined.js";
 import { SearchbarPresenter } from './SearchbarPresenter.jsx';
 
+/* FilterPresenter is responsible for applying the logic necessary to filter out the courses from the overall list */
 const FilterPresenter = observer(({ model }) => {
+    /* global variable for the scope of this presenter, all the smaller functions depend on it instead of passing it back and forth as params */
     var localFilteredCourses = []; //might need to declare out of scope. idk js
 
 
     function applyTranscriptEligibility() {
         if (localFilteredCourses.length == 0)
             return;
-        /* this elias thing  */
+
+        /*  */
         const eligibilitytype = model.filterOptions.eligibility;
 
         let strongcourses = [];
@@ -70,7 +73,7 @@ const FilterPresenter = observer(({ model }) => {
                 }
             default:
                 {
-                    console.log("Error: somehow we got into a state where model.eligibility is no \"strong\"/\"moderat\"/\"weak\".");
+                    console.log("Error: somehow we got into a state where model.eligibility is no \"strong\"/\"moderate\"/\"weak\".");
                     localFilteredCourses = [];
                     break;
                 }
@@ -80,25 +83,35 @@ const FilterPresenter = observer(({ model }) => {
     }
 
     function updatePeriods(){
+        
         if (localFilteredCourses.length == 0)
             return;
-
-        const periodArr = model.filterOptions.period; //has 4 boolean values one for each period
+        
+        const periodArr = [...model.filterOptions.period]; //has 4 boolean values one for each period
         //  [true, false, false, false] means we are only looking for P1 courses.
-
-        let bestcourses = localFilteredCourses.filter(function (course){
-            if(course?.periods.P1 && periodArr[0])
-                return true;
-            if(course?.periods.P2 && periodArr[1])
-                return true;
-            if(course?.periods.P3 && periodArr[2])
-                return true;
-            if(course?.periods.P4 && periodArr[3])
-                return true;
-            return false;
+        let bestcourses = [];
+        let worstcourses = [];
+        bestcourses = localFilteredCourses.filter(function (course){
+            try {
+                if(course?.periods === undefined)
+                    return false;
+                if((course?.periods?.P1 == true) && (periodArr[0] == true))
+                    return true;
+                if((course?.periods?.P2 == true) && (periodArr[1] == true))
+                    return true;
+                if((course?.periods?.P3 == true) && (periodArr[2] == true))
+                    return true;
+                if((course?.periods?.P4 == true) && (periodArr[3] == true))
+                    return true;
+                return false;
+            } catch (error) {
+                console.log("for some reason course?.periods is weird: ", course?.periods, error);
+                return false; 
+            }
+            
         })
 
-        let worstcourses = localFilteredCourses.filter(function (course){
+        worstcourses = localFilteredCourses.filter(function (course){
             return (course?.periods === undefined);
         })
 
@@ -327,12 +340,12 @@ const FilterPresenter = observer(({ model }) => {
     function updateNoNullcourses(){
         let local = [...localFilteredCourses];
 
+
         if(model.filterOptions.applyPeriodFilter){
             local = local.filter(function(course){
                 return (course?.periods && (course?.periods !== "null"));
             })
         }
-
         if(model.filterOptions.applyTranscriptFilter){
             local = local.filter(function(course){
                 return (course?.prerequisites && (course?.prerequisites !== "null"));
@@ -340,7 +353,7 @@ const FilterPresenter = observer(({ model }) => {
         }
         if(model.filterOptions.applyLevelFilter){
             local = local.filter(function(course){
-                return (course?.prerequisites && (course?.prerequisites !== "null"));
+                return (course?.academicLevel && (course?.academicLevel !== "null"));
             })
         }
         if(model.filterOptions.applyLanguageFilter){
@@ -378,7 +391,7 @@ const FilterPresenter = observer(({ model }) => {
                 updateNoNullcourses();
             }
             if(model.filterOptions.applyPeriodFilter){
-                //updatePeriods();
+                updatePeriods();
             }
             if (model.filterOptions.applyLocationFilter) {
                 //after deo finishes locations, until then dont
@@ -406,7 +419,7 @@ const FilterPresenter = observer(({ model }) => {
             model.filteredCourses = [...localFilteredCourses];
             model.filtersChange = false;
             model.setFiltersCalculated();
-            console.log("filtered objects number of elements: ", model.filteredCourses.length);
+            //console.log("filtered objects number of elements: ", model.filteredCourses.length);
         }
     }
 
