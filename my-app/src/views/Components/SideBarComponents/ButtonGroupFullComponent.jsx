@@ -18,17 +18,14 @@ export default function ButtonGroupFullComponent(props) {
     };
 
     const getButtonClasses = (index) => {
-        const baseClasses = `flex-auto py-1 px-4 inline-flex items-center gap-x-2 text-sm 
-      font-medium focus:z-10 border border-gray-200 shadow-2xs hover:bg-[#8785ac]
-      focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none pl-8`;
-        const activeClass = selectedItems[index] ? "bg-violet-500" : "bg-transparent";
-        const roundedClasses =
-            index === 0
-                ? "rounded-l-lg"
-                : index === props.items.length - 1
-                    ? "rounded-r-lg"
-                    : "border-l-0";
-        return `${baseClasses} ${activeClass} ${roundedClasses}`;
+        if (!selectedItems || !Array.isArray(selectedItems)) {
+            return "default-button-class";
+        }
+        if (index < 0 || index >= selectedItems.length) {
+            return "default-button-class";
+        }
+
+        return selectedItems[index] ? "selected-class" : "unselected-class";
     };
 
     return (
