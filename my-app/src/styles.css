@@ -26,15 +26,20 @@
 .bm-burger-button {
     position: absolute;
     width: 36px;
-    height: 30px;
-    left: 20px;
-    top: 20px;
+    height: 36px;
+    left: 36px;
+    top: 36px;
 }
 
-
-.bm-menu-wrap {
-    position: fixed;
-    height: 100%;
-    z-index: 10;
-}
+/* Hide scrollbars everywhere but allow scrolling */
+html, body {
+    overflow: auto;
+    scrollbar-width: none;        /* Firefox */
+    -ms-overflow-style: none;     /* Internet Explorer 10+ */
+  }
+  
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none;                /* Chrome, Safari, Edge */
+  }
 
