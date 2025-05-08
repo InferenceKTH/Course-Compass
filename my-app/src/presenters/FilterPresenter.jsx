@@ -353,7 +353,7 @@ const FilterPresenter = observer(({ model }) => {
         }
         if(model.filterOptions.applyLevelFilter){
             local = local.filter(function(course){
-                return (course?.prerequisites && (course?.prerequisites !== "null"));
+                return (course?.academicLevel && (course?.academicLevel !== "null"));
             })
         }
         if(model.filterOptions.applyLanguageFilter){

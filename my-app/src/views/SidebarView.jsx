@@ -43,12 +43,14 @@ function SidebarView(props) {
                         HandleFilterChange={props.HandleFilterChange}
                         filterName="period"
                         HandleFilterEnable={props.HandleFilterEnable}
+                        description="Filter by the period the course is given. Some courses might be held over multiple periods."
                     />
                     <ToggleField
                         fields={["English", "Swedish"]}
                         HandleFilterChange={props.HandleFilterChange}
                         filterName="language"
                         HandleFilterEnable={props.HandleFilterEnable}
+                        description="Filter language. If you select both, courses which are offered both in English and Swedish are going to be on the top."
                     />
 
                     <DropDownField
@@ -127,7 +129,8 @@ function SidebarView(props) {
                         </label>
                         <div className='flex-none'>
                             <Tooltip
-                                text={props.description}
+                                text={"Removes courses which have not available data in the fields you have applied filters on. \
+                                    Recommended to increase the quality of the search, and to remove discontinued courses."}
                                 position={"left"}
                             />
                         </div>
