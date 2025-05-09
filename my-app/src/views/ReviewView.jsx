@@ -87,6 +87,22 @@ export function ReviewView(props) {
               />
             </div>
 
+            
+
+            {/* Professor Rating */}
+            <div className="text-center">
+              <p className="font-semibold text-gray-700 text-sm mb-1">
+                Professor Rating
+              </p>
+              <RatingComponent
+                className="flex gap-1 text-base justify-center"
+                value={formData.professorRating}
+                onChange={(val) =>
+                  setFormData({ ...formData, professorRating: val })
+                }
+              />
+            </div>
+
             {/* Difficulty Rating */}
             <div className="relative" ref={difficultyRef}>
               <div className="flex items-center justify-center gap-2">
@@ -120,20 +136,6 @@ export function ReviewView(props) {
                   )}
                 </div>
               </div>
-            </div>
-
-            {/* Professor Rating */}
-            <div className="text-center">
-              <p className="font-semibold text-gray-700 text-sm mb-1">
-                Professor Rating
-              </p>
-              <RatingComponent
-                className="flex gap-1 text-base justify-center"
-                value={formData.professorRating}
-                onChange={(val) =>
-                  setFormData({ ...formData, professorRating: val })
-                }
-              />
             </div>
 
             {/* Grade Section */}
@@ -348,10 +350,7 @@ export function ReviewView(props) {
                           <p className="text-sm text-gray-600">N/A</p>
                         )}
                       </div>
-                      <div>
-                        <p className="text-sm font-semibold text-gray-700">Difficulty</p>
-                        <p className="text-sm text-gray-600">{mapDifficultyRating(rev.difficultyRating)}</p>
-                      </div>
+                      
                       <div>
                         <p className="text-sm font-semibold text-gray-700">Professor Rating</p>
                         {rev.professorRating > 0 ? (
@@ -363,6 +362,10 @@ export function ReviewView(props) {
                         ) : (
                           <p className="text-sm text-gray-600">N/A</p>
                         )}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">Difficulty</p>
+                        <p className="text-sm text-gray-600">{mapDifficultyRating(rev.difficultyRating)}</p>
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-gray-700">Professor</p>
