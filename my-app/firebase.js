@@ -6,13 +6,14 @@ import { reaction, toJS } from "mobx";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+	apiKey: "AIzaSyCBckVI9nhAP62u5jZJW3F4SLulUv7znis",
+	authDomain: "findmynextcourse.firebaseapp.com",
+	databaseURL:
+		"https://findmynextcourse-default-rtdb.europe-west1.firebasedatabase.app",
+	projectId: "findmynextcourse",
+	storageBucket: "findmynextcourse.firebasestorage.app",
+	messagingSenderId: "893484115963",
+	appId: "1:893484115963:web:59ac087d280dec919ccd5e",
 };
 
 // Initialize Firebase
@@ -23,7 +24,6 @@ export const db = getDatabase(app);
 export const googleProvider = new GoogleAuthProvider();
 googleProvider.addScope("profile");
 googleProvider.addScope("email");
-let noUpload = false;
 
 export function connectToFirebase(model) {
 	loadCoursesFromCacheOrFirebase(model);

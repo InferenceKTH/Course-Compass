@@ -49,21 +49,18 @@ npm run build
 ### Firebase Configuration
 This project uses Firebase for backend services. To set up your development environment:
 
-1. Copy the environment template:
-```bash
-cp .env.example .env.local
-```
+Update the api keys in firebase.js to your keys.
 
-2. Get the Firebase configuration values from your team lead or the Firebase Console
-3. Update `.env.local` with your Firebase configuration:
-```bash
-VITE_FIREBASE_API_KEY=your_api_key_here
-VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-VITE_FIREBASE_DATABASE_URL=https://your_project.firebasedatabase.app
-VITE_FIREBASE_PROJECT_ID=your_project_id
-VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-VITE_FIREBASE_APP_ID=your_app_id
+```js
+const firebaseConfig = {
+	apiKey: "",
+	authDomain: "",
+	databaseURL:"",
+	projectId: "",
+	storageBucket: "",
+	messagingSenderId: "",
+	appId: "",
+};
 ```
 
 ### Database Population
