@@ -34,7 +34,7 @@ function CoursePagePopup({
 
 	useEffect(() => {
 		const handleKeyDown = (event) => {
-			if (event.key === 'Escape') {
+			if (event.key === 'Escape' || event.key === 'ArrowLeft') {
 				onClose();
 			}
 		};
@@ -179,7 +179,7 @@ function CoursePagePopup({
 							<h3 className="text-2xl font-bold text-[#2e2e4f] mb-0.5">Learning Outcomes:</h3>
 							<div className="mb-3 h-0.5 w-full bg-violet-500"></div>
 							{course.learning_outcomes && course.learning_outcomes.trim() &&
-								course.description.trim() !== "null" ? (
+								course.learning_outcomes.trim() !== "null" ? (
 								<div
 									className="text-lg leading-8 text-[#2e2e4f] font-semibold tracking-wide prose prose-slate max-w-full"
 									dangerouslySetInnerHTML={{ __html: course.learning_outcomes }}
@@ -219,8 +219,8 @@ function CoursePagePopup({
 						<div>
 							<h3 className="text-2xl font-bold text-[#2e2e4f] mb-0.5">Prerequisites:</h3>
 							<div className="mb-3 h-0.5 w-full bg-violet-500"></div>
-							{course.prerequisites_text && course.prerequisites_text.trim() &&
-								course.description.trim() !== "null" ? (
+							{(course.prerequisites_text && course.prerequisites_text.trim() &&
+								course.prerequisites_text.trim() !== "null" )? (
 								<div
 									className="text-lg leading-8 text-[#2e2e4f] font-semibold tracking-wide prose prose-slate max-w-full"
 									dangerouslySetInnerHTML={{ __html: course.prerequisites_text }}

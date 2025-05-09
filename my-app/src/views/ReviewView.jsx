@@ -6,17 +6,22 @@ export function ReviewView(props) {
 	const { formData, setFormData } = props;
 	const [showGradeOptions, setShowGradeOptions] = useState(false);
 	const [showRecommendOptions, setShowRecommendOptions] = useState(false);
+	const [expandedReviews, setExpandedReviews] = useState({});
 	const [showPostAnonymously, setShowPostAnonymously] = useState(false);
-
 	const [anonState, setAnonState] = useState(props.postAnonymously);
-
-	useEffect(() => {
-		setAnonState(props.postAnonymously);
-	}, [props.postAnonymously]);
-
 	const gradeRef = useRef(null);
 	const recommendRef = useRef(null);
 	const anonymousRef = useRef(null);
+
+	// Function to get user initials from their name
+	const getInitials = (name) => {
+		if (!name) return "N/A";
+		const words = name.trim().split(" ");
+		if (words.length === 1) return words[0][0]?.toUpperCase() || "N/A";
+		return `${words[0][0]?.toUpperCase() || ""}${
+			words[words.length - 1][0]?.toUpperCase() || ""
+		}`;
+	};
 
 	useEffect(() => {
 		function handleClickOutside(event) {
@@ -29,6 +34,7 @@ export function ReviewView(props) {
 			) {
 				setShowRecommendOptions(false);
 			}
+
 			if (
 				anonymousRef.current &&
 				!anonymousRef.current.contains(event.target)
@@ -42,6 +48,18 @@ export function ReviewView(props) {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
 	}, []);
+
+	useEffect(() => {
+		setAnonState(props.postAnonymously);
+	}, [props.postAnonymously]);
+
+	// Function to toggle expanded state for a review
+	const toggleExpanded = (index) => {
+		setExpandedReviews((prev) => ({
+			...prev,
+			[index]: !prev[index],
+		}));
+	};
 
 	return (
 		<div className="max-w-3xl mx-auto">
@@ -102,7 +120,7 @@ export function ReviewView(props) {
 										{formData.grade || "Select"}
 									</div>
 									{showGradeOptions && (
-										<div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-white p-2 rounded-md shadow-lg Disturbance shadow-lg z-10 flex space-x-2 animate-fadeIn">
+										<div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-white p-2 rounded-md shadow-lg z-10 flex space-x-2 animate-fadeIn">
 											{grades.map((grade) => (
 												<button
 													key={grade}
@@ -240,16 +258,14 @@ export function ReviewView(props) {
 
 					<div className="relative mt-4">
 						<textarea
-							value={formData.text}
-							onChange={(e) =>
-								setFormData({ ...formData, text: e.target.value })
-							}
-							placeholder="Write your review here..."
-							maxLength={2500}
-							className="w-full border border-gray-300 rounded-md p-2 text-sm h-32 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-colors duration-200"
+						value={formData.text}
+						onChange={(e) => setFormData({ ...formData, text: e.target.value })}
+						placeholder="Write your review here..."
+						maxLength={2500}
+						className="w-full border border-gray-300 rounded-md p-2 text-sm h-32 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-colors duration-200"
 						/>
 						<span className="absolute bottom-2 right-3 text-xs text-gray-500">
-							{formData.text.length}/2500
+						{formData.text.length}/2500
 						</span>
 					</div>
 					{props.errorMessage && (
@@ -266,124 +282,114 @@ export function ReviewView(props) {
 				</div>
 
 				<div className="mt-6">
-					<h3 className="text-lg font-semibold text-gray-800 mb-4">
-						Previous Reviews
-					</h3>
-					<div className="space-y-6">
-						{/* {props.reviews.map((rev, i) => ( */}
-						{[...props.reviews]
-							.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-							.map((rev, i) => (
-								<div key={i} className="bg-white shadow-md rounded-lg p-4">
-									<div className="flex justify-between items-center mb-2">
-										<p className="font-semibold text-gray-800">
-											{rev.userName}
-										</p>
-										<p className="text-sm text-gray-500">
-											Posted on{" "}
-											{new Date(rev.timestamp).toLocaleDateString("en-US", {
-												month: "long",
-												day: "numeric",
-												year: "numeric",
-											})}
-										</p>
-									</div>
-									<div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-2">
-										<div>
-											<p className="text-sm font-semibold text-gray-700">
-												Overall Rating
-											</p>
-											{/* <RatingComponent
-                      className="flex space-x-1 text-sm"
-                      value={rev.overallRating}
-                      readOnly={true}
-                    /> */}
-											{rev.overallRating > 0 ? (
-												<RatingComponent
-													className="flex space-x-1 text-sm"
-													value={rev.overallRating}
-													readOnly={true}
-												/>
-											) : (
-												<p className="text-sm text-gray-600">N/A</p>
-											)}
-										</div>
-										<div>
-											<p className="text-sm font-semibold text-gray-700">
-												Difficulty Rating
-											</p>
-											{rev.difficultyRating > 0 ? (
-												<RatingComponent
-													className="flex space-x-1 text-sm"
-													value={rev.difficultyRating}
-													readOnly={true}
-												/>
-											) : (
-												<p className="text-sm text-gray-600">N/A</p>
-											)}
-										</div>
-										<div>
-											<p className="text-sm font-semibold text-gray-700">
-												Professor Rating
-											</p>
-											{rev.professorRating > 0 ? (
-												<RatingComponent
-													className="flex space-x-1 text-sm"
-													value={rev.professorRating}
-													readOnly={true}
-												/>
-											) : (
-												<p className="text-sm text-gray-600">N/A</p>
-											)}
-										</div>
-										<div>
-											<p className="text-sm font-semibold text-gray-700">
-												Professor
-											</p>
-											{/* <p className="text-sm text-gray-600">{rev.professorName}</p> */}
-											<p className="text-sm text-gray-600">
-												{rev.professorName || "N/A"}
-											</p>
-										</div>
-										<div>
-											<p className="text-sm font-semibold text-gray-700">
-												Grade
-											</p>
-											{/* <p className="text-sm text-gray-600">{rev.grade}</p> */}
-											<p className="text-sm text-gray-600">
-												{rev.grade || "N/A"}
-											</p>
-										</div>
-										<div>
-											<p className="text-sm font-semibold text-gray-700">
-												Recommended
-											</p>
-											{/* <p className="text-sm text-gray-600">{rev.recommend ? "Yes" : "No"}</p> */}
-											<p className="text-sm text-gray-600">
-												{rev.recommend === true
-													? "Yes"
-													: rev.recommend === false
-													? "No"
-													: "N/A"}
-											</p>
-										</div>
-									</div>
-									<div>
-										<p className="text-sm font-semibold text-gray-700">
-											Review
-										</p>
-										<p className="text-sm text-gray-600">{rev.text}</p>
-									</div>
-								</div>
-							))}
-						{props.reviews.length === 0 && (
-							<p className="text-gray-600">No reviews yet.</p>
-						)}
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Previous Reviews</h3>
+          <div className="space-y-6">
+            {[...props.reviews]
+              .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+              .map((rev, i) => {
+                const maxLength = 200;
+                const isLongReview = rev.text.length > maxLength;
+                const isExpanded = expandedReviews[i] || false;
+
+                return (
+                  <div key={i} className="bg-white shadow-md rounded-lg p-4">
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-semibold">
+                          {getInitials(rev.userName)}
+                        </div>
+                        <p className="font-semibold text-gray-800">{rev.userName}</p>
+                      </div>
+                      <p className="text-sm text-gray-500">
+                        Posted on{" "}
+                        {new Date(rev.timestamp).toLocaleDateString("en-US", {
+                          month: "long",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-2">
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">Overall Rating</p>
+                        {rev.overallRating > 0 ? (
+                          <RatingComponent
+                            className="flex space-x-1 text-sm"
+                            value={rev.overallRating}
+                            readOnly={true}
+                          />
+                        ) : (
+                          <p className="text-sm text-gray-600">N/A</p>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">Difficulty Rating</p>
+                        {rev.difficultyRating > 0 ? (
+                          <RatingComponent
+                            className="flex space-x-1 text-sm"
+                            value={rev.difficultyRating}
+                            readOnly={true}
+                          />
+                        ) : (
+                          <p className="text-sm text-gray-600">N/A</p>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">Professor Rating</p>
+                        {rev.professorRating > 0 ? (
+                          <RatingComponent
+                            className="flex space-x-1 text-sm"
+                            value={rev.professorRating}
+                            readOnly={true}
+                          />
+                        ) : (
+                          <p className="text-sm text-gray-600">N/A</p>
+                        )}
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">Professor</p>
+                        <p className="text-sm text-gray-600">{rev.professorName || "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">Grade</p>
+                        <p className="text-sm text-gray-600">{rev.grade || "N/A"}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">Recommended</p>
+                        <p className="text-sm text-gray-600">
+                          {rev.recommend === true ? "Yes" : rev.recommend === false ? "No" : "N/A"}
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-700">Review</p>
+                      <div
+                        className={`text-sm text-gray-600 transition-all duration-300 ${
+                          isExpanded || !isLongReview ? "" : "max-h-10 overflow-hidden"
+                        }`}
+                      >
+                        {isExpanded || !isLongReview
+                          ? rev.text
+                          : `${rev.text.slice(0, maxLength)}...`}
+                      </div>
+                      {isLongReview && (
+                        <button
+                          onClick={() => toggleExpanded(i)}
+                          className="mt-1 text-blue-600 hover:text-blue-800 text-sm font-semibold focus:outline-none"
+                        >
+                          {isExpanded ? "Read Less" : "Read More"}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            {props.reviews.length === 0 && <p className="text-sm text-gray-600">No reviews yet.</p>}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default ReviewView;

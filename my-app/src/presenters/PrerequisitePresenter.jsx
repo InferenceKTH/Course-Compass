@@ -23,7 +23,7 @@ export const PrerequisitePresenter = observer((props) => {
     let codeCounter = 0;
     let hover_popup = document.createElement("div");
     hover_popup.setAttribute("id", "course_popup");
-    hover_popup.style.fontSize = 0.75 + "rem";
+    hover_popup.style.fontSize = 1 + "rem";
     hover_popup.style.pointerEvents = "none";
     hover_popup.style.position = "absolute";
     hover_popup.style.backgroundColor = "white";
@@ -111,9 +111,9 @@ export const PrerequisitePresenter = observer((props) => {
         const popupHeight = pos.height + 20;
         hover_popup.style.minWidth = popupWidth + "px";
         hover_popup.style.minHeight = popupHeight + "px";
-        hover_popup.style.maxWidth = pos.width * 3 + "px";
+        hover_popup.style.maxWidth = pos.width * 2 + "px";
        
-        hover_popup.style.fontSize = window.getComputedStyle(document.querySelector(`[data-id="${node.id}"]`)).fontSize;
+        //hover_popup.style.fontSize = window.getComputedStyle(document.querySelector(`[data-id="${node.id}"]`)).fontSize;
         hover_popup.style.display = "flex";
 
 

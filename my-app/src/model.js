@@ -7,6 +7,8 @@ export const model = {
     //instead of passing searchcouses lambda function down into the searchbarview.
     /* courses returned from SearchbarPresenter (search is applied on top of filteredCourses[]) to be shown in the ListView */
     currentSearch: [],
+
+    sidebarIsOpen: true,
     /* current query text */
     currentSearchText: "",
     scrollPosition: 0,
@@ -16,6 +18,7 @@ export const model = {
     locations: [],
     avgRatings: [],
     favourites: [],
+    searchHistory:[],
     isReady: false,
     /* this is a boolean flag showing that filtering options in the UI have changed, triggering the FilterPresenter to recalculate the filteredCourses[] */
     filtersChange: false, 
@@ -44,6 +47,14 @@ export const model = {
         period: [true, true, true, true],
         applyPeriodFilter: true
     },
+    isPopupOpen: false,
+    selectedCourse: null,
+
+    _coursesListeners: [], //  internal list of listeners
+
+    onCoursesSet(callback) {
+      this._coursesListeners.push(callback);
+    },
 
     setUser(user) {
         if (!this.user)
@@ -64,6 +75,7 @@ export const model = {
 
     setCourses(courses){
         this.courses = courses;
+        this._coursesListeners.forEach(cb => cb(courses));
     },
 
     async addCourse(course) {
@@ -72,6 +84,13 @@ export const model = {
             this.courses = [...this.courses, course];
         } catch (error) {
             console.error("Error adding course:", error);
+        }
+    },
+    addHistoryItem(course_id) {
+        try {
+            this.searchHistory = [...this.searchHistory, course_id];
+        } catch (error) {
+            console.error("Error adding course code to the history:", error);
         }
     },
     setDepartments(departments){
@@ -246,4 +265,73 @@ export const model = {
         const avgRtg = (total / reviews.length).toFixed(1);
         return avgRtg;
     },
+
+    setPopupOpen(isOpen) {
+        if (isOpen) {
+            window.history.pushState({}, '', '/' + this.selectedCourse.code);
+        }
+        console.log("POPOPOOPOPOOOOOOP")
+        if (!isOpen) {
+            let current_url = window.location.href;
+            console.log(current_url);
+            let end_idx = indexOfNth(current_url, '/', 3);
+            if (end_idx >= 0 && end_idx < current_url.length - 1 && current_url.indexOf("#") == -1) {
+                window.history.back();
+            }
+        }
+
+        this.isPopupOpen = isOpen;
+    },
+
+    setSelectedCourse(course) {
+        this.selectedCourse = course;
+    },
+    setSidebarState(state) {
+        this.sidebarIsOpen = state;
+    },
+
+    getSidebarState() {
+        return this.sidebarIsOpen;
+    },
+
+    toggleSidebarIsOpen() {
+        this.sidebarIsOpen = !this.sidebarIsOpen;
+    },
+
+    handleUrlChange() {
+        let current_url = window.location.href;
+        let start_idx = indexOfNth(current_url, '/', 3) + 1;
+        console.log(current_url)
+        
+        if (start_idx > 0 && start_idx < current_url.length && current_url.indexOf("#") == -1) {
+            let course_code = current_url.slice(start_idx);
+            let course = this.getCourse(course_code);
+            console.log(course_code)
+            if (course) {
+                console.log("ACTIVE")
+                this.setSelectedCourse(course);
+                this.setPopupOpen(true);
+            }
+            console.log("Forward");
+        } else {
+            console.log("Back")
+            this.setPopupOpen(false);
+        }
+        //console.log("back");
+    }
+
 };
+
+
+function indexOfNth(string, char, n) {
+    let count = 0;
+    for (let i = 0; i < string.length; i++) {
+        if (string[i] == char) {
+            count++;
+        }
+        if (count == n) {
+            return i;
+        }
+    }
+    return -1;
+}
