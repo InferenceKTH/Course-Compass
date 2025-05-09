@@ -1,6 +1,15 @@
 # Course-Compass 
 ## by team [Inference](https://inferencekth.github.io/Course-Compass/)
-Course-Compass is a webpage for interacting with the kth courses via the kth api. It allows for searching and filtering through all active courses.
+Course-Compass is an interactive web application for exploring KTH courses. It allows users to search, filter, and review courses while providing prerequisite visualization and personalized recommendations. The application uses Firebase for data storage and real-time updates.
+
+
+## Features
+- Course search with advanced filtering
+- Course reviews and ratings
+- Interactive prerequisite visualization
+- Transcript upload for eligibility checking
+- Personal course favorites
+- Dark/Light mode support
 
 ## How to run
 
@@ -19,7 +28,6 @@ docker-compose up
 ```
 builds and starts the container. 
 
-
 ### Building with NPM
 After downloading the repository navigate to the folder my-app and install the dependencies with 
 
@@ -36,9 +44,127 @@ for production use
 npm run build
 ```
 
-## Project structure
-The project uses the **[Model–view–presenter (MVP)](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter)** paradime. The view displays the data. The presenter contains the logic. The model contains the data. 
+## Environment Setup
 
+### Firebase Configuration
+This project uses Firebase for backend services. To set up your development environment:
+
+Update the api keys in firebase.js to your keys.
+
+```js
+const firebaseConfig = {
+	apiKey: "",
+	authDomain: "",
+	databaseURL:"",
+	projectId: "",
+	storageBucket: "",
+	messagingSenderId: "",
+	appId: "",
+};
+```
+
+### Database Population
+To populate the Firebase database with course data:
+
+1. Use the JSON file in `/src/assets/example.json` or prepare a file according to the following outline:
+```json
+{
+  "courseCode": {
+    "code": "string",
+    "name": "string",
+    "location": "string",
+    "department": "string",
+    "language": "string",
+    "description": "string",
+    "academic_level": "string",
+    "periods": "array",
+    "credits": "number",
+    "prerequisites": "object",
+    "prerequisites_text": "string",
+    "learning_outcomes": "string"
+  }
+}
+```
+
+2. Use the `model.populateDatabase(data)` function to upload courses:
+```javascript
+import data from "./assets/example.json";
+model.populateDatabase(data);
+```
+
+### Firebase Security Rules
+<details>
+<summary>Click to view Firebase Rules</summary>
+
+```json
+{
+    "rules": {
+      "courses": {
+        ".read": true,
+        ".write": "auth != null && (auth.uid === 'adminuid' || auth.uid === 'adminuid')"
+      },
+      "metadata": {
+        ".read": true,
+        ".write": "auth != null && (auth.uid === 'adminuid' || auth.uid === 'adminuid')"
+      },
+      "departments": {
+        ".read": true,
+        ".write": "auth != null && (auth.uid === 'adminuid' || auth.uid === 'adminuid')"
+      },
+      "locations": {
+        ".read": true,
+        ".write": "auth != null && (auth.uid === 'adminuid' || auth.uid === 'adminuid')"
+      },
+      "reviews": {
+        ".read": true,
+        "$courseCode": {
+          "$userID": {
+            ".write": "auth != null && (auth.uid === $userID || data.child('uid').val() === auth.uid || !data.exists())",
+            ".validate": "newData.hasChildren(['text', 'timestamp']) && newData.child('text').isString() && newData.child('timestamp').isNumber()"
+          }
+        }
+      },
+      "users": {
+        "$userID": {
+          ".read": "auth != null && auth.uid === $userID",
+          ".write": "auth != null && auth.uid === $userID"
+        }
+      }
+    }
+}
+```
+</details>
+
+To deploy these rules:
+```bash
+firebase deploy --only database
+```
+
+### ⚠️ Security Notes
+- Never commit `.env.local` to version control
+- Keep your Firebase credentials secure
+- Contact the team lead if you need access to the Firebase configuration
+
+## Project structure
+The project uses the **[Model–view–presenter (MVP)](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter)** paradigm. The view displays the data. The presenter contains the logic. The model contains the data. 
+
+### Key Components
+- **/src/model.js**: Core data model and business logic
+- **/src/views/**: UI components and layouts
+- **/src/presenters/**: Interface between Model and View
+- **/src/scripts/**: Utility scripts including transcript parsing
+- **/src/assets/**: Static resources and images
+
+### Development Components
+- **/src/dev/**: Development utilities and component previews
+- **/src/presenters/Tests/**: Test implementations
+- **/scripts/transcript-scraper/**: Transcript parsing tools
+
+
+### Project Tree
+
+<details>
+<summary>Click to view Project Tree</summary>
 
 ```
 .
@@ -153,10 +279,11 @@ The project uses the **[Model–view–presenter (MVP)](https://en.wikipedia.org
 21 directories, 87 files
 ```
 
+</details>
 
 ## Other branches
 
-The **[docs](https://github.com/InferenceKTH/Course-Compass/tree/kth-api)** branch contains the team website.
+The **[docs](https://github.com/InferenceKTH/Course-Compass/tree/docs)** branch contains the team website.
 
 The **[kth-api](https://github.com/InferenceKTH/Course-Compass/tree/kth-api)** contains most of the tools used for gathering and processing the course info.
 
