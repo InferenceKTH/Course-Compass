@@ -3,17 +3,16 @@ import { SidebarPresenter } from '../presenters/SidebarPresenter.jsx';
 import { SearchbarPresenter } from '../presenters/SearchbarPresenter.jsx';
 import { ListViewPresenter } from '../presenters/ListViewPresenter.jsx';
 import { FilterPresenter } from "../presenters/FilterPresenter.jsx";
-import { Routes, Route } from 'react-router-dom';
-import SharedView from '../pages/SharedView.jsx';
 import { slide as Menu } from 'react-burger-menu';
+import { observer } from 'mobx-react-lite';
 
-function MainAppLayout({ model }) {
-	const [sidebarIsOpen, setSidebarIsOpen] = useState(true);
 
+
+function App({ model }) {
+	const [sidebarIsOpen, setSidebarIsOpen] = useState(model.sidebarIsOpen);
 	const toggleSidebar = () => {
 		setSidebarIsOpen(!sidebarIsOpen);
 	}
-
 
 	return (
 			/* The sidebar styling(under the menu)*/
@@ -21,58 +20,49 @@ function MainAppLayout({ model }) {
 			{	/* If sidebar is open, set length to 400px, else it should not be visible  */}
 			<div className={`${sidebarIsOpen ? 'w-[400px] min-w-[300px]' : 'w-[50px]'}`}>
 				<Menu
-					width={window.innerWidth<700?'100%':Math.max(window.innerWidth * 0.26, 300)} // menu width follows the size of the parent div
+					width={window.innerWidth<700?'100%':Math.max(window.innerWidth * 0.26, 300)} 
 					isOpen={sidebarIsOpen}
 					onStateChange={(state) => setSidebarIsOpen(state.isOpen)}
-					className="bg-gradient-to-t from-[#4f3646] to-[#6747c0] z-0 " // The menu styling
+					className="bg-gradient-to-t from-[#4f3646] to-[#6747c0] z-0 " 
 					noOverlay
 					styles={{
 						bmMenuWrap: {
 							zIndex: '10'
-						}
+						},
+						bmBurgerButton: {
+							position: 'absolute',
+							top: '20px',
+							left: '8px',
+							width: '36px',
+							height: '30px',
+							zIndex: '20'
+						},
 					}}
+					customBurgerIcon={ <img src="https://img.icons8.com/ios-filled/50/ffffff/menu-2.png" /> }
 				>
-					{/* The menu contents */}
-					<SidebarPresenter model={model} />
+					<SidebarPresenter model={model}/>
 				</Menu>
 			</div>
 
+
+
 			<div className="flex-1 h-full flex flex-col ">
+
 
 				<div className="bg-gradient-to-t from-[#6246a8] to-[#6747c0] text-white">
 					<div className="flex items-center">
-						{/* The button to open the menu */}
-						<button
-							onClick={toggleSidebar}
-							className="p-2 ml-2 text-white hover:bg-purple-700 rounded"
-						>
-							<img
-								src="https://img.icons8.com/ios-filled/50/ffffff/menu-2.png"
-								alt="menu icon"
-								className="w-6 h-6"
-							/>
-						</button>
-						<SearchbarPresenter model={model} />
+						<SearchbarPresenter model={model}/>
 					</div>
 				</div>
 
 
 				<div className="flex-auto border bg-[#121212] relative">
-					<ListViewPresenter model={model} />
+					<ListViewPresenter model={model}/>
 				</div>
 
-				<FilterPresenter model={model} />
+				<FilterPresenter model={model}/>
 			</div>
 		</div>)
-}
-
-function App({ model }) {
-	return (
-		<Routes>
-			<Route path="/" element={<MainAppLayout model={model} />} />
-			<Route path="/share" element={<SharedView model={model} />} />
-		</Routes>
-	);
 }
 
 export default App;

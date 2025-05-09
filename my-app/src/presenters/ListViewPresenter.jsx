@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import ListView from "../views/ListView.jsx";
 import CoursePagePopup from '../views/Components/CoursePagePopup.jsx';
 import PrerequisitePresenter from './PrerequisitePresenter.jsx';
-import {ReviewPresenter} from "../presenters/ReviewPresenter.jsx"
+import {ReviewPresenter} from "./ReviewPresenter.jsx"
 import {syncScrollPositionToFirebase} from "../../firebase.js"
 
 const ListViewPresenter = observer(({ model }) => {
@@ -74,8 +74,6 @@ const ListViewPresenter = observer(({ model }) => {
         model.setScrollPosition(position);
     }
 
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
-    const [selectedCourse, setSelectedCourse] = useState(null);
     const [sortBy, setSortBy] = useState('relevance');
     const [sortDirection, setSortDirection] = useState('desc');
     const [sortedCourses, setSortedCourses] = useState([]);
@@ -105,40 +103,70 @@ const ListViewPresenter = observer(({ model }) => {
         setSortedCourses(sorted);
     }, [model.currentSearch, sortBy, sortDirection]);
 
+
+    window.addEventListener('popstate', () => {
+        model.handleUrlChange();
+    });
+
+    function indexOfNth(string, char, n) {
+        let count = 0;
+        for (let i = 0; i < string.length; i++) {
+            if (string[i] == char) {
+                count++;
+            }
+            if (count == n) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    model.onCoursesSet((courses) => {
+        let current_url = window.location.href;
+        if (indexOfNth(current_url, '/', 3) != current_url.length - 1) {
+            window.history.replaceState({}, '', '/');
+            /*
+            setTimeout(() => {
+                const newPath = '/' + current_url.slice(indexOfNth(current_url, '/', 3) + 1);
+                window.history.pushState({}, '', newPath);
+              }, 50); 
+            }
+            */
+        model.handleUrlChange();
+        }
+    })
+
     const preP = <PrerequisitePresenter
         model={model}
-        isPopupOpen={isPopupOpen}
-        setIsPopupOpen={setIsPopupOpen}
-        setSelectedCourse={setSelectedCourse}
-        selectedCourse={selectedCourse} />;
-    const reviewPresenter = <ReviewPresenter model={model} course={selectedCourse} />;
+        isPopupOpen={model.isPopupOpen}
+        setIsPopupOpen={(isOpen) => model.setPopupOpen(isOpen)}
+        setSelectedCourse={(course) => model.setSelectedCourse(course)}
+        selectedCourse={model.selectedCourse} />;
+    const reviewPresenter = <ReviewPresenter model={model} course={model.selectedCourse} />;
 
     const popup = <CoursePagePopup
         favouriteCourses={model.favourites}
+        addHistoryItem={model.addHistoryItem}
         addFavourite={addFavourite}
         removeFavourite={removeFavourite}
         handleFavouriteClick={handleFavouriteClick}
-        isOpen={isPopupOpen} onClose={() => setIsPopupOpen(false)}
-        course={selectedCourse}
+        isOpen={model.isPopupOpen}
+        onClose={() => model.setPopupOpen(false)}
+        course={model.selectedCourse}
         prerequisiteTree={preP}
-        reviewPresenter={reviewPresenter}/>
-
-
-
+        reviewPresenter={reviewPresenter}
+        sidebarIsOpen={model.sidebarIsOpen}
+    />;
 
     return <ListView
-        // courses={model.courses}
-        // searchResults={model.currentSearch}
-        // currentSearchLenght={model.currentSearch.length}
-
         favouriteCourses={model.favourites}
         addFavourite={addFavourite}
         removeFavourite={removeFavourite}
         handleFavouriteClick={handleFavouriteClick}
 
-        isPopupOpen={isPopupOpen}
-        setIsPopupOpen={setIsPopupOpen}
-        setSelectedCourse={setSelectedCourse}
+        isPopupOpen={model.isPopupOpen}
+        setPopupOpen={(isOpen) => model.setPopupOpen(isOpen)}
+        setSelectedCourse={(course) => model.setSelectedCourse(course)}
         popup={popup}
 
         targetScroll={model.scrollPosition}
@@ -155,4 +183,4 @@ const ListViewPresenter = observer(({ model }) => {
     />;
 });
 
-export { ListViewPresenter };
+export { ListViewPresenter }; 

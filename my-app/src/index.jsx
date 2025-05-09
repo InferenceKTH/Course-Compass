@@ -10,6 +10,7 @@ import SharedView from "./pages/SharedView.jsx";
 import { JsonToDatabase } from "./presenters/Tests/JsonToDatabase";
 import { AllCoursesPresenter } from "./presenters/Tests/AllCoursesPresenter.jsx";
 
+
 configure({ enforceActions: "never" });
 
 const reactiveModel = makeAutoObservable(model);
@@ -33,7 +34,8 @@ export function makeRouter(reactiveModel) {
     {
       path: "/all",
       element: <AllCoursesPresenter model={reactiveModel} />,
-    },
+    }, 
+    
   ]);
 }
 

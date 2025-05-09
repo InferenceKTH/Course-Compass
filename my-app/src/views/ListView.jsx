@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { DotPulse, Quantum } from 'ldrs/react';
 import 'ldrs/react/Quantum.css';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { useNavigate, Link } from 'react-router-dom';
 
 function ListView(props) {
     const [displayedCourses, setDisplayedCourses] = useState([]);
@@ -10,7 +11,8 @@ function ListView(props) {
     const [isLoading, setIsLoading] = useState(true);
     const [sortBy, setSortBy] = useState('relevance');
     const [sortDirection, setSortDirection] = useState('asc');
-   
+    const navigate = useNavigate();
+
     const toggleReadMore = (courseCode) => {
         setReadMore(prevState => ({
             ...prevState,
@@ -41,9 +43,9 @@ function ListView(props) {
         }
     };
 
-    const handlePeriods2 = (course) => {
-        return "Test";
-    }
+    const handleClickBackArrow = (course_name) => {
+        navigate(course_name);
+    };
 
 
     useEffect(() => {
@@ -159,7 +161,8 @@ function ListView(props) {
                             <div
                                 onClick={() => {
                                     props.setSelectedCourse(course);
-                                    props.setIsPopupOpen(true);
+                                    props.setPopupOpen(true);
+                                    //window.history.pushState({}, '', '/' + course.code);
                                 }}
                                 key={course.code}
                                 className="p-5 mb-3 hover:bg-blue-100 flex items-center border border-b-black border-solid w-full rounded-lg cursor-pointer"

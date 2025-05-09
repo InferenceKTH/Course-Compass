@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import RatingComponent from "./RatingComponent.jsx";
 import { model } from "../../model.js";
 
+
 function CoursePagePopup({
 							 favouriteCourses,
 							 handleFavouriteClick,
@@ -10,7 +11,8 @@ function CoursePagePopup({
 							 course,
 							 prerequisiteTree,
 							 reviewPresenter,
-						 }) {
+							 sidebarIsOpen
+}) {
 
 	const treeRef = useRef(null);
 	const [showOverlay, setShowOverlay] = useState(false);
@@ -34,7 +36,7 @@ function CoursePagePopup({
 
 	useEffect(() => {
 		const handleKeyDown = (event) => {
-			if (event.key === 'Escape') {
+			if (event.key === 'Escape' || event.key === 'ArrowLeft') {
 				onClose();
 			}
 		};
@@ -56,9 +58,9 @@ function CoursePagePopup({
 
 	return (
 		<div
-
-			className="fixed backdrop-blur-sm inset-0 bg-transparent flex justify-end z-50"
-
+			className={`fixed  backdrop-blur-lg inset-0  flex justify-center z-50 ${
+				sidebarIsOpen ? 'pl-[400px]' : 'w-full'
+			}`}
 		>
 			<div
 				className="bg-indigo-300/75 backdrop-blur-lg h-full w-full flex flex-col overflow-auto"
@@ -178,7 +180,7 @@ function CoursePagePopup({
 							<h3 className="text-2xl font-bold text-[#2e2e4f] mb-0.5">Learning Outcomes:</h3>
 							<div className="mb-3 h-0.5 w-full bg-violet-500"></div>
 							{course.learning_outcomes && course.learning_outcomes.trim() &&
-								course.description.trim() !== "null" ? (
+								course.learning_outcomes.trim() !== "null" ? (
 								<div
 									className="text-lg leading-8 text-[#2e2e4f] font-semibold tracking-wide prose prose-slate max-w-full"
 									dangerouslySetInnerHTML={{ __html: course.learning_outcomes }}
@@ -218,8 +220,8 @@ function CoursePagePopup({
 						<div>
 							<h3 className="text-2xl font-bold text-[#2e2e4f] mb-0.5">Prerequisites:</h3>
 							<div className="mb-3 h-0.5 w-full bg-violet-500"></div>
-							{course.prerequisites_text && course.prerequisites_text.trim() &&
-								course.description.trim() !== "null" ? (
+							{(course.prerequisites_text && course.prerequisites_text.trim() &&
+								course.prerequisites_text.trim() !== "null" )? (
 								<div
 									className="text-lg leading-8 text-[#2e2e4f] font-semibold tracking-wide prose prose-slate max-w-full"
 									dangerouslySetInnerHTML={{ __html: course.prerequisites_text }}
