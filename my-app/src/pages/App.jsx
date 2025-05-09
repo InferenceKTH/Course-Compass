@@ -3,11 +3,9 @@ import { SidebarPresenter } from '../presenters/SidebarPresenter.jsx';
 import { SearchbarPresenter } from '../presenters/SearchbarPresenter.jsx';
 import { ListViewPresenter } from '../presenters/ListViewPresenter.jsx';
 import { FilterPresenter } from "../presenters/FilterPresenter.jsx";
-import { Routes, Route } from 'react-router-dom';
-import SharedView from '../pages/SharedView.jsx';
 import { slide as Menu } from 'react-burger-menu';
 
-function MainAppLayout({ model }) {
+function App({ model }) {
 	const [sidebarIsOpen, setSidebarIsOpen] = useState(true);
 
 	const toggleSidebar = () => {
@@ -64,15 +62,6 @@ function MainAppLayout({ model }) {
 				<FilterPresenter model={model} />
 			</div>
 		</div>)
-}
-
-function App({ model }) {
-	return (
-		<Routes>
-			<Route path="/" element={<MainAppLayout model={model} />} />
-			<Route path="/share" element={<SharedView model={model} />} />
-		</Routes>
-	);
 }
 
 export default App;

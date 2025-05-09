@@ -189,7 +189,6 @@ export const PrerequisitePresenter = observer((props) => {
                     nodesDraggable={false}
                     nodesConnectable={false}
                     elementsSelectable={true}
-                    elementsFocusable={false}
                     edgesFocusable={false}
                     
                 >

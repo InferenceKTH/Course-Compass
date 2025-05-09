@@ -21,7 +21,7 @@ export const ReviewPresenter = observer(({ model, course }) => {
         async function fetchReviews() {
             const data = await model.getReviews(course.code);
             setReviews(data);
-            if(data.filter((review)=>{review.userid == model.user.uid}))
+            if(data.filter((review)=>{review.userid == model?.user?.uid}))
                 setErrorMessage("Everyone can only post once. Submitting a new comment will override the old one.");
         }
         fetchReviews();
@@ -30,7 +30,7 @@ export const ReviewPresenter = observer(({ model, course }) => {
     useEffect(() => {
         async function fetchReviews() {
             const data = await model.getReviews(course.code);
-            if(data.filter((review)=>{review.userid == model.user.uid}))
+            if(data.filter((review)=>{review.userid == model?.user?.uid}))
                 setErrorMessage("Everyone can only post once. Submitting a new comment will override the old one.");
         }
         fetchReviews();
