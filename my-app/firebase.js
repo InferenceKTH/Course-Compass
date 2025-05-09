@@ -1,19 +1,18 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { get, getDatabase, ref, set, onValue, onChildRemoved, onChildAdded } from "firebase/database";
+import { get, getDatabase, ref, set, onValue, onChildRemoved, onChildAdded, runTransaction } from "firebase/database";
 import { reaction, toJS } from "mobx";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-	apiKey: "AIzaSyCBckVI9nhAP62u5jZJW3F4SLulUv7znis",
-	authDomain: "findmynextcourse.firebaseapp.com",
-	databaseURL:
-		"https://findmynextcourse-default-rtdb.europe-west1.firebasedatabase.app",
-	projectId: "findmynextcourse",
-	storageBucket: "findmynextcourse.firebasestorage.app",
-	messagingSenderId: "893484115963",
-	appId: "1:893484115963:web:59ac087d280dec919ccd5e",
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.REACT_APP_FIREBASE_DATABASE_URL,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase
@@ -61,42 +60,46 @@ export function connectToFirebase(model) {
 
 // fetches all relevant information to create the model
 async function firebaseToModel(model) {
-	const userRef = ref(db, `users/${model.user.uid}`);
-	onValue(userRef, (snapshot) => {
-		if (!snapshot.exists()) return;
-		const data = snapshot.val();
-		noUpload = true;
-		if (data?.favourites) model.setFavourite(data.favourites);
-		if (data?.currentSearchText)
-			model.setCurrentSearchText(data.currentSearchText);
-		// if (data.scrollPosition)
-		// 	model.setScrollPosition(data.scrollPosition);
-		// if (data.filterOptions) model.setFilterOptions(data.filterOptions);
-		noUpload = false;
-	});
+    const userRef = ref(db, `users/${model.user.uid}`);
+    onValue(userRef, async (snapshot) => {
+        if (!snapshot.exists()) return;
+        const data = snapshot.val();
+
+        // Use a transaction to ensure atomicity
+        await runTransaction(userRef, (currentData) => {
+            if (currentData) {
+                if (data?.favourites) model.setFavourite(data.favourites);
+                if (data?.currentSearchText) model.setCurrentSearchText(data.currentSearchText);
+                // Add other fields as needed
+            }
+            return currentData; // Return the current data to avoid overwriting
+        });
+    });
 }
 
 export function syncModelToFirebase(model) {
-	reaction(
-		() => ({
-			userId: model?.user.uid,
-			favourites: toJS(model.favourites),
-			currentSearchText: toJS(model.currentSearchText),
-			// filterOptions: toJS(model.filterOptions),
-			// Add more per-user attributes here
-		}),
-		// eslint-disable-next-line no-unused-vars
-		({ userId, favourites, currentSearchText }) => {
-			if (noUpload || !userId) return;
-			const userRef = ref(db, "users/${userId}");
-			const dataToSync = {
-				favourites,
-				currentSearchText,
-				// filterOptions,
-			};
-			set(userRef, dataToSync).catch(console.error);
-		}
-	);
+    reaction(
+        () => ({
+            userId: model?.user.uid,
+            favourites: toJS(model.favourites),
+            currentSearchText: toJS(model.currentSearchText),
+        }),
+        async ({ userId, favourites, currentSearchText }) => {
+            if (!userId) return;
+
+            const userRef = ref(db, `users/${userId}`);
+            await runTransaction(userRef, (currentData) => {
+                // Merge the new data with the existing data
+                return {
+                    ...currentData,
+                    favourites,
+                    currentSearchText,
+                };
+            }).catch((error) => {
+                console.error('Error syncing model to Firebase:', error);
+            });
+        }
+    );
 }
 
 export function syncScrollPositionToFirebase(model, containerRef) {
@@ -172,9 +175,12 @@ async function fetchLastUpdatedTimestamp() {
 }
 
 export async function addCourse(course) {
-	if (!course?.code) return;
-	const myRef = ref(db, `courses/${course.code}`);
-	await set(myRef, course);
+    if (!auth.currentUser) 
+        throw new Error('User must be authenticated');
+    if (!course?.code) 
+        throw new Error('Invalid course data');
+ 	const myRef = ref(db, `courses/${course.code}`);
+    await set(myRef, course);
 	updateLastUpdatedTimestamp();
 }
 
@@ -322,9 +328,8 @@ function startAverageRatingListener(model) {
 					initialRatings[courseCode] = avgRating;
 				}
 			});
-
 			model.setAverageRatings(initialRatings);
-		});
+		})
 	}
 
 	// Step 2: listener for each courses avgRating
