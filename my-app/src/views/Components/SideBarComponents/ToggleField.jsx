@@ -31,11 +31,10 @@ export default function ToggleField(props) {
                 />
             </div>
 
-            <div className={`opacity-${filterEnabled ? "100" : "50"}`} onClick={() => {
+            <div className={`${filterEnabled ? "opacity-100" : "opacity-50"}`} onClick={() => {
                     if (!filterEnabled && checkboxRef.current) {
                         checkboxRef.current.click();
                     }
-                    console.log(checkboxRef);
             }}>
                 <div className="flex flex-col sm:flex-row md:flex-row rounded-lg shadow-2xs w-full items-center
              font-medium text-white bg-[#aba8e0] ">
