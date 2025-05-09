@@ -24,7 +24,7 @@ const FilterPresenter = observer(({ model }) => {
         let storedFinishedCourses = [];
 
         if (localStorage.getItem("completedCourses"))
-            storedFinishedCourses = JSON.parse(localStorage.getItem("completedCourses"));
+            storedFinishedCourses = JSON.parse(localStorage.getItem("completedCourses")).map(obj => String(obj.id));
 
 
         localFilteredCourses.forEach(course => {

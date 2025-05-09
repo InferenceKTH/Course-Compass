@@ -191,9 +191,11 @@ const SidebarPresenter = observer(({ model }) => {
     const [fileInputValue, setFileInputValue] = useState(""); // Controls upload field state
 
     const handleFileChange = (event) => {
+        const  truncatedCourses = model.courses.map(({ id, name }) => ({ id, name }));
+        console.log(truncatedCourses);
         const file = event.target.files[0];
         //document.getElementById('PDF-Scraper-Error').style.visibility = "visible";
-        transcriptScraperFunction(file, setErrorMessage, setErrorVisibility);
+        transcriptScraperFunction(file, setErrorMessage, setErrorVisibility, truncatedCourses);
         //document.getElementById('PDF-Scraper-Input').value = '';
         setFileInputValue('');
 

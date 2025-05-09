@@ -4,7 +4,7 @@ import pdfWorker from "pdfjs-dist/build/pdf.worker?url";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
-export default async function transcriptScraperFunction(file, setErrorMessage, setErrorVisibility) {
+export default async function transcriptScraperFunction(file, setErrorMessage, setErrorVisibility, courseList) {
     //const pdfjsLib = window['pdfjsLib'];
     //pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
     if (!file) {
@@ -37,7 +37,7 @@ export default async function transcriptScraperFunction(file, setErrorMessage, s
         }
 
 
-        evaluatePDFtextObjectArray(textObjects, setErrorMessage, setErrorVisibility);
+        evaluatePDFtextObjectArray(textObjects, setErrorMessage, setErrorVisibility, courseList);
 
     }
     catch (e) {
@@ -52,7 +52,7 @@ function throwTranscriptScraperError(txt, setErrorMessage, setErrorVisibility) {
     setErrorVisibility("visible");
 }
 
-function writeLocalStorage_completedCourses(codesArr) {
+function writeLocalStorage_completedCourses(coursePairs) {
     //Getting the local storage contents
     let local = [];
     if (localStorage.getItem("completedCourses"))
@@ -61,22 +61,25 @@ function writeLocalStorage_completedCourses(codesArr) {
         localStorage.setItem("completedCourses", '[]');
     }
 
-    local.sort();
+    //sorting objects by id
+    //local.sort((a, b) => a.id.localeCompare(b.id));
 
-    /*
+    console.log(coursePairs);
+    const map = new Map(coursePairs.map(course => [course.id, course]));
+    for(const course of local){
+        map.set(course.id, course);
+    }
 
-    const months = [{id: "AA12", name: "Apple course"},
+    /*const coursePairs = [{id: "AA12", name: "Apple course"},
             {id: "BB33", name: "Banana course"},
             {id: "BB23", name: "anana course"},
             {id: "1B33", name: "Banana course"}
             ];
     
-    months.sort((a, b) => a.id.localeCompare(b.id));
+    coursePairs.sort((a, b) => a.id.localeCompare(b.id));*/
 
-    */
-
-    let newcodes = local.concat(codesArr);
-    newcodes = [... new Set(newcodes)];
+    let newcodes = Array.from(map.values());
+    newcodes.sort((a, b) => a.id.localeCompare(b.id));
 
 
     localStorage.setItem("completedCourses", JSON.stringify(newcodes));
@@ -84,8 +87,17 @@ function writeLocalStorage_completedCourses(codesArr) {
     window.dispatchEvent(new Event("completedCourses changed"));
 }
 
-function evaluatePDFtextObjectArray(textObjects, setErrorMessage, setErrorVisibility) {
-    let scrapedCodes = [];
+function evaluatePDFtextObjectArray(textObjects, setErrorMessage, setErrorVisibility, courseList) {
+    let scrapedCoursesbyID = [];
+
+    // theres a new structure to scraped courses by ID
+    /*
+        [{
+            id: "IK1203",
+            name: "Nätverk och kommunikation",      //can be swedish or english depending on transcript provided
+        },    
+        ..., {...}}]
+    */
 
     //initializing couple flags.
     let flagKTH = false;
@@ -97,6 +109,7 @@ function evaluatePDFtextObjectArray(textObjects, setErrorMessage, setErrorVisibi
 
     //we are going to go through each text object which is inside the pdf file.
     for (let i = 0; i < textObjects.length; i++) {
+        console.log(textObjects[i].str);
         //we are going to look for our university, KTH
         //current ladok generated National Official transcripts start at xposition 56.692
         if ((!flagKTH) && (textObjects[i].transform[4] === 56.692))
@@ -143,14 +156,18 @@ function evaluatePDFtextObjectArray(textObjects, setErrorMessage, setErrorVisibi
                 if (flagTable) {
                     //console.log(textObjects[i].str, textObjects[i].transform[4]);
                     //extractedText+= textObjects[i].str + "\n";
-                    scrapedCodes.push(textObjects[i].str);
+                    let scrapedObj = {
+                        id: textObjects[i].str,
+                        name: textObjects[i+2].str
+                    };
+                    scrapedCoursesbyID.push(scrapedObj);
                 }
 
         }
 
     }
 
-    if (flagErrorRecords && (scrapedCodes.length == 0)) {
+    if (flagErrorRecords && (scrapedCoursesbyID.length == 0)) {
         throwTranscriptScraperError("Provided Official Transcript of Records instead of National Official transcript of records.", setErrorMessage, setErrorVisibility);
         return;
     }
@@ -160,10 +177,39 @@ function evaluatePDFtextObjectArray(textObjects, setErrorMessage, setErrorVisibi
         return;
     }
 
-    if (scrapedCodes.length == 0) {
+    if (scrapedCoursesbyID.length == 0) {
         throwTranscriptScraperError("Couldn't find any tables to transcribe.", setErrorMessage, setErrorVisibility);
         return;
     }
-    writeLocalStorage_completedCourses(scrapedCodes);
+
+    let coursePairs = [];
+    scrapedCoursesbyID.forEach(scraped_course => {
+        let obj = { ...courseList.find(course => course.id == scraped_course.id), is_in_DB: true};
+        if(obj?.name !== undefined){
+            coursePairs.push(obj);
+        }   
+        else
+            coursePairs.push({...scraped_course, is_in_DB: false});
+    });
+
+    try {
+        writeLocalStorage_completedCourses(coursePairs);
+    } catch (e) {
+        console.log("=======================");
+        console.log(e);
+    }
+    
 
 }
+
+/*
+
+    [
+        {
+            id: ,
+            name: ,         //str
+            is_in_DB:       // 0/1
+        }
+    ]
+
+*/
