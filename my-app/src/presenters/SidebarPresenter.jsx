@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react';
 import { observer } from "mobx-react-lite";
 import SidebarView from "../views/SidebarView.jsx";
-
+import transcriptScraperFunction from "./UploadTranscriptPresenter.jsx";
+import { useState } from "react";
 
 const SidebarPresenter = observer(({ model }) => {
 
@@ -184,6 +185,25 @@ const SidebarPresenter = observer(({ model }) => {
         model.setApplyRemoveNullCourses();
     }
 
+    //==========================================================
+
+    const [errorMessage, setErrorMessage] = useState(""); // Stores error message
+    const [errorVisibility, setErrorVisibility] = useState("hidden"); // Controls visibility
+    const [fileInputValue, setFileInputValue] = useState(""); // Controls upload field state
+
+    const handleFileChange = (event) => {
+        const  truncatedCourses = model.courses.map(({ id, name }) => ({ id, name }));
+        console.log(truncatedCourses);
+        const file = event.target.files[0];
+        //document.getElementById('PDF-Scraper-Error').style.visibility = "visible";
+        transcriptScraperFunction(file, setErrorMessage, setErrorVisibility, truncatedCourses);
+        //document.getElementById('PDF-Scraper-Input').value = '';
+        setFileInputValue('');
+
+        reApplyFilter();
+    };
+    //==========================================================
+
     return (
         <SidebarView HandleFilterChange={HandleFilterChange}
             HandleFilterEnable={HandleFilterEnable}
@@ -214,6 +234,15 @@ const SidebarPresenter = observer(({ model }) => {
             initialCreditsFilterEnable={model.filterOptions.applyCreditsFilter}
 
             initialApplyNullFilterEnable={model.filterOptions.applyRemoveNullCourses }
+
+            //==========================================================
+
+            PdfErrorMessage={errorMessage}
+            PdfErrorVisibility={errorVisibility}
+            PdfHandleFileChange={handleFileChange}
+            PdfFileInputValue={fileInputValue}
+
+            //==========================================================
         />
     );
 });
