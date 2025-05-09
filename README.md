@@ -164,7 +164,7 @@ The project uses the **[Model–view–presenter (MVP)](https://en.wikipedia.org
 - **/scripts/transcript-scraper/**: Transcript parsing tools
 
 
-## Project Tree
+### Project Tree
 
 <details>
 <summary>Click to view Project Tree</summary>
