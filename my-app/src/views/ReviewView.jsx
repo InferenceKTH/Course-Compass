@@ -3,7 +3,7 @@ import RatingComponent from "../views/Components/RatingComponent.jsx";
 
 export function ReviewView(props) {
   const grades = ["A", "B", "C", "D", "E", "F"];
-  const difficulties = ["Easy", "Medium", "Hard"];
+  const difficulties = ["Very Easy", "Easy", "Medium", "Hard", "Very Hard"];
   const { formData, setFormData } = props;
   const [showGradeOptions, setShowGradeOptions] = useState(false);
   const [showRecommendOptions, setShowRecommendOptions] = useState(false);
@@ -24,14 +24,6 @@ export function ReviewView(props) {
     return `${words[0][0]?.toUpperCase() || ""}${
       words[words.length - 1][0]?.toUpperCase() || ""
     }`;
-  };
-
-  // Function to map numeric difficultyRating to Easy/Medium/Hard
-  const mapDifficultyRating = (rating) => {
-    if (!rating || rating === 0) return "N/A";
-    if (rating <= 2) return "Easy";
-    if (rating === 3) return "Medium";
-    return "Hard";
   };
 
   useEffect(() => {
@@ -86,8 +78,6 @@ export function ReviewView(props) {
                 }
               />
             </div>
-
-            
 
             {/* Professor Rating */}
             <div className="text-center">
@@ -338,46 +328,45 @@ export function ReviewView(props) {
                       </p>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-2">
-                      <div>
+                      <div className="flex flex-col items-start">
                         <p className="text-sm font-semibold text-gray-700">Overall Rating</p>
                         {rev.overallRating > 0 ? (
                           <RatingComponent
-                            className="flex space-x-1 text-sm"
+                            className="flex space-x-1 text-sm mt-1"
                             value={rev.overallRating}
                             readOnly={true}
                           />
                         ) : (
-                          <p className="text-sm text-gray-600">N/A</p>
+                          <p className="text-sm text-gray-600 mt-1">N/A</p>
                         )}
                       </div>
-                      
-                      <div>
+                      <div className="flex flex-col items-start">
                         <p className="text-sm font-semibold text-gray-700">Professor Rating</p>
                         {rev.professorRating > 0 ? (
                           <RatingComponent
-                            className="flex space-x-1 text-sm"
+                            className="flex space-x-1 text-sm mt-1"
                             value={rev.professorRating}
                             readOnly={true}
                           />
                         ) : (
-                          <p className="text-sm text-gray-600">N/A</p>
+                          <p className="text-sm text-gray-600 mt-1">N/A</p>
                         )}
                       </div>
-                      <div>
+                      <div className="flex flex-col items-start">
                         <p className="text-sm font-semibold text-gray-700">Difficulty</p>
-                        <p className="text-sm text-gray-600">{mapDifficultyRating(rev.difficultyRating)}</p>
+                        <p className="text-sm text-gray-600 mt-1">{rev.difficultyRating || "N/A"}</p>
                       </div>
-                      <div>
+                      <div className="flex flex-col items-start">
                         <p className="text-sm font-semibold text-gray-700">Professor</p>
-                        <p className="text-sm text-gray-600">{rev.professorName || "N/A"}</p>
+                        <p className="text-sm text-gray-600 mt-1">{rev.professorName || "N/A"}</p>
                       </div>
-                      <div>
+                      <div className="flex flex-col items-start">
                         <p className="text-sm font-semibold text-gray-700">Grade</p>
-                        <p className="text-sm text-gray-600">{rev.grade || "N/A"}</p>
+                        <p className="text-sm text-gray-600 mt-1">{rev.grade || "N/A"}</p>
                       </div>
-                      <div>
+                      <div className="flex flex-col items-start">
                         <p className="text-sm font-semibold text-gray-700">Recommended</p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-gray-600 mt-1">
                           {rev.recommend === true ? "Yes" : rev.recommend === false ? "No" : "N/A"}
                         </p>
                       </div>
