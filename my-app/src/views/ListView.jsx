@@ -32,10 +32,6 @@ function ListView(props) {
         let ret_string = "";
         if (periods) {
             let keys = Object.keys(periods);
-<<<<<<< HEAD
-            // console.log(periods["P1"])
-=======
->>>>>>> ea9693aeba997f0e8f5baec1d13a0654cf5fe642
             for (let key of keys) {
                 if (periods[key]) {
                     ret_string += key + " | ";

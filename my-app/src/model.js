@@ -252,9 +252,14 @@ export const model = {
     },
 
     setPopupOpen(isOpen) {
-        if (isOpen && this.selectedCourse) {
-            this.addHistoryItem(this.selectedCourse.code);
-        }
+        console.log("OPENING/CLOSING A POPUP");
+        // if (isOpen && this.selectedCourse) {
+        //     // this.addHistoryItem(this.selectedCourse.code);
+        //     console.log("user path history:")
+        //     for (let index = 0; index < this.searchHistory.length; index++) {
+        //         console.log(this.searchHistory[index]);
+        //     }
+        // }
         this.isPopupOpen = isOpen;
     },
 
