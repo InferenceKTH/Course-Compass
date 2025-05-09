@@ -4,6 +4,17 @@ import 'ldrs/react/Quantum.css';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useNavigate, Link } from 'react-router-dom';
 
+// Add this helper function at the top of your component
+const highlightText = (text, query) => {
+    if (!query || !text) return text;
+    
+    // Escape special regex characters in the query
+    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // const escapedQuery = query; //for testing purposes
+    const regex = new RegExp(`(${escapedQuery})`, 'gi');
+    return text.replace(regex, '<u>$1</u>');
+};
+
 function ListView(props) {
     const [displayedCourses, setDisplayedCourses] = useState([]);
     const [hasMore, setHasMore] = useState(true);
@@ -169,17 +180,27 @@ function ListView(props) {
                             >
                                 <div>
                                     <div className="codeNameContainer" style={{ display: 'flex' }}>
-                                    <p className="font-bold text-[#000061]">{course.code}</p>
-                                    <p className="font-bold text-[#000061]" style={{color: "GrayText", opacity: 0.5, marginLeft: "0.5em"}}>{handlePeriods(course?.periods)}</p>
+                                        <p className="font-bold text-[#000061]" 
+                                           dangerouslySetInnerHTML={{ 
+                                               __html: highlightText(course.code, props.query) 
+                                           }} 
+                                        />
+                                        <p className="font-bold text-[#000061]" 
+                                           style={{color: "GrayText", opacity: 0.5, marginLeft: "0.5em"}}>
+                                           {handlePeriods(course?.periods)}
+                                        </p>
                                     </div>
-                                    <p className="font-bold">{course.name} </p>
+                                    <p className="font-bold" 
+                                       dangerouslySetInnerHTML={{ 
+                                           __html: highlightText(course.name, props.query) 
+                                       }} 
+                                    />
                                     <p
                                         className="text-gray-600"
                                         dangerouslySetInnerHTML={{
                                             __html: readMore[course.code]
-
-                                                ? course?.description
-                                                : (course?.description?.slice(0, 200)+"..."),
+                                                ? highlightText(course?.description, props.query)
+                                                : highlightText(course?.description?.slice(0, 200) + "...", props.query)
                                         }}
                                     />
                                     {course?.description?.length > 150 && (
