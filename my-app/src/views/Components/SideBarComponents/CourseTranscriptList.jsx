@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
+import Tooltip from "./ToolTip";
 
 export default function CourseTranscriptList(props) {
     let local = [];
@@ -33,6 +34,33 @@ export default function CourseTranscriptList(props) {
     };
 
 
+    //=====================================
+    const tooltipRef = useRef(null);
+
+    const tooltipClasses = [
+        "relative",
+        "top-1/2",
+        "-translate-y-1/7", // fixed typo from "-translate-y-1/7"
+        "bg-gray-800",
+        "text-white",
+        "text-xs",
+        "rounded-xl",
+        "px-3",
+        "py-2",
+        "opacity-0",
+        "peer-hover:opacity-100",
+        "transition-opacity",
+        "duration-200",
+        "z-50",
+        "pointer-events-none",
+        "break-words",
+        "shadow-lg",
+        "w-[250px]",
+        "right-full mr-2" //: "left-full ml-2",
+      ].join(" ");
+
+    //=====================================
+
 
     return (
         <div className="max-w-80">
@@ -62,7 +90,10 @@ export default function CourseTranscriptList(props) {
                                 key={index}
                                 className="flex items-center bg-[#aba8e0] px-3 py-1 rounded-md shadow-md text-sm min-w-18"
                             >
-                                <span className="flex-auto mr-2">{item?.id}</span>
+                                <span className="flex-auto mr-2 peer">{item?.id}</span>
+                                <div className={tooltipClasses}>
+                                    {item?.name}
+                                </div>
                                 <button
                                     onClick={() => removeItem(index)}
                                     className="text-violet-600 hover:text-red-700 font-bold text-sm hover:bg-red-300 rounded-md"
