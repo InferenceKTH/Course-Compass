@@ -3,7 +3,7 @@ import { observer } from "mobx-react-lite";
 import { useState } from 'react';
 import CoursePagePopup from '../views/Components/CoursePagePopup.jsx';
 import PrerequisitePresenter from './PrerequisitePresenter.jsx';
-import { ReviewPresenter } from "../presenters/ReviewPresenter.jsx";
+import { ReviewPresenter } from "./ReviewPresenter.jsx";
 import SearchbarView from "../views/SearchbarView.jsx";
 import Fuse from 'fuse.js'
 import debounce from 'lodash.debounce';
@@ -98,7 +98,6 @@ const SearchbarPresenter = observer(({ model }) => {
             isPopupOpen={model.isPopupOpen}
             setIsPopupOpen={(isOpen) => model.setPopupOpen(isOpen)}
             setSelectedCourse={(course) => model.setSelectedCourse(course)}
-            // popup={popup}
             setSearchQuery={setSearchQuery}
             searchQuery={searchQuery}
             handleFavouriteClick={handleFavouriteClick}
