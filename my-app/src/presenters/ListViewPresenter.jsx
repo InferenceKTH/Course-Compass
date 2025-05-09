@@ -166,7 +166,7 @@ const ListViewPresenter = observer(({ model }) => {
         setPopupOpen={(isOpen) => model.setPopupOpen(isOpen)}
         setSelectedCourse={(course) => model.setSelectedCourse(course)}
         popup={popup}
-
+        query={model.searchQueryModel}
         targetScroll={model.scrollPosition}
         setTargetScroll={setTargetScroll}
         scrollContainerRef={scrollContainerRef}

@@ -41,6 +41,7 @@ const SearchbarPresenter = observer(({ model }) => {
             });
 
             model.setCurrentSearch(sortedResults.map(r => r.item));
+            model.searchQueryModel = query;
         }
     }, 500), []);
 
