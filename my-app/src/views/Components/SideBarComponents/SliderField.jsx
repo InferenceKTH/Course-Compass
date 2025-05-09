@@ -74,7 +74,6 @@ export default function UploadField(props) {
                     if (!filterEnabled && checkboxRef.current) {
                         checkboxRef.current.click();
                     }
-                    console.log(checkboxRef);
                  }}>
                 <div className="bg-[#aba8e0] text-white p-4 rounded-lg shadow-lg border border-gray-300">
                     <div className="mb-2 text-sm font-bold">

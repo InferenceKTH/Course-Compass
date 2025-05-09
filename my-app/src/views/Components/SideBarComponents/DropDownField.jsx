@@ -61,7 +61,6 @@ export default function DropDownField(props) {
                     if (!filterEnabled && checkboxRef.current) {
                         checkboxRef.current.click();
                     }
-                    console.log(checkboxRef);
                  }}>
 
         <div className="relative justify-center text-left w-full"ref={dropdownRef}>

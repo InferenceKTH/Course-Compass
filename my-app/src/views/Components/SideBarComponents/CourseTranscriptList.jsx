@@ -48,38 +48,42 @@ export default function CourseTranscriptList(props) {
                     </button>
                 </div>
             )}
+            <div className="relative">
 
-            {/* Container for multiple items per row */}
-            <div className="grid grid-cols-3 w-full max-[1200px]:grid-cols-2 max-[700px]:grid-cols-1 gap-1 sm:gap-2 overflow-y-auto max-h-[180px] "style={{
-                scrollbarWidth: "thin",
-                scrollbarColor: "#888 #f1f1f1",
-            }}>
-                {items.map((item, index) => (
-                    <div
-                        key={index}
-                        className="flex items-center bg-[#aba8e0] px-3 py-1 rounded-md shadow-md text-sm min-w-18"
-                    >
-                        <span className="flex-auto mr-2">{item}</span>
-                        <button
-                            onClick={() => removeItem(index)}
-                            className="text-violet-600 hover:text-red-700 font-bold text-sm hover:bg-red-300 rounded-md"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="w-4 h-4"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="4"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
+                <div
+                    className="absolute inset-0 mt-30 pointer-events-none bg-gradient-to-b from-transparent to-[#553d65]"
+                ></div>
+                    <div className="grid grid-cols-3 w-full max-[1200px]:grid-cols-2 max-[700px]:grid-cols-1 gap-1 sm:gap-2 overflow-y-auto max-h-[180px] z-0" style={{
+                        scrollbarWidth: "thin",
+                        scrollbarColor: "#888 #f1f1f1",
+                    }}>
+                        {items.map((item, index) => (
+                            <div
+                                key={index}
+                                className="flex items-center bg-[#aba8e0] px-3 py-1 rounded-md shadow-md text-sm min-w-18"
                             >
-                                <line x1="18" y1="6" x2="6" y2="18" />
-                                <line x1="6" y1="6" x2="18" y2="18" />
-                            </svg>
-                        </button>
+                                <span className="flex-auto mr-2">{item}</span>
+                                <button
+                                    onClick={() => removeItem(index)}
+                                    className="text-violet-600 hover:text-red-700 font-bold text-sm hover:bg-red-300 rounded-md"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="w-4 h-4"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                    >
+                                        <line x1="18" y1="6" x2="6" y2="18" />
+                                        <line x1="6" y1="6" x2="18" y2="18" />
+                                    </svg>
+                                </button>
+                            </div>
+                        ))}
                     </div>
-                ))}
             </div>
         </div>
     );

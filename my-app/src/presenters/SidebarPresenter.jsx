@@ -7,7 +7,7 @@ const SidebarPresenter = observer(({ model }) => {
 
     useEffect(() => {
         model.setFiltersChange();
-    })
+    });
 
     let currentLanguageSet = model.filterOptions.language;
     let currentLevelSet = model.filterOptions.level;
@@ -124,6 +124,7 @@ const SidebarPresenter = observer(({ model }) => {
                 break;
             case "department":
                 handleDepartmentFilterChange(param[2]);
+                console.log(param[2]);
                 break;
             case "period":
                 handlePeriodFilterChange(param[2]);
@@ -203,7 +204,7 @@ const SidebarPresenter = observer(({ model }) => {
 
             initialDepartmentFilterOptions={currentDepartmentSet}
             initialDepartmentFilterEnable={model.filterOptions.applyDepartmentFilter}
-            DepartmentFilterField = {model.departments}
+            DepartmentFilterField = {model.formatDepartments()}
 
             initialLocationFilterOptions={currentLocationSet}
             initialLocationFilterEnable={model.filterOptions.applyLocationFilter}

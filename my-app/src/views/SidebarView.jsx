@@ -5,7 +5,7 @@ import DropDownField from "./Components/SideBarComponents/DropDownField.jsx";
 import { UploadTranscriptPresenter } from '../presenters/UploadTranscriptPresenter.jsx';
 import CollapsibleCheckboxes from './Components/SideBarComponents/CollapsibleCheckboxes.jsx';
 import Tooltip from './Components/SideBarComponents/ToolTip.jsx';
-import ButtonGroupFullComponent from './Components/SideBarComponents/ButtonGroupFullComponent.jsx';
+import MultipleChoiceButtons from './Components/SideBarComponents/MultipleChoiceButtons.jsx';
 
 
 
@@ -51,7 +51,7 @@ function SidebarView(props) {
                     />
 
 
-                    <ButtonGroupFullComponent
+                    <MultipleChoiceButtons
                         items={["P1", "P2", "P3", "P4"]}
                         HandleFilterChange={props.HandleFilterChange}
                         filterName="period"
@@ -83,49 +83,7 @@ function SidebarView(props) {
                         filterEnable = {props.initialDepartmentFilterEnable}
                         HandleFilterEnable={props.HandleFilterEnable}
                         fields={
-                            [
-                                {
-                                    id: 1,
-                                    label: "EECS",
-                                    subItems: [
-                                        "Computational Science and  Technology",
-                                        "Theoretical Computer Science",
-                                        "Electric Power and Energy Systems",
-                                        "Network and Systems Engineering",
-                                    ],
-                                },
-                                {
-                                    id: 2,
-                                    label: "ITM",
-                                    subItems: [
-                                        "Learning in Engineering Sciences",
-                                        "Industrial Economics and Management",
-                                        "Energy Systems",
-                                        "Integrated Product Development and Design",
-                                        "SKD GRU",
-                                    ],
-                                },
-                                {
-                                    id: 3,
-                                    label: "SCI",
-                                    subItems: [
-                                        "Mathematics",
-                                        "Applied Physics",
-                                        "Mechanics",
-                                        "Aeronautical and Vehicle Engineering",
-                                    ],
-                                },
-                                {
-                                    id: 4,
-                                    label: "ABE",
-                                    subItems: [
-                                        "Sustainability and Environmental Engineering",
-                                        "Concrete Structures",
-                                        "Structural Design & Bridges",
-                                        "History of Science, Technology and Environment",
-                                    ],
-                                },
-                            ]
+                            props.DepartmentFilterField
                         }
                     />
                     <div className='mr-3 flex justify-between'>
