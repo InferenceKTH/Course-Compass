@@ -129,7 +129,7 @@ function ListView(props) {
                             <select
                                 value={props.sortBy}
                                 onChange={(e) => props.setSortBy(e.target.value)}
-                                className="bg-white border-2 border-[#000061] text-[#000061] font-semibold py-2 px-4 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
+                                className="bg-white  shadow-md text-[#000061] font-semibold py-2 px-4 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
                             >
                                 <option value="relevance">Sort by Relevance</option>
                                 <option value="name">Sort by Name</option>
@@ -141,7 +141,7 @@ function ListView(props) {
 
                             <button
                                 onClick={() => props.setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
-                                className="bg-white border-2 border-[#000061] text-[#000061] font-semibold p-2 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
+                                className="bg-white  shadow-md text-[#000061] font-semibold p-2 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
                                 aria-label={`Sort ${props.sortDirection === 'asc' ? 'ascending' : 'descending'}`}
                             >
                                 {props.sortDirection === 'desc' ? (
