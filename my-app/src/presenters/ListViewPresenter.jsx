@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import ListView from "../views/ListView.jsx";
 import CoursePagePopup from '../views/Components/CoursePagePopup.jsx';
 import PrerequisitePresenter from './PrerequisitePresenter.jsx';
-import {ReviewPresenter} from "../presenters/ReviewPresenter.jsx"
+import {ReviewPresenter} from "./ReviewPresenter.jsx"
 import {syncScrollPositionToFirebase} from "../../firebase.js"
 
 const ListViewPresenter = observer(({ model }) => {
@@ -150,11 +150,13 @@ const ListViewPresenter = observer(({ model }) => {
         addFavourite={addFavourite}
         removeFavourite={removeFavourite}
         handleFavouriteClick={handleFavouriteClick}
-        isOpen={model.isPopupOpen} 
+        isOpen={model.isPopupOpen}
         onClose={() => model.setPopupOpen(false)}
         course={model.selectedCourse}
         prerequisiteTree={preP}
-        reviewPresenter={reviewPresenter}/>
+        reviewPresenter={reviewPresenter}
+        sidebarIsOpen={model.sidebarIsOpen}
+    />;
 
     return <ListView
         favouriteCourses={model.favourites}

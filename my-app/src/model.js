@@ -286,13 +286,7 @@ export const model = {
     setSelectedCourse(course) {
         this.selectedCourse = course;
     },
-    setSidebarState(state) {
-        this.sidebarIsOpen = state;
-    },
 
-    getSidebarState() {
-        return this.sidebarIsOpen;
-    },
 
     toggleSidebarIsOpen() {
         this.sidebarIsOpen = !this.sidebarIsOpen;

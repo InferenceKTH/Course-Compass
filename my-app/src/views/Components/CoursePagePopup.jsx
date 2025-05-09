@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import RatingComponent from "./RatingComponent.jsx";
 import { model } from "../../model.js";
 
+
 function CoursePagePopup({
 							 favouriteCourses,
 							 handleFavouriteClick,
@@ -10,7 +11,8 @@ function CoursePagePopup({
 							 course,
 							 prerequisiteTree,
 							 reviewPresenter,
-						 }) {
+							 sidebarIsOpen
+}) {
 
 	const treeRef = useRef(null);
 	const [showOverlay, setShowOverlay] = useState(false);
@@ -54,12 +56,11 @@ function CoursePagePopup({
 
 	if (!isOpen || !course) return null;
 
-	//console.log(course); ``
 	return (
 		<div
-
-			className="fixed backdrop-blur-sm inset-0 bg-transparent flex justify-end z-50"
-
+			className={`fixed  backdrop-blur-lg inset-0  flex justify-center z-50 ${
+				sidebarIsOpen ? 'pl-[400px]' : 'w-full'
+			}`}
 		>
 			<div
 				className="bg-indigo-300/75 backdrop-blur-lg h-full w-full flex flex-col overflow-auto"

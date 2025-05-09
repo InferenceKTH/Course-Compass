@@ -18,7 +18,7 @@ function App({ model }) {
 			/* The sidebar styling(under the menu)*/
 		<div className=" flex h-screen w-screen bg-[#6246a8] ">
 			{	/* If sidebar is open, set length to 400px, else it should not be visible  */}
-			<div className={`${sidebarIsOpen ? 'w-[400px]' : 'w-0'}`}>
+			<div className={`${sidebarIsOpen ? 'w-[400px]' : ''}`}>
 				<Menu
 					width={400}
 					isOpen={model.sidebarIsOpen}
@@ -30,11 +30,12 @@ function App({ model }) {
 							zIndex: '10'
 						},
 						bmBurgerButton: {
-							position: 'fixed',
+							position: 'absolute',
 							top: '20px',
 							left: '20px',
 							width: '36px',
-							height: '30px'
+							height: '30px',
+							zIndex: '20'
 						},
 					}}
 					customBurgerIcon={ <img src="https://img.icons8.com/ios-filled/50/ffffff/menu-2.png" /> }
