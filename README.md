@@ -279,6 +279,7 @@ The project uses the **[Model–view–presenter (MVP)](https://en.wikipedia.org
 21 directories, 87 files
 ```
 
+</details>
 ## Other branches
 
 The **[docs](https://github.com/InferenceKTH/Course-Compass/tree/docs)** branch contains the team website.
