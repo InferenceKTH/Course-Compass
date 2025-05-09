@@ -462,7 +462,8 @@ export const PrerequisitePresenter = observer((props) => {
         let key = Object.keys(prereqs);
         if (prereqs[key] === true) {
             return true;
-        } else {
+        }
+        else {
             return false;
         }
 
