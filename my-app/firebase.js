@@ -41,6 +41,7 @@ export function connectToFirebase(model) {
 		// eslint-disable-next-line no-unused-vars
 		({ filterOptions }) => {
 			localStorage.setItem("filterOptions", filterOptions);
+			
 		}
 	);
 
@@ -69,6 +70,10 @@ async function firebaseToModel(model) {
 		// if (data.scrollPosition)
 		// 	model.setScrollPosition(data.scrollPosition);
 		// if (data.filterOptions) model.setFilterOptions(data.filterOptions);
+
+		if (data?.darkMode !== undefined) { // light/ dark mode
+			model.setDarkMode(data.darkMode);
+		}
 		noUpload = false;
 	});
 }
@@ -81,6 +86,7 @@ export function syncModelToFirebase(model) {
 			currentSearchText: toJS(model.currentSearchText),
 			// filterOptions: toJS(model.filterOptions),
 			// Add more per-user attributes here
+			darkMode: model.darkMode,// dark/ light mode
 		}),
 		// eslint-disable-next-line no-unused-vars
 		({ userId, favourites, currentSearchText }) => {
@@ -90,6 +96,7 @@ export function syncModelToFirebase(model) {
 				favourites,
 				currentSearchText,
 				// filterOptions,
+				darkMode,// dark/light mode
 			};
 			set(userRef, dataToSync).catch(console.error);
 		}
@@ -309,3 +316,6 @@ export async function getReviewsForCourse(courseCode) {
 	});
 	return reviews;
 }
+
+
+

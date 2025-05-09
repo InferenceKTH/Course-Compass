@@ -43,6 +43,7 @@ function SearchbarView(props) {
         }
     };
 
+
   return (
     <div className="w-full px-6 py-6 flex items-center justify-between" onClick={handleClickOutside}>
       <a href="https://course-compass-inference.web.app/" className="flex items-center h-[90px] w-auto">
@@ -61,6 +62,14 @@ function SearchbarView(props) {
       <div className="flex gap-6 items-center">
         {props.share}
 
+
+        <button
+          onClick={() => props.toggleTheme} // This calls the toggleTheme function passed from the parent
+          className="w-[120px] h-[44px] bg-[#003399] text-white rounded-full border border-[#000061] cursor-pointer hover:bg-[#001a4d] transition-all duration-200"
+        >
+          {props.themeMode ? "Light Mode" : "Dark Mode"}
+        </button>
+
         <a
           className="flex items-center justify-center w-[120px] h-[44px] bg-[#003399] text-white rounded-full border border-[#000061] cursor-pointer hover:bg-[#001a4d] transition-all duration-200"
           href = "https://inferencekth.github.io/Course-Compass/"
@@ -69,6 +78,9 @@ function SearchbarView(props) {
           >
           About us
         </a>
+
+
+        
 
                 <div className="relative favourites-container">
                     <button

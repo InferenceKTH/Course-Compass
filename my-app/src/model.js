@@ -41,7 +41,8 @@ export const model = {
         applyDepartmentFilter: true,
         applyRemoveNullCourses: false,
         period: [true, true, true, true],
-        applyPeriodFilter: true
+        applyPeriodFilter: true,
+        themeMode: "light"
     },
 
     setUser(user) {
@@ -238,4 +239,23 @@ export const model = {
         // cache the result
         return avgRtg;
     },
+
+
+
+
+
+
+      getThemeMode(){
+        return this.themeMode
+      },
+
+    toggleThemeMode() {
+    this.themeMode = !this.themeMode;
+    },
+
+
+
+    setThemeMode(value) {
+    this.themeMode = value;
+    }
 };

@@ -11,6 +11,7 @@ import debounce from 'lodash.debounce';
 const SearchbarPresenter = observer(({ model }) => {
 
     const [searchQuery, setSearchQuery] = useState("");
+    const [themeMode, setThemeMode] = useState('light')
 
     const fuseOptions = {
         keys: [
@@ -50,6 +51,8 @@ const SearchbarPresenter = observer(({ model }) => {
         }
     };
 
+
+
     function resetScoll(){
         model.setScrollPosition(0.01);
     }
@@ -61,6 +64,11 @@ const SearchbarPresenter = observer(({ model }) => {
     function removeAllFavourites() {
         model.setFavourite([]);
     }
+
+    const toggleThemeMode = () => setThemeMode(themeMode === 'light' ? 'dark' : 'light');
+	
+
+    
 
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedCourse, setSelectedCourse] = useState(null);
@@ -77,6 +85,9 @@ const SearchbarPresenter = observer(({ model }) => {
         course={selectedCourse}
         reviewPresenter={reviewPresenter}
         prerequisiteTree={preP}
+        themeMode={themeMode}
+        setThemeMode = {setThemeMode}
+        toggleThemeMode = {toggleThemeMode}
     />;
     
 
@@ -101,6 +112,9 @@ const SearchbarPresenter = observer(({ model }) => {
             handleFavouriteClick={handleFavouriteClick}
             totalCredits={creditsSum(model.favourites)}
             resetScrollPosition={resetScoll}
+            themeMode= {themeMode}
+            setThemeMode = {setThemeMode}
+            toggleThemeMode = {toggleThemeMode}
         />
     );
 });
