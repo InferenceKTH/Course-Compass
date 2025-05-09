@@ -6,6 +6,7 @@ import CoursePagePopup from '../views/Components/CoursePagePopup.jsx';
 import PrerequisitePresenter from './PrerequisitePresenter.jsx';
 import {ReviewPresenter} from "./ReviewPresenter.jsx"
 import {syncScrollPositionToFirebase} from "../../firebase.js"
+import { model } from '../model.js';
 
 const ListViewPresenter = observer(({ model }) => {
     const scrollContainerRef = useRef(null);
@@ -91,6 +92,52 @@ const ListViewPresenter = observer(({ model }) => {
             case 'credits':
                 return sortedCourses.sort((a, b) => 
                     direction * (parseFloat(a.credits) - parseFloat(b.credits)));
+            
+            
+            // indexes: 0 -> overall rating; 1 -> difficulty; 2->teacher rating
+            case 'avg_rating':
+                return sortedCourses.sort((a, b) => {
+                    let aScore = 0;
+                    let bScore = 0;
+                    
+                    if (model.avgRatings[a.code] != null && model.avgRatings[a.code][0] != null) {
+                        aScore = model.avgRatings[a.code][0] + 10; // +10 so courses with no reviews are shown before those with bad reviews (0/5 stars) 
+                    }
+                    
+                    if (model.avgRatings[b.code] != null && model.avgRatings[b.code][0] != null) {
+                        bScore = model.avgRatings[b.code][0] + 10;
+                    }
+                    return direction * (aScore - bScore);
+                });
+            case 'diff_rating':
+            return sortedCourses.sort((a, b) => {
+                let aScore = 0;
+                let bScore = 0;
+                
+                if (model.avgRatings[a.code] != null && model.avgRatings[a.code][1] != null) {
+                    aScore = model.avgRatings[a.code][1] + 10; // +10 so courses with no reviews are shown before those with bad reviews (0/5 stars) 
+                }
+                
+                if (model.avgRatings[b.code] != null && model.avgRatings[b.code][1] != null) {
+                    bScore = model.avgRatings[b.code][1] + 10;
+                }
+
+                return direction * (aScore - bScore);
+            });
+            case 'teacher_rating':
+            return sortedCourses.sort((a, b) => {
+                let aScore = 0;
+                let bScore = 0;
+                
+                if (model.avgRatings[a.code] != null && model.avgRatings[a.code][2] != null) {
+                    aScore = model.avgRatings[a.code][2] + 10; // +10 so courses with no reviews are shown before those with bad reviews (0/5 stars) 
+                }
+                
+                if (model.avgRatings[b.code] != null && model.avgRatings[b.code][2] != null) {
+                    bScore = model.avgRatings[b.code][2] + 10;
+                }
+                return direction * (aScore - bScore);
+            });
             case 'relevance':
                 return direction === -1 ? sortedCourses : sortedCourses.reverse();
             default:
@@ -183,4 +230,4 @@ const ListViewPresenter = observer(({ model }) => {
     />;
 });
 
-export { ListViewPresenter }; 
+export { ListViewPresenter };
