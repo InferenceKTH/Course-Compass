@@ -19,6 +19,7 @@ export const model = {
     locations: [],
     // indexes: 0 -> overall rating; 1 -> difficulty; 2->teacher rating
     avgRatings: [],
+    // model.avgRatings["IK1203"][0]
     /* courses the user selected as their favourite */
     favourites: [],
     searchHistory:[],

@@ -134,6 +134,9 @@ function ListView(props) {
                                 <option value="relevance">Sort by Relevance</option>
                                 <option value="name">Sort by Name</option>
                                 <option value="credits">Sort by Credits</option>
+                                <option value="avg_rating">Sort by Overall Rating</option>
+                                <option value="diff_rating">Sort by Difficulty Rating</option>
+                                <option value="teacher_rating">Sort by Professor Rating</option>
                             </select>
 
                             <button
