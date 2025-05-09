@@ -103,6 +103,39 @@ const ListViewPresenter = observer(({ model }) => {
         setSortedCourses(sorted);
     }, [model.currentSearch, sortBy, sortDirection]);
 
+
+    window.addEventListener('popstate', () => {
+        model.handleUrlChange();
+    });
+
+    function indexOfNth(string, char, n) {
+        let count = 0;
+        for (let i = 0; i < string.length; i++) {
+            if (string[i] == char) {
+                count++;
+            }
+            if (count == n) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    model.onCoursesSet((courses) => {
+        let current_url = window.location.href;
+        if (indexOfNth(current_url, '/', 3) != current_url.length - 1) {
+            window.history.replaceState({}, '', '/');
+            /*
+            setTimeout(() => {
+                const newPath = '/' + current_url.slice(indexOfNth(current_url, '/', 3) + 1);
+                window.history.pushState({}, '', newPath);
+              }, 50); 
+            }
+            */
+        model.handleUrlChange();
+        }
+    })
+
     const preP = <PrerequisitePresenter
         model={model}
         isPopupOpen={model.isPopupOpen}
@@ -130,7 +163,7 @@ const ListViewPresenter = observer(({ model }) => {
         handleFavouriteClick={handleFavouriteClick}
 
         isPopupOpen={model.isPopupOpen}
-        handlePopupOpen={(isOpen) => model.setPopupOpen(isOpen)}
+        setPopupOpen={(isOpen) => model.setPopupOpen(isOpen)}
         setSelectedCourse={(course) => model.setSelectedCourse(course)}
         popup={popup}
 
@@ -148,4 +181,4 @@ const ListViewPresenter = observer(({ model }) => {
     />;
 });
 
-export { ListViewPresenter };
+export { ListViewPresenter }; 
