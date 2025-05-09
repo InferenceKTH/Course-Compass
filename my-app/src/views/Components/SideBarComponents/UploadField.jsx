@@ -9,6 +9,7 @@ export default function UploadField(props) {
 
     const [isDragging, setIsDragging] = useState(false);
     const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
+    const [fileUploaded, setfileUploaded] = useState(localStorage.getItem("completedCourses") != undefined);
 
     const checkboxRef = useRef(null);
 
@@ -36,7 +37,7 @@ export default function UploadField(props) {
                     <h3>{String(props.filterName).charAt(0).toUpperCase() + String(props.filterName).slice(1)} scraper</h3>
                 </div>
 
-                <div className='pt-1 flex-none'>
+                <div className={`pt-1 flex-none ${!fileUploaded? "hidden" : ""}`}>
 
                     <FilterEnableCheckbox
                         ref={checkboxRef}
@@ -44,10 +45,11 @@ export default function UploadField(props) {
                         onToggle={() => {
                             setFilterEnabled(!filterEnabled);
                             props.HandleFilterEnable(["transcript", !filterEnabled]);
-                        }} />
+                        }} 
+                    />
                 </div>
             </div>
-            <div className={`${filterEnabled ? "opacity-100" : "opacity-50"}`} onClick={() => {
+            <div className={`${(!fileUploaded) ? ("opacity-100") : (filterEnabled? "opacity-100": "opacity-50")}`} onClick={() => {
                 if (!filterEnabled && checkboxRef.current) {
                     checkboxRef.current.click();
                 }
@@ -83,7 +85,7 @@ export default function UploadField(props) {
                     {props.errorMessage}
                 </pre>
             </div>
-            <div className={`opacity-${filterEnabled ? "100" : "50"} ${filterEnabled ? "pointer-events-auto" : "pointer-events-none user-select-none"
+            <div className={`${(filterEnabled? "opacity-100": "opacity-50")} ${filterEnabled ? "pointer-events-auto" : "pointer-events-none user-select-none"
                 }`}>
                 <CourseTranscriptList
                     reApplyFilter={props.reApplyFilter}

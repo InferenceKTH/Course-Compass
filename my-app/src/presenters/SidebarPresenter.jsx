@@ -5,16 +5,18 @@ import transcriptScraperFunction from "./UploadTranscriptPresenter.jsx";
 import { useState } from "react";
 
 const SidebarPresenter = observer(({ model }) => {
-
-    useEffect(() => {
-        model.setFiltersChange();
-    });
+    
 
     let currentLanguageSet = model.filterOptions.language;
     let currentLevelSet = model.filterOptions.level;
     let currentPeriodSet = model.filterOptions.period;
     let currentDepartmentSet = model.filterOptions.department;
-    let currentLocationSet = model.filterOptions.location
+    let currentLocationSet = model.filterOptions.location;
+
+    
+    useEffect(() => {
+        model.setFiltersChange();
+    },[]);
 
     function handleLanguageFilterChange(param) {
         if (param === "English") {
@@ -125,7 +127,6 @@ const SidebarPresenter = observer(({ model }) => {
                 break;
             case "department":
                 handleDepartmentFilterChange(param[2]);
-                console.log(param[2]);
                 break;
             case "period":
                 handlePeriodFilterChange(param[2]);

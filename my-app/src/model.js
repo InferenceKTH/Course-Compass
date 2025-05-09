@@ -263,7 +263,7 @@ export const model = {
     },
     //for better display we would like the departments in a structured format based on school 
     formatDepartments() {
-        const grouped = this.departments?.reduce((acc, item) => {
+        const grouped = this?.departments.reduce((acc, item) => {
             const [school, department] = item.split("/");
             if (!acc[school]) {
                 acc[school] = [];

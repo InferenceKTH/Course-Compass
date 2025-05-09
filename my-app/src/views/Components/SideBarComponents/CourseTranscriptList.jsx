@@ -53,7 +53,7 @@ export default function CourseTranscriptList(props) {
                 <div
                     className="absolute inset-0 mt-30 pointer-events-none bg-gradient-to-b from-transparent to-[#553d65]"
                 ></div>
-                    <div className="grid grid-cols-3 w-full max-[1200px]:grid-cols-2 max-[700px]:grid-cols-1 gap-1 sm:gap-2 overflow-y-auto max-h-[180px] z-0" style={{
+                    <div className="grid grid-cols-3 w-full max-[1200px]:grid-cols-2 max-[700px]:grid-cols-1 gap-1 sm:gap-2 overflow-y-auto max-h-[180px] z-0 pb-10" style={{
                         scrollbarWidth: "thin",
                         scrollbarColor: "#888 #f1f1f1",
                     }}>
