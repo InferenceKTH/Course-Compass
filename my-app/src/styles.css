@@ -41,5 +41,20 @@ html, body {
   html::-webkit-scrollbar,
   body::-webkit-scrollbar {
     display: none;                /* Chrome, Safari, Edge */
-  }
+  }/* Add these styles to your CSS file */
+.perspective-1000 {
+    perspective: 1000px;
+}
+
+.transform-style-preserve-3d {
+    transform-style: preserve-3d;
+}
+
+.backface-hidden {
+    backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+    transform: rotateY(180deg);
+}
 

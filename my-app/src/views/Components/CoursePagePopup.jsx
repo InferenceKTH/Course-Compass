@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import RatingComponent from "./RatingComponent.jsx";
 import { model } from "../../model.js";
-
+import ImageFlipper from './ImageFlipper';
 
 function CoursePagePopup({
 							 favouriteCourses,
@@ -17,6 +17,8 @@ function CoursePagePopup({
 	const treeRef = useRef(null);
 	const [showOverlay, setShowOverlay] = useState(false);
 	const [averageRating, setAverageRating] = useState(null);
+
+
 
 
 	useEffect(() => {
@@ -61,8 +63,13 @@ function CoursePagePopup({
 			className={`fixed  backdrop-blur-lg inset-0  flex justify-center z-50 ${
 				sidebarIsOpen ? 'pl-[400px]' : 'w-full'
 			}`}
-			onClick={onClose}
+
 		>
+
+			<div>
+				<ImageFlipper/>
+
+			</div>
 			<div
 				className="bg-indigo-300/75 backdrop-blur-lg h-full w-full flex flex-col overflow-auto"
 				onClick={(e) => {
