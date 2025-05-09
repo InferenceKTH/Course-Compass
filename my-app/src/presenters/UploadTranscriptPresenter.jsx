@@ -65,7 +65,6 @@ function writeLocalStorage_completedCourses(coursePairs) {
     //sorting objects by id
     //local.sort((a, b) => a.id.localeCompare(b.id));
 
-    console.log(coursePairs);
     const map = new Map(coursePairs.map(course => [course.id, course]));
     for(const course of local){
         map.set(course.id, course);
@@ -110,7 +109,6 @@ function evaluatePDFtextObjectArray(textObjects, setErrorMessage, setErrorVisibi
 
     //we are going to go through each text object which is inside the pdf file.
     for (let i = 0; i < textObjects.length; i++) {
-        console.log(textObjects[i].str);
         //we are going to look for our university, KTH
         //current ladok generated National Official transcripts start at xposition 56.692
         if ((!flagKTH) && (textObjects[i].transform[4] === 56.692))
@@ -196,7 +194,6 @@ function evaluatePDFtextObjectArray(textObjects, setErrorMessage, setErrorVisibi
     try {
         writeLocalStorage_completedCourses(coursePairs);
     } catch (e) {
-        console.log("=======================");
         console.log(e);
     }
     
@@ -207,7 +204,7 @@ function evaluatePDFtextObjectArray(textObjects, setErrorMessage, setErrorVisibi
 
     [
         {
-            id: ,
+            id: ,           //str
             name: ,         //str
             is_in_DB:       // 0/1
         }

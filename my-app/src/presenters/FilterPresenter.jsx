@@ -311,13 +311,14 @@ const FilterPresenter = observer(({ model }) => {
     }
 
     function updateDepartments() {
-        const deparments = model.filterOptions.deparment;
+        console.log(model.filterOptions.department);
+        const departments = model.filterOptions.department;
         let bestCourses = [];
         let worstCourses = [];
 
         bestCourses = localFilteredCourses.filter(function (course) {
             try {
-                return (deparments.includes(course?.deparment));
+                return (departments.includes(course?.department));
             } catch (error) {
                 console.log("for some reason course?.department is: ", course?.department, error);
                 return false;
@@ -408,7 +409,7 @@ const FilterPresenter = observer(({ model }) => {
             if (model.filterOptions.applyTranscriptFilter) {
                 applyTranscriptEligibility();
             }
-            if (model.filterOptions.applyDepartments) {
+            if (model.filterOptions.applyDepartmentFilter) {
                 updateDepartments();
             }
 
