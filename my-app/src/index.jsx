@@ -1,5 +1,5 @@
 import { configure, makeAutoObservable } from "mobx";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createHashRouter, RouterProvider } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import { connectToFirebase } from "../firebase";
 import { model } from "./model";
@@ -17,7 +17,7 @@ const reactiveModel = makeAutoObservable(model);
 connectToFirebase(reactiveModel);
 
 export function makeRouter(reactiveModel) {
-  return createBrowserRouter([
+  return createHashRouter([
     {
       path: "/",
       element: <App model={reactiveModel} />,
