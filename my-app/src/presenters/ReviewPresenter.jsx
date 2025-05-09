@@ -4,6 +4,8 @@ import { ReviewView } from '../views/ReviewView.jsx';
 
 export const ReviewPresenter = observer(({ model, course }) => {
     const [reviews, setReviews] = useState([]);
+    const [postAnonymous, setAnonymous] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     const [formData, setFormData] = useState({
         text: "",
         overallRating: 0,
@@ -23,14 +25,34 @@ export const ReviewPresenter = observer(({ model, course }) => {
         fetchReviews();
     }, [course.code, model]);
 
+    useEffect(() => {
+        async function updateError() {
+            if(!model?.user?.uid)
+                setErrorMessage("You need to be logged in to post a comment - Posting anonymously is possible.");
+            else if(reviews.filter((review)=>{return review.uid == model?.user?.uid}).length > 0)
+                setErrorMessage("Everyone can only post once. Submitting a new comment will override the old one.");
+        }
+        updateError();
+    }, [reviews, model?.user?.uid]);
+
+ 
     const handleReviewSubmit = async () => {
+        if(!model?.user){
+            setErrorMessage("You need to be logged in to post a comment - Posting anonymously is possible.");
+            return;
+        }
         if (formData.text.trim()) {
             const review = {
-                userName: model.user?.displayName || "Anonymous",
+                userName: postAnonymous ? "Anonymous" : model.user?.displayName,
+                uid: model?.user?.uid,
                 timestamp: Date.now(),
                 ...formData,
+
             };
-            await model.addReview(course.code, review);
+            if(!await model.addReview(course.code, review)){    
+                setErrorMessage("Something went wrong when posting. Are you logged in?")
+                return;
+            }
             const updatedReviews = await model.getReviews(course.code);
             setReviews(updatedReviews);
             setFormData({
@@ -40,7 +62,6 @@ export const ReviewPresenter = observer(({ model, course }) => {
                 professorName: "",
                 grade: "",
                 recommended: false,
-                avgRating: 0,
             });
         }
     };
@@ -53,6 +74,10 @@ export const ReviewPresenter = observer(({ model, course }) => {
             formData={formData}
             setFormData={setFormData}
             handleReviewSubmit={handleReviewSubmit}
+            errorMessage={errorMessage}
+            setErrorMessage={setErrorMessage}
+            postAnonymous={postAnonymous}
+            setAnonymous={setAnonymous}
         />
 
     );
