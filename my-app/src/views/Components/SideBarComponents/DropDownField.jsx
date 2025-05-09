@@ -57,7 +57,7 @@ export default function DropDownField(props) {
           onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]); }}
         />
       </div>
-      <div className={`opacity-${filterEnabled ? "100" : "50"}`} onClick={() => {
+      <div className={`${filterEnabled ? "opacity-100" : "opacity-50"}`} onClick={() => {
                     if (!filterEnabled && checkboxRef.current) {
                         checkboxRef.current.click();
                     }

@@ -4,10 +4,14 @@ import FilterEnableCheckbox from "./FilterEnableCheckbox";
 import Tooltip from "./ToolTip";
 
 export default function MultipleChoiceButtons(props) {
-    const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
+    const [filterEnabled, setFilterEnabled] = useState(false);
     const [selectedItems, setSelectedItems] = useState(props.initialValues || []);
     
     const checkboxRef = useRef(null);
+
+    useEffect(() => {
+        setFilterEnabled(props.filterEnable);
+    })
 
     const handleClick = (index) => {
         setSelectedItems((prev) => {
@@ -63,7 +67,7 @@ export default function MultipleChoiceButtons(props) {
                     onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]); }}
                 />
             </div>
-            <div className={`opacity-${filterEnabled ? "100" : "50"}`} onClick={() => {
+            <div className={`${filterEnabled ? "opacity-100" : "opacity-50"}`} onClick={() => {
                 if (!filterEnabled && checkboxRef.current) {
                     checkboxRef.current.click();
                 }

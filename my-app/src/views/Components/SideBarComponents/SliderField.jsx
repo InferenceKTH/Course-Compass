@@ -70,7 +70,7 @@ export default function UploadField(props) {
                 />
             </div>
 
-            <div className={`opacity-${filterEnabled ? "100" : "50"}`} onClick={() => {
+            <div className={`${filterEnabled ? "opacity-100" : "opacity-50"}`} onClick={() => {
                     if (!filterEnabled && checkboxRef.current) {
                         checkboxRef.current.click();
                     }
