@@ -160,6 +160,9 @@ The project uses the **[Model–view–presenter (MVP)](https://en.wikipedia.org
 - **/src/presenters/Tests/**: Test implementations
 - **/scripts/transcript-scraper/**: Transcript parsing tools
 
+
+### Project Tree
+
 <details>
 <summary>Click to view Project Tree</summary>
 
@@ -275,6 +278,8 @@ The project uses the **[Model–view–presenter (MVP)](https://en.wikipedia.org
 
 21 directories, 87 files
 ```
+
+</details>
 
 ## Other branches
 
