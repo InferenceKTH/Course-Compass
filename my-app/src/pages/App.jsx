@@ -16,14 +16,14 @@ function App({ model }) {
 
 	return (
 			/* The sidebar styling(under the menu)*/
-		<div className=" flex h-screen w-screen bg-[#6246a8] ">
+		<div className=" flex h-screen w-screen bg-gradient-to-t from-[#4f3646] to-[#6747c0] overflow-hidden">
 			{	/* If sidebar is open, set length to 400px, else it should not be visible  */}
-			<div className={`${sidebarIsOpen ? 'w-[400px]' : ''}`}>
+			<div className={`${sidebarIsOpen ? 'w-[400px] min-w-[300px]' : 'w-[50px]'}`}>
 				<Menu
-					width={400}
-					isOpen={model.sidebarIsOpen}
+					width={window.innerWidth<700?'100%':Math.max(window.innerWidth * 0.26, 300)} 
+					isOpen={sidebarIsOpen}
 					onStateChange={(state) => setSidebarIsOpen(state.isOpen)}
-					className="bg-gradient-to-t from-[#6246a8] to-[#6747c0] z-0 h-screen"
+					className="bg-gradient-to-t from-[#4f3646] to-[#6747c0] z-0 " 
 					noOverlay
 					styles={{
 						bmMenuWrap: {
@@ -32,7 +32,7 @@ function App({ model }) {
 						bmBurgerButton: {
 							position: 'absolute',
 							top: '20px',
-							left: '20px',
+							left: '8px',
 							width: '36px',
 							height: '30px',
 							zIndex: '20'

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
 import Tooltip from "./ToolTip";
 
@@ -12,6 +12,8 @@ const CollapsibleCheckboxes = (props) => {
 
   let paramFieldType = "checkboxhierarchy";
 
+  const checkboxRef = useRef(null);
+
   const rows = props.fields;
 
   const toggleExpand = (id, subItems) => {
@@ -19,8 +21,18 @@ const CollapsibleCheckboxes = (props) => {
       ...prev,
       [id]: !prev[id],
     }));
+    let label = rows.find(item => item.id === id).label;
     subItems.map((_, index) => {
       setSubCheckbox(id, index)
+      if (rows.find(item => item.id === id)?.subItems && rows.find(item => item.id === id)?.subItems.length>0 && rows.find(item => item.id === id)?.subItems[0]) {
+        props.HandleFilterChange([paramFieldType, props.filterName,
+          label + "/" + rows.find(item => item.id === id).subItems[index]
+        ]);
+      } else {
+        props.HandleFilterChange([paramFieldType, props.filterName,
+          label
+        ]);
+      }
     });
   };
 
@@ -38,7 +50,9 @@ const CollapsibleCheckboxes = (props) => {
       ...prev,
       [key]: !prev[key],
     }));
-    props.HandleFilterChange([paramFieldType, props.filterName, rows.find(item => item.id === mainId).label+"/"+rows.find(item => item.id === mainId).subItems[index]]);
+    props.HandleFilterChange([paramFieldType, props.filterName,
+      rows.find(item => item.id === mainId).label + "/" + rows.find(item => item.id === mainId).subItems[index]
+    ]);
   };
 
 
@@ -55,27 +69,27 @@ const CollapsibleCheckboxes = (props) => {
           />
         </div>
         <FilterEnableCheckbox
+          ref={checkboxRef}
           initialValue={filterEnabled}
-          onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]);}}
+          onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]); }}
         />
       </div>
-      <div
-        className={`${filterEnabled
-          ? "opacity-100 pointer-events-auto"
-          : "opacity-50 pointer-events-none"
-          } transition-all`}
-      >
+      <div className={`${filterEnabled ? "opacity-100" : "opacity-50"}`} onClick={() => {
+        if (!filterEnabled && checkboxRef.current) {
+          checkboxRef.current.click();
+        }
+      }}>
         <div className="rounded-lg shadow-2xs w-full text-white bg-[#aba8e0] border border-gray-200 p-4">
           {rows.map((row) => (
             <div key={row.id} className="relative pl-4  ml-2">
               <div className="flex items-center gap-2 mb-1 relative">
                 <input
                   type="checkbox"
-                  id={`checkbox-${row.id}`}
-                  checked={expanded[row.id] || false}
-                  onChange={() => toggleExpand(row.id, row.subItems)}
+                  id={`checkbox-${row?.id}`}
+                  checked={expanded[row?.id] || false}
+                  onChange={() => toggleExpand(row?.id, row?.subItems)}
                   className="accent-violet-500 z-10"
-                  />
+                />
                 <label htmlFor={`checkbox-${row.id}`} className="cursor-pointer font-semibold">
                   {row.label}
                 </label>
@@ -83,45 +97,45 @@ const CollapsibleCheckboxes = (props) => {
 
               <svg
                 width="40"
-                height={`${expanded[row.id] ? (row.subItems.length) * 24 + 34 : 30}`}
-                viewBox={`0 0 40 ${expanded[row.id] ? (row.subItems.length) * 24 + 34 : 30}`}
+                height={`${expanded[row.id] ? (((!row?.subItems || row?.subItems?.length > 1) ? row.subItems.length : 0)) * 24 + 34 : 30}`}
+                viewBox={`0 0 40 ${expanded[row.id] ? (((!row?.subItems || row?.subItems?.length > 1) ? row.subItems.length : 0)) * 24 + 34 : 30}`}
                 preserveAspectRatio="none"
                 className="absolute left-[-25px] top-[-5px]"
-                >
-                {/*big horizontal line */ }
+              >
+                {/*big horizontal line */}
                 <path
-                  d={`M20 0 V${(row.subItems.length) * 24 + 34}`}
+                  d={`M20 0 V${((!row?.subItems || row?.subItems?.length > 1) ? row.subItems.length : 0) * 24 + 33}`}
                   stroke="white"
                   strokeWidth={strokeWidth}
                   fill="none"
                   className=""
                 />
-                {/*top vertical line */ }
+                {/*top vertical line */}
                 {row.id === 1 && (
                   <path
-                  d={`M20 2 H33`}
-                  stroke="white"
-                  strokeWidth={strokeWidth}
-                  fill="none"
-                  className=""
-                />
+                    d={`M20 2 H33`}
+                    stroke="white"
+                    strokeWidth={strokeWidth}
+                    fill="none"
+                    className=""
+                  />
                 )}
-                {/*bottom vertical line */ }
+                {/*bottom vertical line */}
                 {row.id === rows.length && (
                   <path
-                  d={`M20 ${(expanded[row.id]? row.subItems.length:1) * 34 -8} H33`}
-                  stroke="white"
-                  strokeWidth={strokeWidth}
-                  fill="none"
-                  className=""
-                />
+                    d={`M20 ${(expanded[row.id] ? row.subItems.length : 1) * 34 - 8} H33`}
+                    stroke="white"
+                    strokeWidth={strokeWidth}
+                    fill="none"
+                    className=""
+                  />
                 )}
-                
+
               </svg>
 
-              {expanded[row.id] && (
+              {expanded[row.id] && row.subItems.length > 1 && (
                 <div className="mt-2 relative ">
-                  {/*vertical line */ }
+                  {/*vertical line */}
                   <svg
                     width="40"
                     height={`${(row.subItems.length) * 24}`}
@@ -170,7 +184,7 @@ const CollapsibleCheckboxes = (props) => {
                           onChange={() => toggleSubCheckbox(row.id, index)}
                         />
                         <label htmlFor={checkboxId} className="cursor-pointer ml-2">
-                          {subItem.substring(0, 25) + ((subItem.substring(0, 25).length>=25)? "...": "") }
+                          {subItem?.substring(0, 25) + ((subItem?.substring(0, 25).length >= 25) ? "..." : "")}
                         </label>
                       </div>
                     );

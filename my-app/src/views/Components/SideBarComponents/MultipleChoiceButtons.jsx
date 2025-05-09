@@ -3,18 +3,28 @@ import { useRef, useEffect } from "react";
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
 import Tooltip from "./ToolTip";
 
-export default function ButtonGroupFullComponent(props) {
-    const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
+export default function MultipleChoiceButtons(props) {
+    const [filterEnabled, setFilterEnabled] = useState(false);
     const [selectedItems, setSelectedItems] = useState(props.initialValues || []);
     
+    const checkboxRef = useRef(null);
+
+    useEffect(() => {
+        setFilterEnabled(props.filterEnable);
+    })
+
     const handleClick = (index) => {
-        const selectedItem = props.items[index];
-        setSelectedItems((prevSelectedItems) => {
-            return prevSelectedItems.map((item, idx) =>
-                idx === index ? !item : item
-            );
+        setSelectedItems((prev) => {
+            if (!Array.isArray(prev) || index < 0 || index >= prev.length) {
+                console.warn("Invalid selectedItems or index:", prev, index);
+                return prev;
+            }
+    
+            const updated = [...prev];
+            updated[index] = !updated[index];
+            props.HandleFilterChange(["buttongroup", "period", index, updated[index]]);
+            return updated;
         });
-        props.HandleFilterChange(["buttongroup", "period", index]);
     };
 
     const getButtonClasses = (index) => {
@@ -52,12 +62,16 @@ export default function ButtonGroupFullComponent(props) {
                     />
                 </div>
                 <FilterEnableCheckbox
+                    ref={checkboxRef}
                     initialValue={filterEnabled}
                     onToggle={() => { setFilterEnabled(!filterEnabled); props.HandleFilterEnable([props.filterName, !filterEnabled]); }}
                 />
             </div>
-            <div className={`opacity-${filterEnabled ? "100" : "50"} ${filterEnabled ? "pointer-events-auto" : "pointer-events-none user-select-none"
-                }`}>
+            <div className={`${filterEnabled ? "opacity-100" : "opacity-50"}`} onClick={() => {
+                if (!filterEnabled && checkboxRef.current) {
+                    checkboxRef.current.click();
+                }
+            }}>
 
                 <div className="my-1">
                     <div className="flex flex-col sm:inline-flex sm:flex-row rounded-lg shadow-2xs 
