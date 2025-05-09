@@ -30,7 +30,7 @@ function ListView(props) {
         let ret_string = "";
         if (periods) {
             let keys = Object.keys(periods);
-            console.log(periods["P1"])
+            //console.log(periods["P1"])
             for (let key of keys) {
                 if (periods[key]) {
                     ret_string += key + " | ";

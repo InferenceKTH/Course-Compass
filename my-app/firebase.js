@@ -1,7 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
 import { getFunctions, httpsCallable } from 'firebase/functions';
-import { get, getDatabase, ref, set, onValue, push } from "firebase/database";
+import { get, getDatabase, ref, set, onValue, onChildRemoved, onChildAdded } from "firebase/database";
 import { reaction, toJS } from "mobx";
 
 // Your web app's Firebase configuration
@@ -127,32 +127,47 @@ export function syncScrollPositionToFirebase(model, containerRef) {
 }
 
 function startAverageRatingListener(model) {
-	const reviewsRef = ref(db, "reviews");
+	const coursesRef = ref(db, "reviews");
 
-	onValue(reviewsRef, (snapshot) => {
-		if (!snapshot.exists()) return;
+	// Step 1: One-time fetch if model.avgRating is not initialized
+	if (!model.avgRating || Object.keys(model.avgRating).length === 0) {
+		get(coursesRef).then((snapshot) => {
+			if (!snapshot.exists()) return;
 
-		const ratingsMap = {};
+			const initialRatings = {};
 
-		snapshot.forEach((courseSnapshot) => {
-			const courseCode = courseSnapshot.key;
-			let sum = 0;
-			let count = 0;
+			snapshot.forEach((courseSnapshot) => {
+				const courseCode = courseSnapshot.key;
+				const avgRating = courseSnapshot.child("avgRating").val();
 
-			courseSnapshot.forEach((reviewSnapshot) => {
-				const review = reviewSnapshot.val();
-				if (typeof review.rating === "number") {
-					sum += review.rating;
-					count++;
+				if (typeof avgRating === "number") {
+					initialRatings[courseCode] = avgRating;
 				}
 			});
 
-			if (count > 0) {
-				ratingsMap[courseCode] = sum / count;
+			model.setAverageRatings(initialRatings);
+		});
+	}
+
+	// Step 2: listener for each courses avgRating
+	onChildAdded(coursesRef, (courseSnapshot) => {
+		const courseCode = courseSnapshot.key;
+		const avgRatingRef = ref(db, `reviews/${courseCode}/avgRating`);
+
+		onValue(avgRatingRef, (ratingSnapshot) => {
+			if (!ratingSnapshot.exists()) return;
+
+			const rating = ratingSnapshot.val();
+
+			if (typeof rating === "number") {
+				model.updateAverageRating(courseCode, rating);
 			}
 		});
+	});
 
-		model.setAverageRatings(ratingsMap);
+	onChildRemoved(coursesRef, (courseSnapshot) => {
+		const courseCode = courseSnapshot.key;
+		model.updateAverageRating(courseCode, null);
 	});
 }
 

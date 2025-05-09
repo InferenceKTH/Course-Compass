@@ -14,7 +14,7 @@ export const model = {
     courses: [],
     departments : [],
     locations: [],
-    ratings: [],
+    avgRatings: [],
     favourites: [],
     isReady: false,
     /* this is a boolean flag showing that filtering options in the UI have changed, triggering the FilterPresenter to recalculate the filteredCourses[] */
@@ -81,7 +81,11 @@ export const model = {
         this.locations = locations;
     },
     setAverageRatings(ratings) {
-        this.averageRatings = ratings;
+        this.avgRatings = ratings;
+    },
+    updateAverageRating(courseCode, rating){
+        if(this.avgRatings!= null)
+            this.avgRatings[courseCode] = rating;
     },
     setFavourite(favorites){
         this.favourites = favorites;

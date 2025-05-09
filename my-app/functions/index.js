@@ -36,7 +36,7 @@ exports.updateCourseAvgRating = functions.https.onCall(async (data, context) => 
 
 		const avgRating = parseFloat((total / count).toFixed(2));
 
-		// Update the avgRating in courses
+		// Update the avgRating in reviews
 		await db.ref(`reviews/${courseCode}`).update({ avgRating });
 
 		return { success: true, avgRating };
