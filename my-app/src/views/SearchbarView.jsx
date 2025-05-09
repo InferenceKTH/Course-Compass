@@ -88,7 +88,9 @@ function SearchbarView(props) {
                     {showFavourites && (
                         <FavouritesDropdown
                             {...props}
-                            onClick={(e) => e.stopPropagation()}
+                            onClick={
+                                    (e) => e.stopPropagation()           
+                            }
                         />
                     )}
                 </div>

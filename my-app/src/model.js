@@ -50,6 +50,7 @@ export const model = {
     selectedCourse: null,
 
     _coursesListeners: [], //  internal list of listeners
+    urlStackPointer: 0,
 
     onCoursesSet(callback) {
       this._coursesListeners.push(callback);
@@ -259,15 +260,11 @@ export const model = {
     },
 
     setPopupOpen(isOpen) {
-        if (isOpen) {
-            window.history.pushState({}, '', '/' + this.selectedCourse.code);
-        }
-        console.log("POPOPOOPOPOOOOOOP")
+        //console.log("Popup!!!!!")
         if (!isOpen) {
             let current_url = window.location.href;
-            console.log(current_url);
-            let end_idx = indexOfNth(current_url, '/', 3);
-            if (end_idx >= 0 && end_idx < current_url.length - 1 && current_url.indexOf("#") == -1) {
+            let end_index = indexOfNth(current_url, '/', 3);
+            if (end_index + 1 != current_url.length) {
                 window.history.back();
             }
         }
@@ -304,12 +301,13 @@ export const model = {
                 this.setSelectedCourse(course);
                 this.setPopupOpen(true);
             }
+            this.urlStackPointer++;
             console.log("Forward");
-        } else {
+        } else if (start_idx > 0){
             console.log("Back")
             this.setPopupOpen(false);
         }
-        //console.log("back");
+        console.log("Satck: " + this.urlStackPointer)
     }
 
 };

@@ -40,6 +40,8 @@ const FavouritesDropdown = observer((props) => {
                                 onClick={() => {
                                     props.setSelectedCourse(course);
                                     props.setIsPopupOpen(true);
+                                    window.history.pushState({}, '', '/' + course.code);
+                                    
                                 }}
                                 key={course.code}
                                 className="p-3 hover:bg-indigo-400/50 cursor-pointer flex justify-between items-center w-full border-b border-solid border-violet-400"
@@ -95,9 +97,6 @@ const FavouritesDropdown = observer((props) => {
             </div>
             
             {/* Optional course popup */}
-            <div className="relative z-50">
-                {props.isPopupOpen && props.popup}
-            </div>
         </div>
     );
 });

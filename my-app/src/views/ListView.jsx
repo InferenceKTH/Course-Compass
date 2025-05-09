@@ -162,7 +162,7 @@ function ListView(props) {
                                 onClick={() => {
                                     props.setSelectedCourse(course);
                                     props.setPopupOpen(true);
-                                    //window.history.pushState({}, '', '/' + course.code);
+                                    window.history.pushState({}, '', '/' + course.code);
                                 }}
                                 key={course.code}
                                 className="p-5 mb-3 hover:bg-blue-100 flex items-center border border-b-black border-solid w-full rounded-lg cursor-pointer"
