@@ -1,3 +1,4 @@
+import { query } from "firebase/database";
 import { addCourse, addReviewForCourse, getReviewsForCourse, uploadDepartmentsAndLocations } from "../firebase";
 
 
@@ -52,6 +53,7 @@ export const model = {
     },
     isPopupOpen: false,
     selectedCourse: null,
+    searchQueryModel: "",
 
     _coursesListeners: [], //  internal list of listeners
 
