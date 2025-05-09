@@ -215,11 +215,6 @@ export const PrerequisitePresenter = observer((props) => {
             type: node_type,
             data: { label: name },
             style: { 
-                //padding: 0,
-                //maxWidth: "100px",
-                //display: 'inline-block',
-                //justifyContent: 'center',
-                //alignItems: 'center',
                 zIndex: 0 
             },
             position,
@@ -484,7 +479,9 @@ export const PrerequisitePresenter = observer((props) => {
                 let copy = JSON.parse(JSON.stringify(props.selectedCourse.prerequisites));
                 let courses_taken = [];
                 if (localStorage.getItem("completedCourses") != null) {
-                    courses_taken = localStorage.getItem("completedCourses");
+                    for (let obj of localStorage.getItem("completedCourses")) {
+                        courses_taken.push(obj?.id);
+                    }
                 }
                 code_to_name = model.getCourseNames(courses_taken);
                 

@@ -150,11 +150,7 @@ const ListViewPresenter = observer(({ model }) => {
         setSortedCourses(sorted);
     }, [model.currentSearch, sortBy, sortDirection]);
 
-
-    window.addEventListener('popstate', () => {
-        model.handleUrlChange();
-    });
-
+    
     function indexOfNth(string, char, n) {
         let count = 0;
         for (let i = 0; i < string.length; i++) {
@@ -168,19 +164,22 @@ const ListViewPresenter = observer(({ model }) => {
         return -1;
     }
 
+    window.addEventListener('popstate', () => {
+        model.handleUrlChange();
+    });
+
     model.onCoursesSet((courses) => {
         let current_url = window.location.href;
-        if (indexOfNth(current_url, '/', 3) != current_url.length - 1) {
-            window.history.replaceState({}, '', '/');
-            /*
-            setTimeout(() => {
-                const newPath = '/' + current_url.slice(indexOfNth(current_url, '/', 3) + 1);
-                window.history.pushState({}, '', newPath);
-              }, 50); 
-            }
-            */
-        model.handleUrlChange();
+        let course_code = "";
+        let start_index = indexOfNth(current_url, '/', 3) + 1;
+        if (start_index > 1) {
+            course_code = current_url.slice(start_index);
         }
+        if (start_index != current_url.length && course_code.length >= 6) {
+            window.history.replaceState({}, '', '/');
+            window.history.pushState({}, '', '/' + course_code);
+        }
+        model.handleUrlChange();
     })
 
     const preP = <PrerequisitePresenter
