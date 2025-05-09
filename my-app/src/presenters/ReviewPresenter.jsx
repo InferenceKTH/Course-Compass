@@ -21,20 +21,19 @@ export const ReviewPresenter = observer(({ model, course }) => {
         async function fetchReviews() {
             const data = await model.getReviews(course.code);
             setReviews(data);
-            if(data.filter((review)=>{review.userid == model?.user?.uid}))
-                setErrorMessage("Everyone can only post once. Submitting a new comment will override the old one.");
         }
         fetchReviews();
     }, [course.code, model]);
 
     useEffect(() => {
-        async function fetchReviews() {
-            const data = await model.getReviews(course.code);
-            if(data.filter((review)=>{review.userid == model?.user?.uid}))
+        async function updateError() {
+            if(!model?.user?.uid)
+                setErrorMessage("You need to be logged in to post a comment - Posting anonymously is possible.");
+            else if(reviews.filter((review)=>{return review.uid == model?.user?.uid}).length > 0)
                 setErrorMessage("Everyone can only post once. Submitting a new comment will override the old one.");
         }
-        fetchReviews();
-    }, [reviews]);
+        updateError();
+    }, [reviews, model?.user?.uid]);
 
  
     const handleReviewSubmit = async () => {
@@ -63,7 +62,6 @@ export const ReviewPresenter = observer(({ model, course }) => {
                 professorName: "",
                 grade: "",
                 recommended: false,
-                avgRating: 0,
             });
         }
     };

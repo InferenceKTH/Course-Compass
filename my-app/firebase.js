@@ -354,6 +354,7 @@ export async function getReviewsForCourse(courseCode) {
 	if (!snapshot.exists()) return [];
 	const reviews = [];
 	snapshot.forEach((childSnapshot) => {
+		if(childSnapshot.key!="avgRating")
 		reviews.push({
 			id: childSnapshot.key,
 			...childSnapshot.val(),

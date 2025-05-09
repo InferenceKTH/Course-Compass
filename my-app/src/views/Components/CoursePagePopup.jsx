@@ -54,7 +54,7 @@ function CoursePagePopup({
 
 	if (!isOpen || !course) return null;
 
-	console.log(course); ``
+	//console.log(course); ``
 	return (
 		<div
 
