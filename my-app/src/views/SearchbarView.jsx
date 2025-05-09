@@ -59,78 +59,83 @@ function SearchbarView(props) {
         className="w-[400px] h-[44px] pl-14 pr-4 bg-white text-black rounded-full"
       />
 
-      <div className="flex gap-6 items-center">
-        {props.share}
+        <div className="flex gap-6 items-center">
+            {props.share}
 
 
-        <button
-          onClick={() => props.toggleTheme} // This calls the toggleTheme function passed from the parent
-          className="w-[120px] h-[44px] bg-[#003399] text-white rounded-full border border-[#000061] cursor-pointer hover:bg-[#001a4d] transition-all duration-200"
-        >
-          {props.themeMode ? "Light Mode" : "Dark Mode"}
-        </button>
+            <button
+                onClick={(e) => {
+                    e.stopPropagation();
+                    props.toggleThemeMode();
+                }}
+                className={`w-[120px] h-[44px] ${
+                    props.themeMode === 'light'
+                        ? 'bg-[#003399] text-white rounded-full border border-[#000061] cursor-pointer hover:bg-[#001a4d] transition-all duration-200'
+                        : 'bg-[#003399]     rounded-full border border-red-600  transition-all duration-200 cursor-pointer text-red-600 hover:bg-red-600 hover:text-white border-solid font-bold'
 
-        <a
-          className="flex items-center justify-center w-[120px] h-[44px] bg-[#003399] text-white rounded-full border border-[#000061] cursor-pointer hover:bg-[#001a4d] transition-all duration-200"
-          href = "https://inferencekth.github.io/Course-Compass/"
-          target="_blank"
-          rel="noopener noreferrer"
-          >
-          About us
-        </a>
+                }`}>
+                {props.themeMode === 'light' ? "Light mode" : "Dark mode"}
+            </button>
+
+            <a
+                className="flex items-center justify-center w-[120px] h-[44px] bg-[#003399] text-white rounded-full border border-[#000061] cursor-pointer hover:bg-[#001a4d] transition-all duration-200"
+                href="https://inferencekth.github.io/Course-Compass/"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                About us
+            </a>
 
 
-        
-
-                <div className="relative favourites-container">
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setShowFavourites(!showFavourites);
-                        }}
-                        className={`w-[120px] h-[44px] ${
-                            !showFavourites
+            <div className="relative favourites-container">
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setShowFavourites(!showFavourites);
+                    }}
+                    className={`w-[120px] h-[44px] ${
+                        !showFavourites
                             ? 'bg-[#003399] text-white rounded-full border border-[#000061] cursor-pointer hover:bg-[#001a4d] transition-all duration-200'
                             : 'bg-[#003399]     rounded-full border border-red-600  transition-all duration-200 cursor-pointer text-red-600 hover:bg-red-600 hover:text-white border-solid font-bold'
-                            // cursor-pointer text-red-600 hover:bg-red-600 hover:text-white border-r border-solid border-violet-400 font-semibold transition-colors
-                        
-                        }`}>
-                        {showFavourites? "Close":"Favourites"}
+                        // cursor-pointer text-red-600 hover:bg-red-600 hover:text-white border-r border-solid border-violet-400 font-semibold transition-colors
+
+                    }`}>
+                    {showFavourites ? "Close" : "Favourites"}
+                </button>
+                {showFavourites && (
+                    <FavouritesDropdown
+                        {...props}
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                )}
+            </div>
+
+            <div className="flex items-center cursor-pointer">
+                {user ? (
+                    <button
+                        onClick={handleSignOut}
+                        className="w-[120px] h-[44px] bg-[#003399] text-white rounded-full border border-[#000061] cursor-pointer hover:bg-[#001a4d] transition-all duration-200">
+                        Sign out
                     </button>
-                    {showFavourites && (
-                        <FavouritesDropdown
-                            {...props}
-                            onClick={(e) => e.stopPropagation()}
-                        />
-                    )}
-                </div>
+                ) : (
+                    <button
+                        onClick={handleSignIn}
+                        className="w-auto min-w-[120px] h-[44px] bg-[#003399] text-white text-sm rounded-full border border-[#001a4d] cursor-pointer hover:bg-[#001a4d] transition-all duration-200 flex items-center justify-center px-4">
+                        Sign in with Google
+                    </button>
 
-          <div className="flex items-center cursor-pointer">
-              {user ? (
-                  <button
-                      onClick={handleSignOut}
-                      className="w-[120px] h-[44px] bg-[#003399] text-white rounded-full border border-[#000061] cursor-pointer hover:bg-[#001a4d] transition-all duration-200">
-                      Sign out
-                  </button>
-              ) : (
-                  <button
-                      onClick={handleSignIn}
-                      className="w-auto min-w-[120px] h-[44px] bg-[#003399] text-white text-sm rounded-full border border-[#001a4d] cursor-pointer hover:bg-[#001a4d] transition-all duration-200 flex items-center justify-center px-4">
-                      Sign in with Google
-                  </button>
+                )}
 
-              )}
+            </div>
 
-          </div>
-
-          {user && (
-              <img
-                  src={user.photoURL}
-                  alt="Profile"
-                  className="w-[44px] h-[44px] rounded-full border border-[#000061]"
-              />
-          )}
-      </div>
+            {user && (
+                <img
+                    src={user.photoURL}
+                    alt="Profile"
+                    className="w-[44px] h-[44px] rounded-full border border-[#000061]"
+                />
+            )}
+        </div>
     </div>
   );
 }
