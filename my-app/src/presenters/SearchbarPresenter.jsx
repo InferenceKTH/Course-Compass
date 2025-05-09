@@ -28,8 +28,19 @@ const SearchbarPresenter = observer(({ model }) => {
             model.setCurrentSearch(model.filteredCourses);
         } else {
             const fuse = new Fuse(model.filteredCourses, fuseOptions);
-            const results = fuse.search(query).map((r) => r.item);
-            model.setCurrentSearch(results);
+            const results = fuse.search(query);
+            
+            const sortedResults = results.sort((a, b) => {
+                const aStartsWith = a.item.code.toLowerCase().startsWith(query.toLowerCase());
+                const bStartsWith = b.item.code.toLowerCase().startsWith(query.toLowerCase());
+                
+                //sort by prefix match as a primary sorting 
+                if (aStartsWith && !bStartsWith) return -1;
+                if (!aStartsWith && bStartsWith) return 1;
+                return a.score - b.score;  //Fuse.js score sorting otherwise
+            });
+
+            model.setCurrentSearch(sortedResults.map(r => r.item));
         }
     }, 500), []);
 

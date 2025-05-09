@@ -158,11 +158,11 @@ function ListView(props) {
                         initialScrollY={0}
                     >
                         {displayedCourses.map(course => (
-                            <Link to={'/?' + course.code}>
                             <div
                                 onClick={() => {
                                     props.setSelectedCourse(course);
-                                    props.handlePopupOpen(true);
+                                    props.setPopupOpen(true);
+                                    //window.history.pushState({}, '', '/' + course.code);
                                 }}
                                 key={course.code}
                                 className="p-5 mb-3 hover:bg-blue-100 flex items-center border border-b-black border-solid w-full rounded-lg cursor-pointer"
@@ -245,7 +245,6 @@ function ListView(props) {
                                     </div>
                                 </div>
                             </div>
-                            </Link>
                         ))}
                     </InfiniteScroll>
                 </div>
