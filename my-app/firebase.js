@@ -126,50 +126,6 @@ export function syncScrollPositionToFirebase(model, containerRef) {
 		containerRef.current?.removeEventListener("scroll", handleScroll);
 }
 
-function startAverageRatingListener(model) {
-	const coursesRef = ref(db, "reviews");
-
-	// Step 1: One-time fetch if model.avgRating is not initialized
-	if (!model.avgRating || Object.keys(model.avgRating).length === 0) {
-		get(coursesRef).then((snapshot) => {
-			if (!snapshot.exists()) return;
-
-			const initialRatings = {};
-
-			snapshot.forEach((courseSnapshot) => {
-				const courseCode = courseSnapshot.key;
-				const avgRating = courseSnapshot.child("avgRating").val();
-
-				if (typeof avgRating === "number") {
-					initialRatings[courseCode] = avgRating;
-				}
-			});
-
-			model.setAverageRatings(initialRatings);
-		});
-	}
-
-	// Step 2: listener for each courses avgRating
-	onChildAdded(coursesRef, (courseSnapshot) => {
-		const courseCode = courseSnapshot.key;
-		const avgRatingRef = ref(db, `reviews/${courseCode}/avgRating`);
-
-		onValue(avgRatingRef, (ratingSnapshot) => {
-			if (!ratingSnapshot.exists()) return;
-
-			const rating = ratingSnapshot.val();
-
-			if (typeof rating === "number") {
-				model.updateAverageRating(courseCode, rating);
-			}
-		});
-	});
-
-	onChildRemoved(coursesRef, (courseSnapshot) => {
-		const courseCode = courseSnapshot.key;
-		model.updateAverageRating(courseCode, null);
-	});
-}
 
 
 function saveCoursesToCache(courses, timestamp) {
@@ -346,6 +302,51 @@ export async function addReviewForCourse(courseCode, review) {
 	} catch (error) {
 		console.error("Error when adding a course to firebase or updating the average:", error);
 	}
+}
+
+function startAverageRatingListener(model) {
+	const coursesRef = ref(db, "reviews");
+
+	// Step 1: One-time fetch if model.avgRating is not initialized
+	if (!model.avgRating || Object.keys(model.avgRating).length === 0) {
+		get(coursesRef).then((snapshot) => {
+			if (!snapshot.exists()) return;
+
+			const initialRatings = {};
+
+			snapshot.forEach((courseSnapshot) => {
+				const courseCode = courseSnapshot.key;
+				const avgRating = courseSnapshot.child("avgRating").val();
+
+				if (avgRating && Array.isArray(avgRating)) {
+					initialRatings[courseCode] = avgRating;
+				}
+			});
+
+			model.setAverageRatings(initialRatings);
+		});
+	}
+
+	// Step 2: listener for each courses avgRating
+	onChildAdded(coursesRef, (courseSnapshot) => {
+		const courseCode = courseSnapshot.key;
+		const avgRatingRef = ref(db, `reviews/${courseCode}/avgRating`);
+
+		onValue(avgRatingRef, (ratingSnapshot) => {
+			if (!ratingSnapshot.exists()) return;
+
+			const rating = ratingSnapshot.val();
+
+			if (typeof rating === "number") {
+				model.updateAverageRating(courseCode, rating);
+			}
+		});
+	});
+
+	onChildRemoved(coursesRef, (courseSnapshot) => {
+		const courseCode = courseSnapshot.key;
+		model.updateAverageRating(courseCode, null);
+	});
 }
 
 export async function getReviewsForCourse(courseCode) {

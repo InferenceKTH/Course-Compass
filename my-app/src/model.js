@@ -17,6 +17,7 @@ export const model = {
     courses: [],
     departments : [],
     locations: [],
+    // indexes: 0 -> overall rating; 1 -> difficulty; 2->teacher rating
     avgRatings: [],
     /* courses the user selected as their favourite */
     favourites: [],
@@ -298,7 +299,6 @@ export const model = {
         if (isOpen) {
             window.history.pushState({}, '', '/' + this.selectedCourse.code);
         }
-        console.log("POPOPOOPOPOOOOOOP")
         if (!isOpen) {
             let current_url = window.location.href;
             console.log(current_url);
