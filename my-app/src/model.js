@@ -1,3 +1,4 @@
+import { query } from "firebase/database";
 import { addCourse, addReviewForCourse, getReviewsForCourse, uploadDepartmentsAndLocations } from "../firebase";
 
 
@@ -16,6 +17,9 @@ export const model = {
     courses: [],
     departments : [],
     locations: [],
+    // indexes: 0 -> overall rating; 1 -> difficulty; 2->teacher rating
+    avgRatings: [],
+    /* courses the user selected as their favourite */
     favourites: [],
     searchHistory:[],
     isReady: false,
@@ -30,24 +34,32 @@ export const model = {
     filterOptions: {
         //apply-X-Filter boolean triggering flag wether corresponding filtering functions should run or not
         //different arrays require different data, some uses string arrays, some boolean values, and so on
-        applyTranscriptFilter: true,
+        applyTranscriptFilter: false,
         eligibility: "weak",  //the possible values for the string are: "weak"/"moderate"/"strong"
         applyLevelFilter: true,
         level: ["PREPARATORY", "BASIC", "ADVANCED", "RESEARCH"], //the possible values for the array are: "PREPARATORY", "BASIC", "ADVANCED", "RESEARCH"
-        applyLanguageFilter: true,
+        applyLanguageFilter: false,
         language: "none", //the possible values for the string are: "none"/"english"/"swedish"/"both"
-        applyLocationFilter:true,
+        applyLocationFilter:false,
         location: [], //the possible values for the array are: 'KTH Campus', 'KTH Kista', 'AlbaNova', 'KTH Flemingsberg', 'KTH Solna', 'KTH Södertälje', 'Handelshögskolan', 'KI Solna', 'Stockholms universitet', 'KONSTFACK'
         applyCreditsFilter:true,
         creditMin: 0,
         creditMax: 45,
-        applyDepartmentFilter: true,
+        applyDepartmentFilter: false,
+        department: [],
         applyRemoveNullCourses: false,
         period: [true, true, true, true],
         applyPeriodFilter: true
     },
     isPopupOpen: false,
     selectedCourse: null,
+    searchQueryModel: "",
+
+    _coursesListeners: [], //  internal list of listeners
+
+    onCoursesSet(callback) {
+      this._coursesListeners.push(callback);
+    },
 
     _coursesListeners: [], //  internal list of listeners
     urlStackPointer: 0,
@@ -98,6 +110,13 @@ export const model = {
     },
     setLocations(locations){
         this.locations = locations;
+    },
+    setAverageRatings(ratings) {
+        this.avgRatings = ratings;
+    },
+    updateAverageRating(courseCode, rating){
+        if(this.avgRatings!= null)
+            this.avgRatings[courseCode] = rating;
     },
     setFavourite(favorites){
         this.favourites = favorites;
@@ -161,9 +180,10 @@ export const model = {
     async addReview(courseCode, review) {
         try {
             await addReviewForCourse(courseCode, review);
-
+            return true;
         } catch (error) {
             console.error("Error adding review:", error);
+            return false;
         }
     },
     
@@ -201,6 +221,7 @@ export const model = {
 
     updateLevelFilter(level) {
         this.filterOptions.level = level;
+        console.log(level);
     },
 
     updateDepartmentFilter(department) {
@@ -250,12 +271,34 @@ export const model = {
     setApplyPeriodFilter(periodfilterState) {
         this.filterOptions.applyPeriodFilter = periodfilterState;
     },
+    //for better display we would like the departments in a structured format based on school 
+    formatDepartments() {
+        const grouped = this.departments?.reduce((acc, item) => {
+            const [school, department] = item.split("/");
+            if (!acc[school]) {
+                acc[school] = [];
+            }
+            acc[school].push(department?.trim());
+            return acc;
+        }, {});
+        const sortedGrouped = Object.keys(grouped)
+            .sort()
+            .reduce((acc, key) => {
+            acc[key] = grouped[key].sort();
+            return acc;
+            }, {});
+        const fields = Object.entries(sortedGrouped).map(([school, departments], index) => ({
+            id: index + 1,
+            label: school,
+            subItems: departments,
+        }));
+        return fields;
+    },
     async getAverageRating(courseCode) {
         const reviews = await getReviewsForCourse(courseCode);
         if (!reviews || reviews.length === 0) return null;
         const total = reviews.reduce((sum, review) => sum + (review.overallRating || 0), 0);
         const avgRtg = (total / reviews.length).toFixed(1);
-        // cache the result
         return avgRtg;
     },
 
@@ -275,13 +318,7 @@ export const model = {
     setSelectedCourse(course) {
         this.selectedCourse = course;
     },
-    setSidebarState(state) {
-        this.sidebarIsOpen = state;
-    },
 
-    getSidebarState() {
-        return this.sidebarIsOpen;
-    },
 
     toggleSidebarIsOpen() {
         this.sidebarIsOpen = !this.sidebarIsOpen;

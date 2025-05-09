@@ -189,7 +189,6 @@ export const PrerequisitePresenter = observer((props) => {
                     nodesDraggable={false}
                     nodesConnectable={false}
                     elementsSelectable={true}
-                    elementsFocusable={false}
                     edgesFocusable={false}
                     
                 >
@@ -463,7 +462,8 @@ export const PrerequisitePresenter = observer((props) => {
         let key = Object.keys(prereqs);
         if (prereqs[key] === true) {
             return true;
-        } else {
+        }
+        else {
             return false;
         }
 
@@ -472,7 +472,7 @@ export const PrerequisitePresenter = observer((props) => {
 
     function loadTree() {
         
-        console.log(JSON.stringify(props.selectedCourse.prerequisites, null, 4));
+        //console.log(JSON.stringify(props.selectedCourse.prerequisites, null, 4));
         if (!props.selectedCourse?.prerequisites || props.selectedCourse.prerequisites.length == 0) {
             let display_node = createNode("No Prerequisites", "No Prerequisites", "default");
             display_node.style["pointerEvents"] = "none";

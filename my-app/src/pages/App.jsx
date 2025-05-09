@@ -3,38 +3,39 @@ import { SidebarPresenter } from '../presenters/SidebarPresenter.jsx';
 import { SearchbarPresenter } from '../presenters/SearchbarPresenter.jsx';
 import { ListViewPresenter } from '../presenters/ListViewPresenter.jsx';
 import { FilterPresenter } from "../presenters/FilterPresenter.jsx";
-import { Routes, Route } from 'react-router-dom';
-import SharedView from '../pages/SharedView.jsx';
 import { slide as Menu } from 'react-burger-menu';
 import { observer } from 'mobx-react-lite';
 
 
 
-function MainAppLayout({ model }) {
-
+function App({ model }) {
 	const [sidebarIsOpen, setSidebarIsOpen] = useState(model.sidebarIsOpen);
+	const toggleSidebar = () => {
+		setSidebarIsOpen(!sidebarIsOpen);
+	}
 
 	return (
 			/* The sidebar styling(under the menu)*/
-		<div className=" flex h-screen w-screen bg-[#6246a8] ">
+		<div className=" flex h-screen w-screen bg-gradient-to-t from-[#4f3646] to-[#6747c0] overflow-hidden">
 			{	/* If sidebar is open, set length to 400px, else it should not be visible  */}
-			<div className={`${sidebarIsOpen ? 'w-[400px]' : 'w-0'}`}>
+			<div className={`${sidebarIsOpen ? 'w-[400px] min-w-[300px]' : 'w-[50px]'}`}>
 				<Menu
-					width={400}
-					isOpen={model.sidebarIsOpen}
+					width={window.innerWidth<700?'100%':Math.max(window.innerWidth * 0.26, 300)} 
+					isOpen={sidebarIsOpen}
 					onStateChange={(state) => setSidebarIsOpen(state.isOpen)}
-					className="bg-gradient-to-t from-[#6246a8] to-[#6747c0] z-0 h-screen"
+					className="bg-gradient-to-t from-[#4f3646] to-[#6747c0] z-0 " 
 					noOverlay
 					styles={{
 						bmMenuWrap: {
 							zIndex: '10'
 						},
 						bmBurgerButton: {
-							position: 'fixed',
+							position: 'absolute',
 							top: '20px',
-							left: '20px',
+							left: '8px',
 							width: '36px',
-							height: '30px'
+							height: '30px',
+							zIndex: '20'
 						},
 					}}
 					customBurgerIcon={ <img src="https://img.icons8.com/ios-filled/50/ffffff/menu-2.png" /> }
@@ -64,13 +65,4 @@ function MainAppLayout({ model }) {
 		</div>)
 }
 
-function App({model}) {
-	return (
-		<Routes>
-			<Route path="/" element={<MainAppLayout model={model}/>}/>
-			<Route path="/share" element={<SharedView model={model}/>}/>
-		</Routes>
-	);
-}
-
-export default observer(App);
+export default App;
