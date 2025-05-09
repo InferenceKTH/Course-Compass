@@ -146,31 +146,24 @@ const SidebarPresenter = observer(({ model }) => {
     function HandleFilterEnable(param) {
         switch (param[0]) {
             case "language":
-                console.log("language filter set to: " + param[1]);
                 model.setApplyLanguageFilter(param[1]);
                 break;
             case "level":
-                console.log("level filter set to: " + param[1]);
                 model.setApplyLevelFilter(param[1]);
                 break;
             case "location":
-                console.log("location filter set to: " + param[1]);
                 model.setApplyLocationFilter(param[1]);
                 break;
             case "credits":
-                console.log("credits filter set to: " + param[1]);
                 model.setApplyCreditsFilter(param[1]);
                 break;
             case "transcript":
-                console.log("transcript filter set to: " + param[1]);
                 model.setApplyTranscriptFilter(param[1]);
                 break;
             case "department":
-                console.log("department filter set to: " + param[1]);
                 model.setApplyDepartmentFilter(param[1]);
                 break;
             case "period":
-                console.log("period filter set to: " + param[1]);
                 model.setApplyPeriodFilter(param[1]);
                 break;
             default:
@@ -194,14 +187,13 @@ const SidebarPresenter = observer(({ model }) => {
 
     const handleFileChange = (event) => {
         const  truncatedCourses = model.courses.map(({ id, name }) => ({ id, name }));
-        console.log(truncatedCourses);
         const file = event.target.files[0];
         //document.getElementById('PDF-Scraper-Error').style.visibility = "visible";
-        transcriptScraperFunction(file, setErrorMessage, setErrorVisibility, truncatedCourses);
+        transcriptScraperFunction(file, setErrorMessage, setErrorVisibility, reApplyFilter, truncatedCourses);
         //document.getElementById('PDF-Scraper-Input').value = '';
         setFileInputValue('');
 
-        reApplyFilter();
+        
     };
     //==========================================================
 

@@ -183,8 +183,8 @@ const CollapsibleCheckboxes = (props) => {
                           checked={!!checkedSubItems[key]}
                           onChange={() => toggleSubCheckbox(row.id, index)}
                         />
-                        <label htmlFor={checkboxId} className="cursor-pointer ml-2">
-                          {subItem?.substring(0, 25) + ((subItem?.substring(0, 25).length >= 25) ? "..." : "")}
+                        <label htmlFor={checkboxId} className="cursor-pointer ml-2 truncate max-w-xs">
+                          {subItem}
                         </label>
                       </div>
                     );
