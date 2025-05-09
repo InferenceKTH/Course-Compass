@@ -109,7 +109,7 @@ function ListView(props) {
     }
 
     return (
-        <div className="relative bg-white text-black p-2 flex flex-col gap-3 h-screen">
+        <div className="relative bg-gray-100 text-black p-2 flex flex-col gap-3 h-screen">
             {isLoading ? (
                 <div className="flex justify-center items-center h-full">
                     <Quantum size="400" speed="10" color="#000061" />
@@ -179,7 +179,7 @@ function ListView(props) {
                                     //window.history.pushState({}, '', '/' + course.code);
                                 }}
                                 key={course.code}
-                                className="p-5 mb-3 hover:bg-blue-100 flex items-center border border-b-black border-solid w-full rounded-lg cursor-pointer"
+                               className="p-5 mb-3 hover:bg-blue-100 flex items-center bg-white w-full rounded-lg cursor-pointer shadow-md hover:shadow-lg transition-shadow duration-300"
                             >
                                 <div>
                                     <div className="codeNameContainer" style={{ display: 'flex' }}>
