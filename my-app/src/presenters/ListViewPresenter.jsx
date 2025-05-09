@@ -170,14 +170,15 @@ const ListViewPresenter = observer(({ model }) => {
 
     model.onCoursesSet((courses) => {
         let current_url = window.location.href;
+        if (current_url.indexOf("#") != -1) {return;}
         let course_code = "";
-        let start_index = indexOfNth(current_url, '/', 3) + 1;
+        let start_index = indexOfNth(current_url, '/', 3) + 2;
         if (start_index > 1) {
             course_code = current_url.slice(start_index);
         }
         if (start_index != current_url.length && course_code.length >= 6) {
             window.history.replaceState({}, '', '/');
-            window.history.pushState({}, '', '/' + course_code);
+            window.history.pushState({}, '', '/?' + course_code);
         }
         model.handleUrlChange();
     })
