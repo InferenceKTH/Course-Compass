@@ -3,16 +3,16 @@ import { SidebarPresenter } from '../presenters/SidebarPresenter.jsx';
 import { SearchbarPresenter } from '../presenters/SearchbarPresenter.jsx';
 import { ListViewPresenter } from '../presenters/ListViewPresenter.jsx';
 import { FilterPresenter } from "../presenters/FilterPresenter.jsx";
-import { Routes, Route } from 'react-router-dom';
-import SharedView from '../pages/SharedView.jsx';
 import { slide as Menu } from 'react-burger-menu';
 import { observer } from 'mobx-react-lite';
 
 
 
-function MainAppLayout({ model }) {
-
+function App({ model }) {
 	const [sidebarIsOpen, setSidebarIsOpen] = useState(model.sidebarIsOpen);
+	const toggleSidebar = () => {
+		setSidebarIsOpen(!sidebarIsOpen);
+	}
 
 	return (
 			/* The sidebar styling(under the menu)*/
@@ -65,13 +65,4 @@ function MainAppLayout({ model }) {
 		</div>)
 }
 
-function App({model}) {
-	return (
-		<Routes>
-			<Route path="/" element={<MainAppLayout model={model}/>}/>
-			<Route path="/share" element={<SharedView model={model}/>}/>
-		</Routes>
-	);
-}
-
-export default observer(App);
+export default App;

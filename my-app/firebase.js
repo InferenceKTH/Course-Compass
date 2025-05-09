@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
-import { get, getDatabase, ref, set, onValue, push } from "firebase/database";
+import { getFunctions, httpsCallable } from 'firebase/functions';
+import { get, getDatabase, ref, set, onValue, onChildRemoved, onChildAdded } from "firebase/database";
 import { reaction, toJS } from "mobx";
 
 // Your web app's Firebase configuration
@@ -17,6 +18,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const functions = getFunctions(app);
 export const auth = getAuth(app);
 export const db = getDatabase(app);
 export const googleProvider = new GoogleAuthProvider();
@@ -50,6 +52,7 @@ export function connectToFirebase(model) {
 			firebaseToModel(model); // Set up listeners for user-specific data
 			syncModelToFirebase(model); // Start syncing changes to Firebase
 			syncScrollPositionToFirebase(model);
+			startAverageRatingListener(model);
 		} else {
 			model.setUser(null); // If no user, clear user-specific data
 		}
@@ -122,6 +125,52 @@ export function syncScrollPositionToFirebase(model, containerRef) {
 	return () =>
 		containerRef.current?.removeEventListener("scroll", handleScroll);
 }
+
+function startAverageRatingListener(model) {
+	const coursesRef = ref(db, "reviews");
+
+	// Step 1: One-time fetch if model.avgRating is not initialized
+	if (!model.avgRating || Object.keys(model.avgRating).length === 0) {
+		get(coursesRef).then((snapshot) => {
+			if (!snapshot.exists()) return;
+
+			const initialRatings = {};
+
+			snapshot.forEach((courseSnapshot) => {
+				const courseCode = courseSnapshot.key;
+				const avgRating = courseSnapshot.child("avgRating").val();
+
+				if (typeof avgRating === "number") {
+					initialRatings[courseCode] = avgRating;
+				}
+			});
+
+			model.setAverageRatings(initialRatings);
+		});
+	}
+
+	// Step 2: listener for each courses avgRating
+	onChildAdded(coursesRef, (courseSnapshot) => {
+		const courseCode = courseSnapshot.key;
+		const avgRatingRef = ref(db, `reviews/${courseCode}/avgRating`);
+
+		onValue(avgRatingRef, (ratingSnapshot) => {
+			if (!ratingSnapshot.exists()) return;
+
+			const rating = ratingSnapshot.val();
+
+			if (typeof rating === "number") {
+				model.updateAverageRating(courseCode, rating);
+			}
+		});
+	});
+
+	onChildRemoved(coursesRef, (courseSnapshot) => {
+		const courseCode = courseSnapshot.key;
+		model.updateAverageRating(courseCode, null);
+	});
+}
+
 
 function saveCoursesToCache(courses, timestamp) {
 	const request = indexedDB.open("CourseDB", 1);
@@ -288,11 +337,14 @@ async function loadCoursesFromCacheOrFirebase(model) {
 
 export async function addReviewForCourse(courseCode, review) {
 	try {
-		const reviewsRef = ref(db, `reviews/${courseCode}`);
-		const newReviewRef = push(reviewsRef);
-		await set(newReviewRef, review);
+		const reviewsRef = ref(db, `reviews/${courseCode}/${review.uid}`);
+		await set(reviewsRef, review);
+		const updateCourseAvgRating = httpsCallable(functions, 'updateCourseAvgRating');
+   		const result = await updateCourseAvgRating({ courseCode });
+		
+		console.log('Average rating updated:', result.data.avgRating);
 	} catch (error) {
-		console.error("Error when adding a course to firebase:", error);
+		console.error("Error when adding a course to firebase or updating the average:", error);
 	}
 }
 
@@ -302,6 +354,7 @@ export async function getReviewsForCourse(courseCode) {
 	if (!snapshot.exists()) return [];
 	const reviews = [];
 	snapshot.forEach((childSnapshot) => {
+		if(childSnapshot.key!="avgRating")
 		reviews.push({
 			id: childSnapshot.key,
 			...childSnapshot.val(),

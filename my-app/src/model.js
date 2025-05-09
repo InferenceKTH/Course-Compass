@@ -16,6 +16,7 @@ export const model = {
     courses: [],
     departments : [],
     locations: [],
+    avgRatings: [],
     favourites: [],
     searchHistory:[],
     isReady: false,
@@ -98,6 +99,13 @@ export const model = {
     setLocations(locations){
         this.locations = locations;
     },
+    setAverageRatings(ratings) {
+        this.avgRatings = ratings;
+    },
+    updateAverageRating(courseCode, rating){
+        if(this.avgRatings!= null)
+            this.avgRatings[courseCode] = rating;
+    },
     setFavourite(favorites){
         this.favourites = favorites;
     },
@@ -160,9 +168,10 @@ export const model = {
     async addReview(courseCode, review) {
         try {
             await addReviewForCourse(courseCode, review);
-
+            return true;
         } catch (error) {
             console.error("Error adding review:", error);
+            return false;
         }
     },
     
@@ -254,7 +263,6 @@ export const model = {
         if (!reviews || reviews.length === 0) return null;
         const total = reviews.reduce((sum, review) => sum + (review.overallRating || 0), 0);
         const avgRtg = (total / reviews.length).toFixed(1);
-        // cache the result
         return avgRtg;
     },
 
