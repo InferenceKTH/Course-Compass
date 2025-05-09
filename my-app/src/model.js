@@ -211,7 +211,6 @@ export const model = {
 
     updateLevelFilter(level) {
         this.filterOptions.level = level;
-        console.log(level);
     },
 
     updateDepartmentFilter(department) {
@@ -296,10 +295,8 @@ export const model = {
         if (isOpen) {
             window.history.pushState({}, '', '/' + this.selectedCourse.code);
         }
-        console.log("POPOPOOPOPOOOOOOP")
         if (!isOpen) {
             let current_url = window.location.href;
-            console.log(current_url);
             let end_idx = indexOfNth(current_url, '/', 3);
             if (end_idx >= 0 && end_idx < current_url.length - 1 && current_url.indexOf("#") == -1) {
                 window.history.back();
@@ -321,23 +318,17 @@ export const model = {
     handleUrlChange() {
         let current_url = window.location.href;
         let start_idx = indexOfNth(current_url, '/', 3) + 1;
-        console.log(current_url)
         
         if (start_idx > 0 && start_idx < current_url.length && current_url.indexOf("#") == -1) {
             let course_code = current_url.slice(start_idx);
             let course = this.getCourse(course_code);
-            console.log(course_code)
             if (course) {
-                console.log("ACTIVE")
                 this.setSelectedCourse(course);
                 this.setPopupOpen(true);
             }
-            console.log("Forward");
         } else {
-            console.log("Back")
             this.setPopupOpen(false);
         }
-        //console.log("back");
     }
 
 };

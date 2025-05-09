@@ -8,7 +8,7 @@ export default function CourseTranscriptList(props) {
     // eslint-disable-next-line no-unused-vars
     window.addEventListener("completedCourses changed", event => {
         if (localStorage.getItem("completedCourses"))
-            local = JSON.parse(localStorage.getItem("completedCourses")).map(obj => String(obj.id));
+            local = JSON.parse(localStorage.getItem("completedCourses"));
         setItems(local);
     });
 
@@ -62,7 +62,7 @@ export default function CourseTranscriptList(props) {
                                 key={index}
                                 className="flex items-center bg-[#aba8e0] px-3 py-1 rounded-md shadow-md text-sm min-w-18"
                             >
-                                <span className="flex-auto mr-2">{item}</span>
+                                <span className="flex-auto mr-2">{item?.id}</span>
                                 <button
                                     onClick={() => removeItem(index)}
                                     className="text-violet-600 hover:text-red-700 font-bold text-sm hover:bg-red-300 rounded-md"

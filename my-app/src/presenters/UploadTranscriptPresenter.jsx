@@ -4,7 +4,7 @@ import pdfWorker from "pdfjs-dist/build/pdf.worker?url";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
-export default async function transcriptScraperFunction(file, setErrorMessage, setErrorVisibility, courseList) {
+export default async function transcriptScraperFunction(file, setErrorMessage, setErrorVisibility, reApplyFilter, courseList) {
     //const pdfjsLib = window['pdfjsLib'];
     //pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
     if (!file) {
@@ -44,6 +44,7 @@ export default async function transcriptScraperFunction(file, setErrorMessage, s
         throwTranscriptScraperError("While parsing the pdf something went wrong.\n" + e, setErrorMessage, setErrorVisibility);
         console.log(e);
     }
+    reApplyFilter();
 }
 
 function throwTranscriptScraperError(txt, setErrorMessage, setErrorVisibility) {
