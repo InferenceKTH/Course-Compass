@@ -59,9 +59,6 @@ exports.updateCourseAvgRating = functions.https.onCall(async (data, context) => 
 			throw new functions.https.HttpsError('failed-precondition', 'No valid ratings');
 		}
 
-
-
-
 		// Update the avgRating in reviews
 		await db.ref(`reviews/${courseCode}`).update({"avgRating" :[avgRatingOverall, avgRatingDifficulty, avgRatingProfessor] } );
 

@@ -18,6 +18,7 @@ export const model = {
     locations: [],
     // indexes: 0 -> overall rating; 1 -> difficulty; 2->teacher rating
     avgRatings: [],
+    /* courses the user selected as their favourite */
     favourites: [],
     searchHistory:[],
     isReady: false,
@@ -32,18 +33,19 @@ export const model = {
     filterOptions: {
         //apply-X-Filter boolean triggering flag wether corresponding filtering functions should run or not
         //different arrays require different data, some uses string arrays, some boolean values, and so on
-        applyTranscriptFilter: true,
+        applyTranscriptFilter: false,
         eligibility: "weak",  //the possible values for the string are: "weak"/"moderate"/"strong"
         applyLevelFilter: true,
         level: ["PREPARATORY", "BASIC", "ADVANCED", "RESEARCH"], //the possible values for the array are: "PREPARATORY", "BASIC", "ADVANCED", "RESEARCH"
-        applyLanguageFilter: true,
+        applyLanguageFilter: false,
         language: "none", //the possible values for the string are: "none"/"english"/"swedish"/"both"
-        applyLocationFilter:true,
+        applyLocationFilter:false,
         location: [], //the possible values for the array are: 'KTH Campus', 'KTH Kista', 'AlbaNova', 'KTH Flemingsberg', 'KTH Solna', 'KTH Södertälje', 'Handelshögskolan', 'KI Solna', 'Stockholms universitet', 'KONSTFACK'
         applyCreditsFilter:true,
         creditMin: 0,
         creditMax: 45,
-        applyDepartmentFilter: true,
+        applyDepartmentFilter: false,
+        department: [],
         applyRemoveNullCourses: false,
         period: [true, true, true, true],
         applyPeriodFilter: true
@@ -210,6 +212,7 @@ export const model = {
 
     updateLevelFilter(level) {
         this.filterOptions.level = level;
+        console.log(level);
     },
 
     updateDepartmentFilter(department) {
@@ -258,6 +261,29 @@ export const model = {
     },
     setApplyPeriodFilter(periodfilterState) {
         this.filterOptions.applyPeriodFilter = periodfilterState;
+    },
+    //for better display we would like the departments in a structured format based on school 
+    formatDepartments() {
+        const grouped = this.departments?.reduce((acc, item) => {
+            const [school, department] = item.split("/");
+            if (!acc[school]) {
+                acc[school] = [];
+            }
+            acc[school].push(department?.trim());
+            return acc;
+        }, {});
+        const sortedGrouped = Object.keys(grouped)
+            .sort()
+            .reduce((acc, key) => {
+            acc[key] = grouped[key].sort();
+            return acc;
+            }, {});
+        const fields = Object.entries(sortedGrouped).map(([school, departments], index) => ({
+            id: index + 1,
+            label: school,
+            subItems: departments,
+        }));
+        return fields;
     },
     async getAverageRating(courseCode) {
         const reviews = await getReviewsForCourse(courseCode);

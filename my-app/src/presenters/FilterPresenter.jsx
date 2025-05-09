@@ -147,9 +147,9 @@ const FilterPresenter = observer(({ model }) => {
 
         bestCourses = localFilteredCourses.filter(function (course) {
             try {
-                return (locations.includes(course?.location));
+                return (locations.includes(course?.location.toUpperCase()));
             } catch (error) {
-                console.log("for some reason course?.location is: ", course?.location, error);
+                console.log("for some reason course?.location is: ", course, error);
                 return false;
             }
 
@@ -394,10 +394,7 @@ const FilterPresenter = observer(({ model }) => {
                 updatePeriods();
             }
             if (model.filterOptions.applyLocationFilter) {
-                //after deo finishes locations, until then dont
-
-                //console.log("going to apply location on:",localFilteredCourses.length);
-                //updateLocations();
+                updateLocations();
             }
             if (model.filterOptions.applyLevelFilter) {
                 updateLevels();
@@ -412,8 +409,7 @@ const FilterPresenter = observer(({ model }) => {
                 applyTranscriptEligibility();
             }
             if (model.filterOptions.applyDepartments) {
-                //console.log("going to apply location on:",localFilteredCourses.length);
-                //updateDepartments();
+                updateDepartments();
             }
 
             model.filteredCourses = [...localFilteredCourses];

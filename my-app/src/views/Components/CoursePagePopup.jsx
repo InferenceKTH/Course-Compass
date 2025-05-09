@@ -61,6 +61,7 @@ function CoursePagePopup({
 			className={`fixed  backdrop-blur-lg inset-0  flex justify-center z-50 ${
 				sidebarIsOpen ? 'pl-[400px]' : 'w-full'
 			}`}
+			onClick={onClose}
 		>
 			<div
 				className="bg-indigo-300/75 backdrop-blur-lg h-full w-full flex flex-col overflow-auto"
