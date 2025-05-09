@@ -480,7 +480,7 @@ export const PrerequisitePresenter = observer((props) => {
                 let courses_taken = [];
                 if (localStorage.getItem("completedCourses") != null) {
                     for (let obj of localStorage.getItem("completedCourses")) {
-                        courses_taken.push(obj?.id);
+                        courses_taken.push(obj?.id);    
                     }
                 }
                 code_to_name = model.getCourseNames(courses_taken);
