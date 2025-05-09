@@ -1,6 +1,7 @@
 # Course-Compass 
 ## by team [Inference](https://inferencekth.github.io/Course-Compass/)
-Course-Compass is a webpage for interacting with the kth courses via the kth api. It allows for searching and filtering through all active courses.
+Course-Compass is an interactive web application for exploring KTH courses. It allows users to search, filter, and review courses while providing prerequisite visualization and personalized recommendations. The application uses Firebase for data storage and real-time updates.
+
 
 ## Features
 - Course search with advanced filtering
@@ -63,6 +64,35 @@ REACT_APP_FIREBASE_PROJECT_ID=your_project_id
 REACT_APP_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
 REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 REACT_APP_FIREBASE_APP_ID=your_app_id
+```
+
+### Database Population
+To populate the Firebase database with course data:
+
+1. Use the JSON file in `/src/assets/example.json` or prepare a file according to the following outline:
+```json
+{
+  "courseCode": {
+    "code": "string",
+    "name": "string",
+    "location": "string",
+    "department": "string",
+    "language": "string",
+    "description": "string",
+    "academic_level": "string",
+    "periods": "array",
+    "credits": "number",
+    "prerequisites": "object",
+    "prerequisites_text": "string",
+    "learning_outcomes": "string"
+  }
+}
+```
+
+2. Use the `model.populateDatabase(data)` function to upload courses:
+```javascript
+import data from "./assets/example.json";
+model.populateDatabase(data);
 ```
 
 ### Firebase Security Rules
