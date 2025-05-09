@@ -8,7 +8,7 @@ export default function CourseTranscriptList(props) {
     // eslint-disable-next-line no-unused-vars
     window.addEventListener("completedCourses changed", event => {
         if (localStorage.getItem("completedCourses"))
-            local = JSON.parse(localStorage.getItem("completedCourses"));
+            local = JSON.parse(localStorage.getItem("completedCourses")).map(obj => String(obj.id));
         setItems(local);
     });
 

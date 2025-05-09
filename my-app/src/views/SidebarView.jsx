@@ -2,9 +2,10 @@ import React from 'react';
 import ToggleField from "./Components/SideBarComponents/ToggleField.jsx";
 import SliderField from "./Components/SideBarComponents/SliderField.jsx";
 import DropDownField from "./Components/SideBarComponents/DropDownField.jsx";
-import { UploadTranscriptPresenter } from '../presenters/UploadTranscriptPresenter.jsx';
+//import { UploadTranscriptPresenter } from '../presenters/UploadTranscriptPresenter.jsx';
 import CollapsibleCheckboxes from './Components/SideBarComponents/CollapsibleCheckboxes.jsx';
 import Tooltip from './Components/SideBarComponents/ToolTip.jsx';
+import UploadField from './Components/SideBarComponents/UploadField';
 import MultipleChoiceButtons from './Components/SideBarComponents/MultipleChoiceButtons.jsx';
 
 
@@ -21,14 +22,26 @@ function SidebarView(props) {
             <h6 className="m-2 text-lg font-medium text-white text-center">
                 Filters
             </h6>
-            <UploadTranscriptPresenter
+            {/*<UploadTranscriptPresenter
                 HandleFilterChange={props.HandleFilterChange}
                 filterName="transcript"
                 HandleFilterEnable={props.HandleFilterEnable}
                 reApplyFilter={props.reApplyFilter}
                 filterEnable={props.initialApplyTranscriptFilter}
                 initialValue={props.initialTranscriptElegiblityValue}
-            />
+            />*/}
+            <UploadField
+                        errorMessage={props.PdfErrorMessage}            //
+                        errorVisibility={props.PdfErrorVisibility}      //
+                        handleFileChange={props.PdfHandleFileChange}    //
+                        fileInputValue={props.PdfFileInputValue}        //
+                        HandleFilterEnable={props.HandleFilterEnable}
+                        HandleFilterChange={props.HandleFilterChange}
+                        filterName="transcript"
+                        reApplyFilter={props.reApplyFilter}
+                        filterEnable={props.initialApplyTranscriptFilter}
+                        initialValue={props.initialTranscriptElegiblityValue}
+                    />
             <div className='flex-auto justify-center '>
                 <div className="z-10 w-100% rounded-lg justify-center pb-10" >
 
