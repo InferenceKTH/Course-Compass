@@ -303,7 +303,6 @@ export const model = {
     },
 
     setPopupOpen(isOpen) {
-        //console.log("Popup!!!!!")
         if (!isOpen) {
             let current_url = window.location.href;
             let end_index = indexOfNth(current_url, '/', 3);
@@ -327,24 +326,18 @@ export const model = {
     handleUrlChange() {
         let current_url = window.location.href;
         let start_idx = indexOfNth(current_url, '/', 3) + 1;
-        console.log(current_url)
         
         if (start_idx > 0 && start_idx < current_url.length && current_url.indexOf("#") == -1) {
             let course_code = current_url.slice(start_idx);
             let course = this.getCourse(course_code);
-            console.log(course_code)
             if (course) {
-                console.log("ACTIVE")
                 this.setSelectedCourse(course);
                 this.setPopupOpen(true);
             }
             this.urlStackPointer++;
-            console.log("Forward");
         } else if (start_idx > 0){
-            console.log("Back")
             this.setPopupOpen(false);
         }
-        console.log("Satck: " + this.urlStackPointer)
     }
 
 };
