@@ -52,7 +52,6 @@ export const PrerequisitePresenter = observer((props) => {
     const nodeHeight = 36;
 
     loadTree();
-    //console.log(initialNodes);
 
     const getLayoutedElements = (nodes, edges, direction = 'LR') => {
         const isHorizontal = direction === 'LR';
@@ -242,8 +241,6 @@ export const PrerequisitePresenter = observer((props) => {
         
         if (!Array.isArray(current_object)) {   // Is object
             let key = Object.keys(current_object)[0];
-            //console.log("Len: " + current_object[key].length);
-            //console.log("Type: " + typeof current_object[key]);
             if (current_object[key] != null && current_object[key].length == 1 && (typeof current_object[key][0] == "string" 
             || (current_object[key][0].length == 1 && typeof current_object[key][0][0] == "string"))) {
                 prereq_convert(courses_taken, current_object[key], key, previous_node_id); 
@@ -286,13 +283,10 @@ export const PrerequisitePresenter = observer((props) => {
                         if (!started_compressing) {
                             if (i < current_object.length - 2 && typeof current_object[i + 1] == "string" && typeof current_object[i + 2] == "string") {
                                 let next = current_object[i + 1]; let next_next = current_object[i + 2];
-                                //console.log(next)
-                                //console.log(course_number, next.slice(2), next_next.slice(2))
                                 if (next.slice(0, 2) === course_letters
                                 && next_next.slice(0, 2) === course_letters && !isNaN(next.slice(2))
                                 && !isNaN(next_next.slice(2)) && parseInt(next.slice(2)) == course_number + 1
                                 && parseInt(next_next.slice(2)) == course_number + 2) {
-                                        //console.log(course_number, next.slice(2), next_next.slice(2))
                                         current_compresion.push([i, course_letters, course_number]);
                                         current_compresion.push([i + 1, course_letters, course_number + 1]);
                                         current_compresion.push([i + 2, course_letters, course_number + 2]);
@@ -317,7 +311,6 @@ export const PrerequisitePresenter = observer((props) => {
                                 } else {
                                     started_compressing = false;
                                     //refined_course_array.push([i + 1, current_object[i + 1].slice(0, 2), current_object[i + 1].slice(2)]);
-                                    //console.log(current_compresion);
                                     refined_course_array.push([-1, "!", current_compresion]);
                                     current_compresion = [];
                                 }
@@ -336,8 +329,6 @@ export const PrerequisitePresenter = observer((props) => {
                 }
                 
             }
-            //console.log("HERERERERERE!!!")
-            //console.log(refined_course_array);
 
 
             for (let i = 0; i < refined_course_array.length; i++) {
@@ -364,8 +355,6 @@ export const PrerequisitePresenter = observer((props) => {
                     } else if (previous_key == "and" && compressed_done_count == compressed_length) {
                         course_done = true;
                     }
-                    //console.log("Compressed:");
-                    //console.log(refined_course_array[i][2]);
                     course_code = refined_course_array[i][2][0][1] + refined_course_array[i][2][0][2] +
                     "-" + refined_course_array[i][2][compressed_length - 1][1] + refined_course_array[i][2][compressed_length - 1][2];
                     input_text = course_code;
@@ -399,9 +388,6 @@ export const PrerequisitePresenter = observer((props) => {
         if (typeof current_object == "object" && !Array.isArray(current_object)) {
             let key = Object.keys(current_object)[0];
             let object_array = current_object[key];
-            //console.log("DEBUGGING  ")
-            //console.log(current_node)
-            //console.log(object_array)
             let num_of_matches = 0;
             for (let i = 0; i < object_array.length; i++) {
                 if (Array.isArray(object_array[i])) {
@@ -435,15 +421,12 @@ export const PrerequisitePresenter = observer((props) => {
                 } else if(object_array[i] === true) {num_of_matches++}
             }
             if (key == "or" && num_of_matches > 0) {
-                //console.log(current_node)
                 current_object[key] = true;
                 if (current_node != null) {
                     current_node["style"]["backgroundColor"] = "lightgreen";
                 }
             }
             else if (key == "and" && num_of_matches == object_array.length) {
-                //console.log("DEBUGGING 2");
-                //console.log(num_of_matches, object_array.length)
                 current_object[key] = true;
                 if (current_node != null) {
                     current_node["style"]["backgroundColor"] = "lightgreen";
@@ -458,7 +441,6 @@ export const PrerequisitePresenter = observer((props) => {
 
     function generateTree(courses_taken, prereqs) {
         prereq_convert(courses_taken, prereqs, null, props.selectedCourse.code);
-        //console.log(JSON.stringify(prereqs, null, 4));
         let key = Object.keys(prereqs);
         if (prereqs[key] === true) {
             return true;
@@ -472,7 +454,6 @@ export const PrerequisitePresenter = observer((props) => {
 
     function loadTree() {
         
-        //console.log(JSON.stringify(props.selectedCourse.prerequisites, null, 4));
         if (!props.selectedCourse?.prerequisites || props.selectedCourse.prerequisites.length == 0) {
             let display_node = createNode("No Prerequisites", "No Prerequisites", "default");
             display_node.style["pointerEvents"] = "none";

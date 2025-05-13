@@ -153,8 +153,6 @@ function evaluatePDFtextObjectArray(textObjects, setErrorMessage, setErrorVisibi
             //for good measures we also make sure the text is not longer that 7 chars; the longest course ID found so far at KTH
             if ((textObjects[i].transform[4] === 56.692) && (textObjects[i + 12].transform[4] === 510.233) && (textObjects[i].str.length < 8))
                 if (flagTable) {
-                    //console.log(textObjects[i].str, textObjects[i].transform[4]);
-                    //extractedText+= textObjects[i].str + "\n";
                     let scrapedObj = {
                         id: textObjects[i].str,
                         name: textObjects[i+2].str
