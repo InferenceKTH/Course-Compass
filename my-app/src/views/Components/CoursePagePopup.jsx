@@ -103,7 +103,6 @@ function CoursePagePopup({
 	};
 
 	if (!isOpen || !course) return null;
-	console.log(course);
 	return (
 		<div
 			className={`fixed  backdrop-blur-lg inset-0  flex justify-center z-50 ${sidebarIsOpen ? 'pl-[400px]' : 'w-full'
