@@ -358,9 +358,11 @@ export const model = {
 
     handleUrlChange() {
         let current_url = window.location.href;
-        let start_idx = indexOfNth(current_url, '/', 3) + 1;
 
-        if (start_idx > 0 && start_idx < current_url.length && current_url.indexOf("#") == -1) {
+        let start_idx = indexOfNth(current_url, '/', 3) + 2;
+        
+        if (start_idx > 0 && start_idx < current_url.length) {
+
             let course_code = current_url.slice(start_idx);
             let course = this.getCourse(course_code);
             if (course) {

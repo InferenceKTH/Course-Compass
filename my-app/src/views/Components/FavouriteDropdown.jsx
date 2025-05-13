@@ -40,7 +40,7 @@ const FavouritesDropdown = observer((props) => {
                                 onClick={() => {
                                     props.setSelectedCourse(course);
                                     props.setIsPopupOpen(true);
-                                    window.history.pushState({}, '', '/' + course.code);
+                                    window.history.pushState({}, '', '/?' + course.code);
                                     
                                 }}
                                 key={course.code}
