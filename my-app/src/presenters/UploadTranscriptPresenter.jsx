@@ -1,12 +1,15 @@
 import * as pdfjsLib from "pdfjs-dist";
 import pdfWorker from "pdfjs-dist/build/pdf.worker?url";
 
+/* This file originally was the TranscriptScraper.js but it got reworked into a sort of presenter which was under a view for some reason,
+ * and was the one who called the UploadField component (something that a view should've done). So this in the last sprint got hastily 
+ * refactored such that its organisation makes atleast some sense in the MVP model. That caused it to be such a weird function with 4 methods being
+ * passed in its arguments. Now this is used as a source file in SidebarPresenter instead, but still requires quite some cleaning up. 
+ */
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 export default async function transcriptScraperFunction(file, setErrorMessage, setErrorVisibility, reApplyFilter, courseList) {
-    //const pdfjsLib = window['pdfjsLib'];
-    //pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
     if (!file) {
         console.log("element: 'PDF-Scraper-Input' changed, but we havent gotten a file yet.");
         return;
@@ -70,14 +73,6 @@ function writeLocalStorage_completedCourses(coursePairs) {
         map.set(course.id, course);
     }
 
-    /*const coursePairs = [{id: "AA12", name: "Apple course"},
-            {id: "BB33", name: "Banana course"},
-            {id: "BB23", name: "anana course"},
-            {id: "1B33", name: "Banana course"}
-            ];
-    
-    coursePairs.sort((a, b) => a.id.localeCompare(b.id));*/
-
     let newcodes = Array.from(map.values());
     newcodes.sort((a, b) => a.id.localeCompare(b.id));
 
@@ -104,7 +99,6 @@ function evaluatePDFtextObjectArray(textObjects, setErrorMessage, setErrorVisibi
     let flagKTH_NeverSet = true;
     let flagTable = false;
     let flagTableDone = false;
-
     let flagErrorRecords = false;
 
     //we are going to go through each text object which is inside the pdf file.
@@ -199,13 +193,12 @@ function evaluatePDFtextObjectArray(textObjects, setErrorMessage, setErrorVisibi
 }
 
 /*
-
+        Structure we are storing our completed courses in LocalStorage.
     [
         {
             id: ,           //str
             name: ,         //str
-            is_in_DB:       // 0/1
+            is_in_DB:       //true/false
         }
     ]
-
 */

@@ -13,12 +13,12 @@ const FilterPresenter = observer(({ model }) => {
      *  This presenter should be changed such that it uses side-effects instead model.filtersChange flag, since
      */
 
-    /* function  */
+    /* functions  */
     function applyTranscriptEligibility() {
         if (localFilteredCourses.length == 0)
             return;
 
-        /*  */
+        /* this should be either weak/moderate/strong */
         const eligibilitytype = model.filterOptions.eligibility;
 
         let strongcourses = [];
@@ -289,21 +289,6 @@ const FilterPresenter = observer(({ model }) => {
 
         localFilteredCourses = localFilteredCourses.filter(course => levels.includes(course?.academicLevel));
 
-        /*
-        let levels = model.filterOptions.level;
-        let stayingCourses = [];
-        
-        for(let i=0; i<localFilteredCourses.length; i++){
-            let stay = false;
-            for(let j=0; j<levels.length; j++){
-                if(localFilteredCourses[i].academicLevel === levels[j]){
-                    stay = true;
-                    break;
-                }
-            }
-            if(stay) stayingCourses.push(localFilteredCourses[i]);
-        }
-        localFilteredCourses = [...stayingCourses];*/
     }
 
     function updateDepartments() {
@@ -333,6 +318,10 @@ const FilterPresenter = observer(({ model }) => {
         localFilteredCourses = [...bestCourses, ...worstCourses];
     }
 
+    /* Function that deals with removing the courses that have no properties or have null properties in the categories the user 
+     * using for filtering. The "null" check is a remainder from a version where we didn't use the ?. property accessing yet,
+     * should be able to be removed without problem in the future.
+    */
     function updateNoNullcourses(){
         let local = [...localFilteredCourses];
 
