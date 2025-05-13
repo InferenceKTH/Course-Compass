@@ -11,7 +11,6 @@ export default function MultipleChoiceButtons(props) {
 
     useEffect(() => {
         setFilterEnabled(props.filterEnable);
-        console.log(props.filterEnable);
     })
 
     const handleClick = (index) => {
