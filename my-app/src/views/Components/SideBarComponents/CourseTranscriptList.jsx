@@ -38,32 +38,28 @@ export default function CourseTranscriptList(props) {
     const tooltipRef = useRef(null);
 
     const tooltipClasses = [
-        "relative",
-        "top-1/2",
-        "-translate-y-1/7", // fixed typo from "-translate-y-1/7"
+        "absolute",
         "bg-gray-800",
         "text-white",
         "text-xs",
         "rounded-xl",
+        "z-100",
         "px-3",
         "py-2",
         "opacity-0",
         "peer-hover:opacity-100",
         "transition-opacity",
         "duration-200",
-        "z-50",
         "pointer-events-none",
         "break-words",
         "shadow-lg",
-        "w-[250px]",
-        "right-full mr-2" //: "left-full ml-2",
-      ].join(" ");
+    ].join(" ");
 
     //=====================================
 
 
     return (
-        <div className="max-w-80">
+        <div className="max-w-80 z-100">
             {items.length > 0 && (
                 <div className="flex justify-between">
 
@@ -79,42 +75,45 @@ export default function CourseTranscriptList(props) {
             <div className="relative">
 
                 <div
-                    className="absolute inset-0 mt-30 pointer-events-none bg-gradient-to-b from-transparent to-[#553d65]"
+                    className="absolute inset-0 mt-30 pointer-events-none bg-gradient-to-b from-transparent to-[#553d65] z-100"
                 ></div>
-                    <div className="grid grid-cols-3 w-full max-[1200px]:grid-cols-2 max-[700px]:grid-cols-1 gap-1 sm:gap-2 overflow-y-auto max-h-[180px] z-0 pb-10" style={{
-                        scrollbarWidth: "thin",
-                        scrollbarColor: "#888 #f1f1f1",
-                    }}>
-                        {items.map((item, index) => (
-                            <div
-                                key={index}
-                                className="flex items-center bg-[#aba8e0] px-3 py-1 rounded-md shadow-md text-sm min-w-18"
-                            >
+                <div className="grid grid-cols-3 w-full max-[1200px]:grid-cols-2 max-[700px]:grid-cols-1 gap-1 sm:gap-2 overflow-y-auto overflow-x-hidden max-h-[180px] pb-10" style={{
+                    scrollbarWidth: "thin",
+                    scrollbarColor: "#888 #f1f1f1",
+                }}>
+                    {items.map((item, index) => (
+                        <div
+                            key={index}
+                            className="flex items-center bg-[#aba8e0] px-3 py-1 rounded-md shadow-md text-sm min-w-18"
+                        >
+                            <div className="relative">
                                 <span className="flex-auto mr-2 peer">{item?.id}</span>
+
                                 <div className={tooltipClasses}>
                                     {item?.name}
                                 </div>
-                                <button
-                                    onClick={() => removeItem(index)}
-                                    className="text-violet-600 hover:text-red-700 font-bold text-sm hover:bg-red-300 rounded-md"
-                                >
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        className="w-4 h-4"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="4"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    >
-                                        <line x1="18" y1="6" x2="6" y2="18" />
-                                        <line x1="6" y1="6" x2="18" y2="18" />
-                                    </svg>
-                                </button>
                             </div>
-                        ))}
-                    </div>
+                            <button
+                                onClick={() => removeItem(index)}
+                                className="text-violet-600 hover:text-red-700 font-bold text-sm hover:bg-red-300 rounded-md"
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="w-4 h-4"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    <line x1="18" y1="6" x2="6" y2="18" />
+                                    <line x1="6" y1="6" x2="18" y2="18" />
+                                </svg>
+                            </button>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );

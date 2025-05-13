@@ -9,9 +9,13 @@ export default function UploadField(props) {
 
     const [isDragging, setIsDragging] = useState(false);
     const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
-    const [fileUploaded, setfileUploaded] = useState(localStorage.getItem("completedCourses") != undefined);
+    const [fileUploaded, setfileUploaded] = useState(false);
 
     const checkboxRef = useRef(null);
+
+    useState(() => {
+        setfileUploaded(localStorage.getItem("completedCourses") != undefined)
+    });
 
     const handleDragOver = (event) => {
         event.preventDefault(); // Prevent default behavior (to allow drop)
@@ -49,6 +53,7 @@ export default function UploadField(props) {
                     />
                 </div>
             </div>
+            <div></div>
             <div className={`${(!fileUploaded) ? ("opacity-100") : (filterEnabled? "opacity-100": "opacity-50")}`} onClick={() => {
                 if (!filterEnabled && checkboxRef.current) {
                     checkboxRef.current.click();

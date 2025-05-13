@@ -179,6 +179,29 @@ const SidebarPresenter = observer(({ model }) => {
         model.setApplyRemoveNullCourses();
     }
 
+    function formatDepartmentSet(departmentSet) {
+        const grouped = departmentSet.reduce((acc, item) => {
+            const [school, department] = item.split("/");
+            if (!acc[school]) {
+                acc[school] = [];
+            }
+            acc[school].push(department?.trim());
+            return acc;
+        }, {});
+        const sortedGrouped = Object.keys(grouped)
+            .sort()
+            .reduce((acc, key) => {
+            acc[key] = grouped[key].sort();
+            return acc;
+            }, {});
+        const fields = Object.entries(sortedGrouped).map(([school, departments], index) => ({
+            id: index + 1,
+            label: school,
+            subItems: departments,
+        }));
+        return fields;
+    }
+
     //==========================================================
 
     const [errorMessage, setErrorMessage] = useState(""); // Stores error message
@@ -215,7 +238,7 @@ const SidebarPresenter = observer(({ model }) => {
             initialPeriodFilterOptions={currentPeriodSet}
             initialPeriodFilterEnable={model.filterOptions.applyPeriodFilter}
 
-            initialDepartmentFilterOptions={currentDepartmentSet}
+            initialDepartmentFilterOptions={formatDepartmentSet(currentDepartmentSet.filter(item => item !== "undefined/undefined"))}
             initialDepartmentFilterEnable={model.filterOptions.applyDepartmentFilter}
             DepartmentFilterField = {model.formatDepartments()}
 
