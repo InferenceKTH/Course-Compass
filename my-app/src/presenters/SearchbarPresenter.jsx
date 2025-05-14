@@ -15,6 +15,7 @@ import debounce from 'lodash.debounce';
 const SearchbarPresenter = observer(({ model }) => {
     const [searchQuery, setSearchQuery] = useState("");
 
+    // the search uses fuse.js
     const fuseOptions = useMemo(() => ({
         keys: [
             { name: 'code', weight: 0.5 },   
@@ -26,7 +27,7 @@ const SearchbarPresenter = observer(({ model }) => {
         minMatchCharLength: 2,
     }), []); // Options never change
 
-    // Debounced search function
+    // Debounced search function - afterwards we sort with startWith() by hand
     const searchCourses = useCallback(debounce((query) => {
         if(!model?.filteredCourses)
             return;
@@ -49,7 +50,7 @@ const SearchbarPresenter = observer(({ model }) => {
             model.setCurrentSearch(sortedResults.map(r => r.item));
             model.searchQueryModel = query;
         }
-    }, 750), []);
+    }, 500), []);
 
     const addFavourite = (course) => {
         model.addFavourite(course);
