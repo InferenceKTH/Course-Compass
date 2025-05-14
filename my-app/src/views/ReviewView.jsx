@@ -1,6 +1,11 @@
 import React, { useState, useRef, useEffect } from "react";
 import RatingComponent from "../views/Components/RatingComponent.jsx";
 
+/**
+ * Displays the user an interface to give a review for a specified course. Invoked by the ReviewPresenter.
+ * @param {*} props 
+ * @returns 
+ */
 export function ReviewView(props) {
   const grades = ["A", "B", "C", "D", "E", "F"];
   const difficulties = ["Very Easy", "Easy", "Medium", "Hard", "Very Hard"];

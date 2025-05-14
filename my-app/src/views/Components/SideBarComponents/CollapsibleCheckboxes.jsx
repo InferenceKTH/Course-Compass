@@ -2,6 +2,11 @@ import React, { useState, useRef } from "react";
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
 import Tooltip from "./ToolTip";
 
+/**
+ * Used by the SidebarView for filtering things with checkboxes.
+ * @param {*} props 
+ * @returns 
+ */
 const CollapsibleCheckboxes = (props) => {
   const [expanded, setExpanded] = useState([]);
   const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);

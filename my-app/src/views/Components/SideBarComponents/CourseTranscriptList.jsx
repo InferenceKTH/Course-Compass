@@ -1,5 +1,8 @@
 import { useState, forwardRef } from "react";
-
+/**
+ * Shows a list of taken courses after uploading a transcript of records. 
+ * Used by the SidebarView.
+ */
 const CourseTranscriptList = forwardRef((props,ref) => {
     let local = [];
     if (localStorage.getItem("completedCourses"))

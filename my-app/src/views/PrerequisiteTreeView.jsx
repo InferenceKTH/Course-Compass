@@ -2,6 +2,10 @@ import React from "react";
 import ReactFlow, { MiniMap, Controls, Background } from "reactflow";
 import "reactflow/dist/style.css";
 
+/**
+ * Displays a ReactFlow window, that is used in the context of a prerequisite tree.
+ * @param {} props 
+ */
 function PrerequisiteTreeView(props) {
     return (
         <div className="w-full h-[500px] rounded-lg">

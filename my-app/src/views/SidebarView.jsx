@@ -12,7 +12,6 @@ import MultipleChoiceButtons from './Components/SideBarComponents/MultipleChoice
  * Represents the sidebar and consists of an upload field, dropdown field, toggle fields, sliders, etc. 
  * It shows the filters and settings for the search. The view is invoked by the SidebarPresenter.
  * @param {*} props 
- * @returns 
  */
 function SidebarView(props) {
     return (
