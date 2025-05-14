@@ -4,6 +4,7 @@ import FilterEnableCheckbox from "./FilterEnableCheckbox";
 //import * as scraper from '../../../../src/scripts/transcript-scraper/transcript-scraper.js';
 import ButtonGroupField from './ButtonGroupField';
 import ToolTip from './ToolTip';
+import UploadGif from "../../../assets/upload.gif";
 
 export default function UploadField(props) {
 
@@ -72,7 +73,7 @@ export default function UploadField(props) {
                             />
                         </div>
                         <div className="flex flex-col items-center justify-center pt-5">
-                            <img src="..\..\..\..\src\assets\upload.gif" alt="Upload GIF" className="object-contain" />
+                            <img src={UploadGif} alt="Upload GIF" className="object-contain" />
                             <p className=" text-sm "><span className="font-semibold">Click to upload</span> or drag and drop</p>
                             <p className="text-xs">National Official Transcript of Records in PDF format</p>
                         </div>
