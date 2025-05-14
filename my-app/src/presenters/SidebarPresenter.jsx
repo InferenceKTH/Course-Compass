@@ -181,19 +181,27 @@ const SidebarPresenter = observer(({ model }) => {
 
     function formatDepartmentSet(departmentSet) {
         const grouped = departmentSet.reduce((acc, item) => {
-            const [school, department] = item.split("/");
-            if (!acc[school]) {
-                acc[school] = [];
+            if (item.includes("/")) {
+                const [school, department] = item.split("/");
+                if (!acc[school]) {
+                    acc[school] = [];
+                }
+                acc[school].push(department?.trim());
+                return acc;
+            } else {
+                const [school] = item;
+                if (!acc[school]) {
+                    acc[school] = [];
+                }
+                return acc;
             }
-            acc[school].push(department?.trim());
-            return acc;
         }, {});
         const sortedGrouped = Object.keys(grouped)
-            .sort()
-            .reduce((acc, key) => {
+        .sort()
+        .reduce((acc, key) => {
             acc[key] = grouped[key].sort();
             return acc;
-            }, {});
+        }, {});
         const fields = Object.entries(sortedGrouped).map(([school, departments], index) => ({
             id: index + 1,
             label: school,

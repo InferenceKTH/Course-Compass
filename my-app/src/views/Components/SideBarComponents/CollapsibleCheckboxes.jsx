@@ -19,19 +19,17 @@ const CollapsibleCheckboxes = (props) => {
 
   const toggleExpand = (id, subItems) => {  
     let entry = rows.find(item => item.id === id);
-    if (entry && entry?.label && entry?.subItems) {
+    if (!entry?.subItems || (entry?.subItems.length == 1 && !entry?.subItems[0])) { 
+      props.HandleFilterChange([paramFieldType, props.filterName,
+        entry?.label
+      ]);
+    }else if (entry && entry?.label && entry?.subItems) {
       subItems?.map((_, index) => {
         if ((checkedSubItems[`${id}-${index}`] && expanded[id]) || (!expanded[id])) {
-          if (!entry?.subItems || entry?.subItems.includes("undefined")) {
-            props.HandleFilterChange([paramFieldType, props.filterName,
-              entry?.label
-            ]);
-          } else {
             props.HandleFilterChange([paramFieldType, props.filterName,
               entry?.label + "/" + entry?.subItems[index]
+              
             ]);
-          }
-          console.log(entry?.subItems[index], "toggle")
         }
 
         setSubCheckbox(id, index);
