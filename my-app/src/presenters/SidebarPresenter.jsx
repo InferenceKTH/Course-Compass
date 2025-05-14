@@ -1,19 +1,22 @@
 import React, { useEffect } from 'react';
 import { observer } from "mobx-react-lite";
 import SidebarView from "../views/SidebarView.jsx";
-
+import transcriptScraperFunction from "./UploadTranscriptPresenter.jsx";
+import { useState } from "react";
 
 const SidebarPresenter = observer(({ model }) => {
-
-    useEffect(() => {
-        model.setFiltersChange();
-    });
+    
 
     let currentLanguageSet = model.filterOptions.language;
     let currentLevelSet = model.filterOptions.level;
     let currentPeriodSet = model.filterOptions.period;
     let currentDepartmentSet = model.filterOptions.department;
-    let currentLocationSet = model.filterOptions.location
+    let currentLocationSet = model.filterOptions.location;
+
+    
+    useEffect(() => {
+        model.setFiltersChange();
+    },[]);
 
     function handleLanguageFilterChange(param) {
         if (param === "English") {
@@ -124,7 +127,6 @@ const SidebarPresenter = observer(({ model }) => {
                 break;
             case "department":
                 handleDepartmentFilterChange(param[2]);
-                console.log(param[2]);
                 break;
             case "period":
                 handlePeriodFilterChange(param[2]);
@@ -144,31 +146,24 @@ const SidebarPresenter = observer(({ model }) => {
     function HandleFilterEnable(param) {
         switch (param[0]) {
             case "language":
-                console.log("language filter set to: " + param[1]);
                 model.setApplyLanguageFilter(param[1]);
                 break;
             case "level":
-                console.log("level filter set to: " + param[1]);
                 model.setApplyLevelFilter(param[1]);
                 break;
             case "location":
-                console.log("location filter set to: " + param[1]);
                 model.setApplyLocationFilter(param[1]);
                 break;
             case "credits":
-                console.log("credits filter set to: " + param[1]);
                 model.setApplyCreditsFilter(param[1]);
                 break;
             case "transcript":
-                console.log("transcript filter set to: " + param[1]);
                 model.setApplyTranscriptFilter(param[1]);
                 break;
             case "department":
-                console.log("department filter set to: " + param[1]);
                 model.setApplyDepartmentFilter(param[1]);
                 break;
             case "period":
-                console.log("period filter set to: " + param[1]);
                 model.setApplyPeriodFilter(param[1]);
                 break;
             default:
@@ -183,6 +178,55 @@ const SidebarPresenter = observer(({ model }) => {
     function setApplyRemoveNullCourses(){
         model.setApplyRemoveNullCourses();
     }
+
+    function formatDepartmentSet(departmentSet) {
+        const grouped = departmentSet.reduce((acc, item) => {
+            if (item.includes("/")) {
+                const [school, department] = item.split("/");
+                if (!acc[school]) {
+                    acc[school] = [];
+                }
+                acc[school].push(department?.trim());
+                return acc;
+            } else {
+                const [school] = item;
+                if (!acc[school]) {
+                    acc[school] = [];
+                }
+                return acc;
+            }
+        }, {});
+        const sortedGrouped = Object.keys(grouped)
+        .sort()
+        .reduce((acc, key) => {
+            acc[key] = grouped[key].sort();
+            return acc;
+        }, {});
+        const fields = Object.entries(sortedGrouped).map(([school, departments], index) => ({
+            id: index + 1,
+            label: school,
+            subItems: departments,
+        }));
+        return fields;
+    }
+
+    //==========================================================
+
+    const [errorMessage, setErrorMessage] = useState(""); // Stores error message
+    const [errorVisibility, setErrorVisibility] = useState("hidden"); // Controls visibility
+    const [fileInputValue, setFileInputValue] = useState(""); // Controls upload field state
+
+    const handleFileChange = (event) => {
+        const  truncatedCourses = model.courses.map(({ id, name }) => ({ id, name }));
+        const file = event.target.files[0];
+        //document.getElementById('PDF-Scraper-Error').style.visibility = "visible";
+        transcriptScraperFunction(file, setErrorMessage, setErrorVisibility, reApplyFilter, truncatedCourses);
+        //document.getElementById('PDF-Scraper-Input').value = '';
+        setFileInputValue('');
+
+        
+    };
+    //==========================================================
 
     return (
         <SidebarView HandleFilterChange={HandleFilterChange}
@@ -202,7 +246,7 @@ const SidebarPresenter = observer(({ model }) => {
             initialPeriodFilterOptions={currentPeriodSet}
             initialPeriodFilterEnable={model.filterOptions.applyPeriodFilter}
 
-            initialDepartmentFilterOptions={currentDepartmentSet}
+            initialDepartmentFilterOptions={formatDepartmentSet(currentDepartmentSet.filter(item => item !== "undefined/undefined"))}
             initialDepartmentFilterEnable={model.filterOptions.applyDepartmentFilter}
             DepartmentFilterField = {model.formatDepartments()}
 
@@ -214,6 +258,15 @@ const SidebarPresenter = observer(({ model }) => {
             initialCreditsFilterEnable={model.filterOptions.applyCreditsFilter}
 
             initialApplyNullFilterEnable={model.filterOptions.applyRemoveNullCourses }
+
+            //==========================================================
+
+            PdfErrorMessage={errorMessage}
+            PdfErrorVisibility={errorVisibility}
+            PdfHandleFileChange={handleFileChange}
+            PdfFileInputValue={fileInputValue}
+
+            //==========================================================
         />
     );
 });

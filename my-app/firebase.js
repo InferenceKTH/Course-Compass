@@ -35,7 +35,6 @@ export function connectToFirebase(model) {
 	const options = JSON.parse(localStorage.getItem("filterOptions"));
 	if (options) {
 		model.setFilterOptions(options);
-		console.log("Restore options from local storage");
 	}
 
 	reaction(
@@ -203,7 +202,6 @@ export async function uploadDepartmentsAndLocations(departments, locations) {
 		const departmentsRef = ref(db, "departments");
 		try {
 			await set(departmentsRef, departments);
-			console.log("Uploaded Departments");
 		} catch (error) {
 			console.error("Failed to upload departments:", error);
 			return false;
@@ -213,7 +211,6 @@ export async function uploadDepartmentsAndLocations(departments, locations) {
 		const locationsRef = ref(db, "locations");
 		try {
 			await set(locationsRef, locations);
-			console.log("Uploaded Locations");
 		} catch (error) {
 			console.error("Failed to upload locations:", error);
 			return false;
@@ -275,7 +272,6 @@ async function loadCoursesFromCacheOrFirebase(model) {
 		});
 
 		if (cachedTimestamp === firebaseTimestamp) {
-			console.log("Using cached courses from IndexedDB...");
 			const courseTx = db.transaction("courses", "readonly");
 			const courseStore = courseTx.objectStore("courses");
 			const getAllReq = courseStore.getAll();
@@ -291,7 +287,6 @@ async function loadCoursesFromCacheOrFirebase(model) {
 	}
 
 	// fallback: fetch from Firebase
-	console.log("Fetching courses from Firebase...");
 	const courses = await fetchAllCourses();
 	model.setCourses(courses);
 	saveCoursesToCache(courses, firebaseTimestamp);
@@ -304,7 +299,6 @@ export async function addReviewForCourse(courseCode, review) {
 		const updateCourseAvgRating = httpsCallable(functions, 'updateCourseAvgRating');
    		const result = await updateCourseAvgRating({ courseCode });
 		
-		console.log('Average rating updated:', result.data.avgRating);
 	} catch (error) {
 		console.error("Error when adding a course to firebase or updating the average:", error);
 	}

@@ -15,22 +15,22 @@ export const model = {
     scrollPosition: 0,
     /* list of all course objects downloaded from the Firebase realtime database and stored locally as JSON object in this array */
     courses: [],
-    departments : [],
+    departments: [],
     locations: [],
     // indexes: 0 -> overall rating; 1 -> difficulty; 2->teacher rating
     avgRatings: [],
     // model.avgRatings["IK1203"][0]
     /* courses the user selected as their favourite */
     favourites: [],
-    searchHistory:[],
+    searchHistory: [],
     isReady: false,
     /* this is a boolean flag showing that filtering options in the UI have changed, triggering the FilterPresenter to recalculate the filteredCourses[] */
-    filtersChange: false, 
+    filtersChange: false,
     /* this is a flag showing if the filteredCourses[] has changed (since FilterPresenter recalculated it), so now SearchBarPresenter needs to 
     recalculate currentSearch[] depending this updated list of courses */
     filtersCalculated: false,
     /* this is the array that FilterPresenter fills up with course objects, filtered from the model.courses[] */
-    filteredCourses: [], 
+    filteredCourses: [],
     /* JSON object containing all important parameters the FilterPresenter needs to calculate the filtered list of courses */
     filterOptions: {
         //apply-X-Filter boolean triggering flag wether corresponding filtering functions should run or not
@@ -41,9 +41,9 @@ export const model = {
         level: ["PREPARATORY", "BASIC", "ADVANCED", "RESEARCH"], //the possible values for the array are: "PREPARATORY", "BASIC", "ADVANCED", "RESEARCH"
         applyLanguageFilter: false,
         language: "none", //the possible values for the string are: "none"/"english"/"swedish"/"both"
-        applyLocationFilter:false,
+        applyLocationFilter: false,
         location: [], //the possible values for the array are: 'KTH Campus', 'KTH Kista', 'AlbaNova', 'KTH Flemingsberg', 'KTH Solna', 'KTH Södertälje', 'Handelshögskolan', 'KI Solna', 'Stockholms universitet', 'KONSTFACK'
-        applyCreditsFilter:true,
+        applyCreditsFilter: true,
         creditMin: 0,
         creditMax: 45,
         applyDepartmentFilter: false,
@@ -59,14 +59,14 @@ export const model = {
     _coursesListeners: [], //  internal list of listeners
 
     onCoursesSet(callback) {
-      this._coursesListeners.push(callback);
+        this._coursesListeners.push(callback);
     },
 
     _coursesListeners: [], //  internal list of listeners
     urlStackPointer: 0,
 
     onCoursesSet(callback) {
-      this._coursesListeners.push(callback);
+        this._coursesListeners.push(callback);
     },
 
     setUser(user) {
@@ -74,19 +74,19 @@ export const model = {
             this.user = user;
     },
 
-    setCurrentSearch(searchResults){
+    setCurrentSearch(searchResults) {
         this.currentSearch = searchResults;
     },
 
-    setCurrentSearchText(text){
+    setCurrentSearchText(text) {
         this.currentSearchText = text;
     },
-    
+
     setScrollPosition(position) {
         this.scrollPosition = position;
     },
 
-    setCourses(courses){
+    setCourses(courses) {
         this.courses = courses;
         this._coursesListeners.forEach(cb => cb(courses));
     },
@@ -106,20 +106,20 @@ export const model = {
             console.error("Error adding course code to the history:", error);
         }
     },
-    setDepartments(departments){
+    setDepartments(departments) {
         this.departments = departments;
     },
-    setLocations(locations){
+    setLocations(locations) {
         this.locations = locations;
     },
     setAverageRatings(ratings) {
         this.avgRatings = ratings;
     },
-    updateAverageRating(courseCode, rating){
-        if(this.avgRatings!= null)
+    updateAverageRating(courseCode, rating) {
+        if (this.avgRatings != null)
             this.avgRatings[courseCode] = rating;
     },
-    setFavourite(favorites){
+    setFavourite(favorites) {
         this.favourites = favorites;
     },
 
@@ -175,7 +175,7 @@ export const model = {
         this.departments = Array.from(dep);
         this.locations = Array.from(loc);
         uploadDepartmentsAndLocations(this.departments, this.locations);
-        
+
     },
     //for reviews
     async addReview(courseCode, review) {
@@ -187,7 +187,7 @@ export const model = {
             return false;
         }
     },
-    
+
     async getReviews(courseCode) {
         try {
             return await getReviewsForCourse(courseCode);
@@ -206,7 +206,7 @@ export const model = {
         this.filtersCalculated = true;
     },
 
-    setFilterOptions(options){
+    setFilterOptions(options) {
         this.filterOptions = options; // do we want to set the flags? What about useEffect?
     },
 
@@ -214,7 +214,7 @@ export const model = {
         this.filterOptions.applyRemoveNullCourses = !this.filterOptions.applyRemoveNullCourses;
         this.setFiltersChange();
     },
-    
+
     setApplyRemoveNullCourses() {
         this.filterOptions.applyRemoveNullCourses = !this.filterOptions.applyRemoveNullCourses;
         this.setFiltersChange();
@@ -222,7 +222,6 @@ export const model = {
 
     updateLevelFilter(level) {
         this.filterOptions.level = level;
-        console.log(level);
     },
 
     updateDepartmentFilter(department) {
@@ -274,7 +273,7 @@ export const model = {
     },
     //for better display we would like the departments in a structured format based on school 
     formatDepartments() {
-        const grouped = this.departments?.reduce((acc, item) => {
+        const grouped = this?.departments.reduce((acc, item) => {
             const [school, department] = item.split("/");
             if (!acc[school]) {
                 acc[school] = [];
@@ -285,8 +284,8 @@ export const model = {
         const sortedGrouped = Object.keys(grouped)
             .sort()
             .reduce((acc, key) => {
-            acc[key] = grouped[key].sort();
-            return acc;
+                acc[key] = grouped[key].sort();
+                return acc;
             }, {});
         const fields = Object.entries(sortedGrouped).map(([school, departments], index) => ({
             id: index + 1,
@@ -295,12 +294,44 @@ export const model = {
         }));
         return fields;
     },
-    async getAverageRating(courseCode) {
+    async getAverageRating(courseCode, option) {
         const reviews = await getReviewsForCourse(courseCode);
         if (!reviews || reviews.length === 0) return null;
-        const total = reviews.reduce((sum, review) => sum + (review.overallRating || 0), 0);
-        const avgRtg = (total / reviews.length).toFixed(1);
-        return avgRtg;
+        
+        let validReviews = 0;
+        let total = 0;
+    
+        switch (option) {
+            case "avg":
+                reviews.forEach(review => {
+                    if (typeof review.overallRating === 'number') {
+                        total += review.overallRating;
+                        validReviews++;
+                    }
+                });
+                break;
+            case "diff":
+                reviews.forEach(review => {
+                    if (typeof review.difficultyRating === 'number') {
+                        total += review.difficultyRating;
+                        validReviews++;
+                    }
+                });
+                break;
+            case "prof":
+                reviews.forEach(review => {
+                    if (typeof review.professorRating === 'number') {
+                        total += review.professorRating;
+                        validReviews++;
+                    }
+                });
+                break;
+            default:
+                return null;
+        }
+    
+        if (validReviews === 0) return null;
+        return (total / validReviews).toFixed(1);
     },
 
     setPopupOpen(isOpen) {
@@ -326,9 +357,11 @@ export const model = {
 
     handleUrlChange() {
         let current_url = window.location.href;
+
         let start_idx = indexOfNth(current_url, '/', 3) + 2;
         
         if (start_idx > 0 && start_idx < current_url.length) {
+
             let course_code = current_url.slice(start_idx);
             let course = this.getCourse(course_code);
             if (course) {
@@ -336,7 +369,7 @@ export const model = {
                 this.setPopupOpen(true);
             }
             this.urlStackPointer++;
-        } else if (start_idx > 0){
+        } else if (start_idx > 0) {
             this.setPopupOpen(false);
         }
     }

@@ -2,9 +2,10 @@ import React from 'react';
 import ToggleField from "./Components/SideBarComponents/ToggleField.jsx";
 import SliderField from "./Components/SideBarComponents/SliderField.jsx";
 import DropDownField from "./Components/SideBarComponents/DropDownField.jsx";
-import { UploadTranscriptPresenter } from '../presenters/UploadTranscriptPresenter.jsx';
+//import { UploadTranscriptPresenter } from '../presenters/UploadTranscriptPresenter.jsx';
 import CollapsibleCheckboxes from './Components/SideBarComponents/CollapsibleCheckboxes.jsx';
 import Tooltip from './Components/SideBarComponents/ToolTip.jsx';
+import UploadField from './Components/SideBarComponents/UploadField';
 import MultipleChoiceButtons from './Components/SideBarComponents/MultipleChoiceButtons.jsx';
 
 
@@ -21,14 +22,26 @@ function SidebarView(props) {
             <h6 className="m-2 text-lg font-medium text-white text-center">
                 Filters
             </h6>
-            <UploadTranscriptPresenter
+            {/*<UploadTranscriptPresenter
                 HandleFilterChange={props.HandleFilterChange}
                 filterName="transcript"
                 HandleFilterEnable={props.HandleFilterEnable}
                 reApplyFilter={props.reApplyFilter}
                 filterEnable={props.initialApplyTranscriptFilter}
                 initialValue={props.initialTranscriptElegiblityValue}
-            />
+            />*/}
+            <UploadField
+                        errorMessage={props.PdfErrorMessage}            //
+                        errorVisibility={props.PdfErrorVisibility}      //
+                        handleFileChange={props.PdfHandleFileChange}    //
+                        fileInputValue={props.PdfFileInputValue}        //
+                        HandleFilterEnable={props.HandleFilterEnable}
+                        HandleFilterChange={props.HandleFilterChange}
+                        filterName="transcript"
+                        reApplyFilter={props.reApplyFilter}
+                        filterEnable={props.initialApplyTranscriptFilter}
+                        initialValue={props.initialTranscriptElegiblityValue}
+                    />
             <div className='flex-auto justify-center '>
                 <div className="z-10 w-100% rounded-lg justify-center pb-10" >
 
@@ -48,6 +61,7 @@ function SidebarView(props) {
                         initialValues={props.initialLanguageFilterOptions}
                         filterEnable = {props.initialLanguageFilterEnable}
                         HandleFilterEnable={props.HandleFilterEnable}
+                        description="Filter language. If you select both, courses which are offered both in English and Swedish are going to be on the top."
                     />
 
 
@@ -58,7 +72,8 @@ function SidebarView(props) {
                         initialValues={props.initialPeriodFilterOptions}
                         filterEnable = {props.initialPeriodFilterEnable}
                         HandleFilterEnable={props.HandleFilterEnable}
-                        description="Filter language. If you select both, courses which are offered both in English and Swedish are going to be on the top."
+                        description="Filter by the period a course is given, the autumn semester consists of P1 and P2, while the spring semester is P3 and P4.
+                        Courses offered over multiple periods will also show up."
                     />
 
                     <DropDownField
@@ -68,6 +83,7 @@ function SidebarView(props) {
                         initialValues={props.initialLocationFilterOptions}
                         filterEnable = {props.initialLocationFilterEnable}
                         HandleFilterEnable={props.HandleFilterEnable}
+                        description="Filter the location a course is offered. Courses offered only online may get filtered out if this option is selected."
                     />
                     <SliderField
                         HandleFilterChange={props.HandleFilterChange}
@@ -75,6 +91,7 @@ function SidebarView(props) {
                         initialValues={props.initialCreditsFilterOptions}
                         filterEnable = {props.initialCreditsFilterEnable}
                         HandleFilterEnable={props.HandleFilterEnable}
+                        description="Select a range of credits (hp.) the courses shown should fall into (inclusive)"
                     />
                     <CollapsibleCheckboxes
                         HandleFilterChange={props.HandleFilterChange}
@@ -85,6 +102,7 @@ function SidebarView(props) {
                         fields={
                             props.DepartmentFilterField
                         }
+                        description="Filter for the departments the course is given by. Useful for finding courses in a variety of specifics topics."
                     />
                     <div className='mr-3 flex justify-between'>
                         <input
@@ -103,7 +121,8 @@ function SidebarView(props) {
                         <div className='flex-none'>
                             <Tooltip
                                 text={"Removes courses which have not available data in the fields you have applied filters on. \
-                                    Recommended to increase the quality of the search, and to remove discontinued courses."}
+                                    Recommended to increase the quality of the search, and to remove discontinued/badly maintained courses. \
+                                    "}
                                 position={"left"}
                             />
                         </div>
