@@ -26,6 +26,7 @@ const SearchbarPresenter = observer(({ model }) => {
     }), []); // Options never change
 
     // Debounced search function - afterwards we sort with startWith() by hand
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const searchCourses = useCallback(debounce((query) => {
         if(!model?.filteredCourses)
             return;
