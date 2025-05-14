@@ -45,7 +45,7 @@ function CoursePagePopup({
 			.split(/\n/).map(line => {
 				// Check if line starts with bullet or number
 				if (!/^[•\d]/.test(line.trim())) {
-					return `<div class="mb-4">${line}</div>`;
+					return `<div className="mb-4">${line}</div>`;
 				}
 				return line;
 			}).join('');
