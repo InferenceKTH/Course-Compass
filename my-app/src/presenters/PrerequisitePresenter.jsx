@@ -489,7 +489,10 @@ export const PrerequisitePresenter = observer((props) => {
                         courses_taken.push(local[i]?.id)
                     }
                 }
+<<<<<<< HEAD
                 //console.log(local);
+=======
+>>>>>>> origin/main
                 let eligible = generateTree(courses_taken, copy);
                 if (eligible) {
                     root["style"]["backgroundColor"] = "lightgreen";

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import CourseTranscriptList from './CourseTranscriptList';
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
 //import * as scraper from '../../../../src/scripts/transcript-scraper/transcript-scraper.js';

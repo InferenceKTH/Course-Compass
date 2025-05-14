@@ -7,9 +7,9 @@ export default function ToggleField(props) {
     let paramFieldType = "toggle";
 
     const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
-    //eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [prop1Set, setprop1Set] = useState((props.initialValues == "both") || (props.initialValues == String(props.fields[0]).charAt(0).toLowerCase() + String(props.fields[0]).slice(1)));
-    //eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line no-unused-vars
+    const [prop1Set, setprop1Set] = useState((props.initialValues=="both") || (props.initialValues==String(props.fields[0]).charAt(0).toLowerCase() + String(props.fields[0]).slice(1)));
+    // eslint-disable-next-line no-unused-vars
     const [prop2Set, setprop2Set] = useState((props.initialValues=="both") || (props.initialValues==String(props.fields[1]).charAt(0).toLowerCase() + String(props.fields[1]).slice(1)));
 
     const checkboxRef = useRef(null);
