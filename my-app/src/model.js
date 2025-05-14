@@ -244,9 +244,9 @@ export const model = {
 		console.log(level);
 	},
 
-	updateDepartmentFilter(department) {
-		this.filterOptions.department = department;
-	},
+    updateLevelFilter(level) {
+        this.filterOptions.level = level;
+    },
 
 	updateLanguageFilter(languages) {
 		this.filterOptions.language = languages;
@@ -316,45 +316,89 @@ export const model = {
 		);
 		return fields;
 	},
-	async getAverageRating(courseCode, option) {
-		const reviews = await getReviewsForCourse(courseCode);
-		if (!reviews || reviews.length === 0) return null;
-
-		let validReviews = 0;
-		let total = 0;
-
-		switch (option) {
-			case "avg":
-				reviews.forEach((review) => {
-					if (typeof review.overallRating === "number") {
-						total += review.overallRating;
-						validReviews++;
-					}
-				});
-				break;
-			case "diff":
-				reviews.forEach((review) => {
-					if (typeof review.difficultyRating === "number") {
-						total += review.difficultyRating;
-						validReviews++;
-					}
-				});
-				break;
-			case "prof":
-				reviews.forEach((review) => {
-					if (typeof review.professorRating === "number") {
-						total += review.professorRating;
-						validReviews++;
-					}
-				});
-				break;
-			default:
-				return null;
-		}
-
-		if (validReviews === 0) return null;
-		return (total / validReviews).toFixed(1);
-	},
+    setApplyTranscriptFilter(transcriptFilterState) {
+        this.filterOptions.applyTranscriptFilter = transcriptFilterState;
+    },
+    setApplyLevelFilter(levelFilterState) {
+        this.filterOptions.applyLevelFilter = levelFilterState;
+    },
+    setApplyLanguageFilter(languageFilterState) {
+        this.filterOptions.applyLanguageFilter = languageFilterState;
+    },
+    setApplyLocationFilter(locationFilterState) {
+        this.filterOptions.applyLocationFilter = locationFilterState;
+    },
+    setApplyCreditsFilter(creditsFilterState) {
+        this.filterOptions.applyCreditsFilter = creditsFilterState;
+    },
+    setApplyDepartmentFilter(departmentFilterState) {
+        this.filterOptions.applyDepartmentFilter = departmentFilterState;
+    },
+    setApplyPeriodFilter(periodfilterState) {
+        this.filterOptions.applyPeriodFilter = periodfilterState;
+    },
+    //for better display we would like the departments in a structured format based on school 
+    formatDepartments() {
+        const grouped = this?.departments.reduce((acc, item) => {
+            const [school, department] = item.split("/");
+            if (!acc[school]) {
+                acc[school] = [];
+            }
+            acc[school].push(department?.trim());
+            return acc;
+        }, {});
+        const sortedGrouped = Object.keys(grouped)
+            .sort()
+            .reduce((acc, key) => {
+                acc[key] = grouped[key].sort();
+                return acc;
+            }, {});
+        const fields = Object.entries(sortedGrouped).map(([school, departments], index) => ({
+            id: index + 1,
+            label: school,
+            subItems: departments,
+        }));
+        return fields;
+    },
+    async getAverageRating(courseCode, option) {
+        const reviews = await getReviewsForCourse(courseCode);
+        if (!reviews || reviews.length === 0) return null;
+        
+        let validReviews = 0;
+        let total = 0;
+    
+        switch (option) {
+            case "avg":
+                reviews.forEach(review => {
+                    if (typeof review.overallRating === 'number') {
+                        total += review.overallRating;
+                        validReviews++;
+                    }
+                });
+                break;
+            case "diff":
+                reviews.forEach(review => {
+                    if (typeof review.difficultyRating === 'number') {
+                        total += review.difficultyRating;
+                        validReviews++;
+                    }
+                });
+                break;
+            case "prof":
+                reviews.forEach(review => {
+                    if (typeof review.professorRating === 'number') {
+                        total += review.professorRating;
+                        validReviews++;
+                    }
+                });
+                break;
+            default:
+                return null;
+        }
+    
+        if (validReviews === 0) return null;
+        return (total / validReviews).toFixed(1);
+    },
 
 	setPopupOpen(isOpen) {
 		if (!isOpen) {

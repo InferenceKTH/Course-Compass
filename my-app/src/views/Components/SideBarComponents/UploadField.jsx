@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import CourseTranscriptList from './CourseTranscriptList';
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
 //import * as scraper from '../../../../src/scripts/transcript-scraper/transcript-scraper.js';
@@ -9,6 +9,7 @@ export default function UploadField(props) {
 
     const [isDragging, setIsDragging] = useState(false);
     const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
+    const [fileUploaded, setfileUploaded] = useState(false);
 
     const checkboxRef = useRef(null);
 
@@ -26,6 +27,8 @@ export default function UploadField(props) {
         setIsDragging(false);
         if (event.dataTransfer.files.length > 0) {
             props.handleFileChange({ target: { files: event.dataTransfer.files } });
+            setfileUploaded(localStorage.getItem("completedCourses") != undefined);
+            console.log(localStorage.getItem("completedCourses") != undefined);
         }
     };
 
@@ -36,7 +39,7 @@ export default function UploadField(props) {
                     <h3>{String(props.filterName).charAt(0).toUpperCase() + String(props.filterName).slice(1)} scraper</h3>
                 </div>
 
-                <div className='pt-1 flex-none'>
+                <div className={`pt-1 flex-none ${!fileUploaded? "hidden" : ""}`}>
 
                     <FilterEnableCheckbox
                         ref={checkboxRef}
@@ -44,10 +47,12 @@ export default function UploadField(props) {
                         onToggle={() => {
                             setFilterEnabled(!filterEnabled);
                             props.HandleFilterEnable(["transcript", !filterEnabled]);
-                        }} />
+                        }} 
+                    />
                 </div>
             </div>
-            <div className={`${filterEnabled ? "opacity-100" : "opacity-50"}`} onClick={() => {
+            <div></div>
+            <div className={`${(!fileUploaded) ? ("opacity-100") : (filterEnabled? "opacity-100": "opacity-50")}`} onClick={() => {
                 if (!filterEnabled && checkboxRef.current) {
                     checkboxRef.current.click();
                 }
@@ -60,16 +65,26 @@ export default function UploadField(props) {
                     <label htmlFor="PDF-Scraper-Input" className="flex flex-col items-stretch justify-baseline w-full h-50 rounded-lg cursor-pointer bg-[#aba8e0] hover:bg-gray-400">
                         <div className='flex-none self-end mr-3 pt-2'>
                             <ToolTip
-                                text={"This is the transcript scraper, it takes in a National Transcript of Records from KTH and based on the courses you have passed, you can filter out the suggested courses. This filtering can be applied at three stages."}
+                                text={"This is the transcript scraper, it takes in a National Transcript of Records from Ladok and \
+                                    based on the courses you have passed in KTH, you can filter out the suggested courses. This \
+                                    filtering can be applied at three stages. Scraping of PDFs is all done locally in your browser using PDFjs Library.\
+                                    "}
                                 position="left"
                             />
                         </div>
                         <div className="flex flex-col items-center justify-center pt-5">
                             <img src="..\..\..\..\src\assets\upload.gif" alt="Upload GIF" className="object-contain" />
                             <p className=" text-sm "><span className="font-semibold">Click to upload</span> or drag and drop</p>
-                            <p className="text-xs">KTH transcript of records in PDF format</p>
+                            <p className="text-xs">National Official Transcript of Records in PDF format</p>
                         </div>
-                        <input id="PDF-Scraper-Input" type="file" className="hidden" onChange={props.handleFileChange} />
+                        <input
+                            id="PDF-Scraper-Input" 
+                            type="file" 
+                            className="hidden" 
+                            onChange={(event) => {
+                                props.handleFileChange(event);
+                                setfileUploaded(true);
+                            }}  />
                     </label>
                 </div>
                 <ButtonGroupField
@@ -83,10 +98,11 @@ export default function UploadField(props) {
                     {props.errorMessage}
                 </pre>
             </div>
-            <div className={`opacity-${filterEnabled ? "100" : "50"} ${filterEnabled ? "pointer-events-auto" : "pointer-events-none user-select-none"
+            <div className={`${(filterEnabled? "opacity-100": "opacity-50")} ${filterEnabled ? "pointer-events-auto" : "pointer-events-none user-select-none"
                 }`}>
                 <CourseTranscriptList
                     reApplyFilter={props.reApplyFilter}
+                    ref={checkboxRef}
                 />
             </div>
         </div>

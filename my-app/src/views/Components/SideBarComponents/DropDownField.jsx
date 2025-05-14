@@ -9,9 +9,10 @@ export default function DropDownField(props) {
   let paramFieldType = "dropdown";
   const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedItems, setSelectedItems] = useState(props.initialValues.map(t => t?.toUpperCase()));
+  const [selectedItems, setSelectedItems] = useState(props?.initialValues?.map(t => t?.toUpperCase()));
 
-  const items = props.options.map(t => t?.toUpperCase());
+  const items = props?.options?.map(t => t?.toUpperCase());
+
 
   const checkboxRef = useRef(null);
 
@@ -19,7 +20,7 @@ export default function DropDownField(props) {
 
   const handleCheckboxChange = (item) => {
     setSelectedItems((prev) =>
-      prev.includes(item?.toUpperCase()) ? prev.filter((i) => i !== item) : [...prev, item]
+      prev?.includes(item?.toUpperCase()) ? prev.filter((i) => i !== item) : [...prev, item]
     );
     props.HandleFilterChange([paramFieldType, props.filterName, item]);
   };
@@ -69,14 +70,14 @@ export default function DropDownField(props) {
             onClick={toggleDropdown}
             className="bg-violet-500 text-white px-4 py-2 rounded-md shadow-md focus:outline-none hover:bg-[#aba8e0] w-full"
           >
-            {selectedItems.length? (selectedItems.map(i => String(i).charAt(0).toUpperCase() + String(i).slice(1).toLowerCase()).join(", ").substring(0, 30) + ((selectedItems.join(", ").substring(0, 30).length>=30)? "...": "") ):"Select Options"}
+            {selectedItems?.length? (selectedItems?.map(i => String(i).charAt(0).toUpperCase() + String(i).slice(1).toLowerCase()).join(", ").substring(0, 30) + ((selectedItems?.join(", ").substring(0, 30).length>=30)? "...": "") ):"Select Options"}
           </button>
 
           {/* Dropdown Menu */}
           {isOpen && (
             <div className=" bg-[#aba8e0] mx-1 border-b border-x rounded-b-lg shadow-lg z-30">
               <ul className="">
-                {items.map((item, index) => (
+                {items?.map((item, index) => (
                   <li key={index} className="flex items-center p-2 hover:bg-gray-500">
                     <label className="flex-auto py-3 px-4 inline-flex gap-x-2 -mt-px -ms-px 
                 first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 s
@@ -85,7 +86,7 @@ export default function DropDownField(props) {
 
                       <input
                         type="checkbox"
-                        checked={selectedItems.includes(item?.toUpperCase())}
+                        checked={selectedItems?.includes(item?.toUpperCase())}
                         onChange={() => handleCheckboxChange(item)}
                         className="mr-2 sr-only peer"
                       />
