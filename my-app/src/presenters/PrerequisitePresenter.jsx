@@ -35,9 +35,6 @@ export const PrerequisitePresenter = observer((props) => {
     hover_popup.style.padding = "5px";
     document.body.appendChild(hover_popup);
 
-
-    let code_to_name;
-
     let input_text_obj = {};
 
     const position = { x: 0, y: 0 };
@@ -153,7 +150,8 @@ export const PrerequisitePresenter = observer((props) => {
 
     }
 
-    function handleMouseLeave(event, node) {
+    
+    function handleMouseLeave(event, node) { // eslint-disable-line no-unused-vars
         hover_popup.style.display = "none";
     }
 
@@ -214,6 +212,11 @@ export const PrerequisitePresenter = observer((props) => {
             type: node_type,
             data: { label: name },
             style: { 
+                //padding: 0,
+                //maxWidth: "100px",
+                //display: 'inline-block',
+                //justifyContent: 'center',
+                //alignItems: 'center',
                 zIndex: 0 
             },
             position,
@@ -456,7 +459,7 @@ export const PrerequisitePresenter = observer((props) => {
             initialNodes.push(display_node);
         } else {
             try {
-                let root = createNode(props.selectedCourse.code, props.selectedCourse.code, "input");
+                let root = createNode(props?.selectedCourse?.code, props?.selectedCourse?.code, "input");
                 let copy = JSON.parse(JSON.stringify(props.selectedCourse.prerequisites));
                 let courses_taken = [];
                 let local = JSON.parse(localStorage.getItem("completedCourses"));

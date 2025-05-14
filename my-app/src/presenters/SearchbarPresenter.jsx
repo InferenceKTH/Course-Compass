@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { observer } from "mobx-react-lite";
 import { useState } from 'react';
 import CoursePagePopup from '../views/Components/CoursePagePopup.jsx';
@@ -11,19 +11,21 @@ import debounce from 'lodash.debounce';
 const SearchbarPresenter = observer(({ model }) => {
     const [searchQuery, setSearchQuery] = useState("");
 
-    const fuseOptions = {
+    const fuseOptions = useMemo(() => ({
         keys: [
             { name: 'code', weight: 0.5 },   
             { name: 'name', weight: 0.4 },  
             { name: 'description', weight: 0.1 }, 
         ],
-        threshold: 0.3141592653589793238,           // adjust this for sensitivity
+        threshold: 0.3141592653589793238,
         ignoreLocation: true,
         minMatchCharLength: 2,
-    };
+    }), []); // Options never change
 
     // Debounced search function
     const searchCourses = useCallback(debounce((query) => {
+        if(!model?.filteredCourses)
+            return;
         if (!query.trim()) {
             model.setCurrentSearch(model.filteredCourses);
         } else {
@@ -43,7 +45,7 @@ const SearchbarPresenter = observer(({ model }) => {
             model.setCurrentSearch(sortedResults.map(r => r.item));
             model.searchQueryModel = query;
         }
-    }, 500), []);
+    }, 750), []);
 
     const addFavourite = (course) => {
         model.addFavourite(course);
