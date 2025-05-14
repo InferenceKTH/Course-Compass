@@ -49,14 +49,13 @@ function App({ model }) {
 			<div className="flex-1 h-full flex flex-col ">
 
 
-				<div className="bg-gradient-to-t from-[#6246a8] to-[#6747c0] text-white">
-					<div className="flex items-center">
+				<div className="flex items-center bg-gradient-to-t  from-[#6246a8] to-[#6747c0] text-white">
 						<SearchbarPresenter model={model}/>
-					</div>
 				</div>
 
 
-				<div className="flex-auto border bg-[#121212] relative">
+				<div
+					className="flex sm:flex-auto h-screen w-screen sm:w-full bg-gradient-to-t from-[#4f3646] to-[#6747c0] overflow-hidden">
 					<ListViewPresenter model={model}/>
 				</div>
 
