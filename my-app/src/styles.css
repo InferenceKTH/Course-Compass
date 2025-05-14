@@ -15,9 +15,41 @@
     --font-kanit: "Kanit", sans-serif;
 }
 
+.light {
+  --background: #f0f0f0;
+  --text: #000000;
+  --secondary-text: #444444;
+  --accent-text: #003399;
+  --accent-hover: #001a4d;
+  --underline: #000061;
+  --close-button: #ff0000;
+  --tree: #e0e0e0;
+  --tree-overlay: rgba(0, 0, 0, 0.1);
+  --favourite-button: #cccccc;
+  --favourite-button-active: #ffcc00;
+  --hover: #dddddd;
+}
+
+.dark {
+  --background: #121212;
+  --text: #ffffff;
+  --secondary-text: #bbbbbb;
+  --accent-text: #66aaff;
+  --accent-hover: #3388ff;
+  --underline: #66aaff;
+  --close-button: #ff5555;
+  --tree: #1e1e1e;
+  --tree-overlay: rgba(255, 255, 255, 0.1);
+  --favourite-button: #555555;
+  --favourite-button-active: #ffaa00;
+  --hover: #333333;
+}
+
+
 .font-kanit {
     font-family: var(--font-kanit);
 }
+
 
 .react-flow__node.no-handles .react-flow__handle {
     display: none;

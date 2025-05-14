@@ -50,7 +50,8 @@ export const model = {
         department: [],
         applyRemoveNullCourses: false,
         period: [true, true, true, true],
-        applyPeriodFilter: true
+        applyPeriodFilter: true,
+        themeMode:"light"
     },
     isPopupOpen: false,
     selectedCourse: null,
@@ -339,6 +340,19 @@ export const model = {
         } else if (start_idx > 0){
             this.setPopupOpen(false);
         }
+    },
+
+
+    getThemeMode(){
+        return this.themeMode
+    },
+    
+    toggleThemeMode(){
+        this.themeMode=!this.themeMode;
+    },
+
+    setThemeMode(value){
+        this.themeMode=value;
     }
 
 };
@@ -356,3 +370,4 @@ function indexOfNth(string, char, n) {
     }
     return -1;
 }
+

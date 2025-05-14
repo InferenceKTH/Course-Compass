@@ -61,6 +61,20 @@ function SearchbarView(props) {
 
       <div className="flex gap-6 items-center">
         {props.share}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            props.toggleThemeMode();
+          }}
+          className={`w-[120px] h-[44px] ${
+            props.themeMode === 'light' 
+              ? 'bg-[#003399] text-white rounded-full border border-[#000061] cursor-pointer hover:bg-[#001a4d] transition-all duration-200'
+              : 'bg-[#003399] text-red-600 hover:bg-red-600 hover:text-white border-solid font bg-black'
+          }`}
+        >
+          {props.themeMode === 'light' ? "Light mode" : "Dark mode"}
+        </button>
+
 
         <a
           className="flex items-center justify-center w-[120px] h-[44px] bg-[#003399] text-white rounded-full border border-[#000061] cursor-pointer hover:bg-[#001a4d] transition-all duration-200"

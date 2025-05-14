@@ -10,8 +10,21 @@ import { model } from '../model.js';
 
 const ListViewPresenter = observer(({ model }) => {
     const scrollContainerRef = useRef(null);
+    const[themeMode, setThemeMode]=useState(()=>{
+        return localStorage.getItem('themeMode') || 'light';
+    });
     let attempts = 0;
     const MAX_Depth = 49;
+
+    useEffect(()=>{
+        localStorage.setItem('themeMode', themeMode);
+        if(themeMode==='dark'){
+            document.documentElement.classList.add('dark');
+        }else{
+            document.documentElement.classList.remove('dark');
+        }
+    }, [themeMode]);
+
 
     function persistantScrolling(fetchMoreCourses, hasMore){
         const container = scrollContainerRef.current;
@@ -183,6 +196,11 @@ const ListViewPresenter = observer(({ model }) => {
         model.handleUrlChange();
     })
 
+
+    const toggleThemeMode=() =>{
+        setThemeMode(themeMode ==='light'?'dark':'light');
+    };
+
     const preP = <PrerequisitePresenter
         model={model}
         isPopupOpen={model.isPopupOpen}
@@ -203,6 +221,7 @@ const ListViewPresenter = observer(({ model }) => {
         prerequisiteTree={preP}
         reviewPresenter={reviewPresenter}
         sidebarIsOpen={model.sidebarIsOpen}
+        themeMode={themeMode}
     />;
 
     return <ListView
