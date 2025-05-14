@@ -6,6 +6,7 @@ import CoursePagePopup from '../views/Components/CoursePagePopup.jsx';
 import PrerequisitePresenter from './PrerequisitePresenter.jsx';
 import {ReviewPresenter} from "./ReviewPresenter.jsx"
 import {syncScrollPositionToFirebase} from "../../firebase.js"
+import { model } from '../model.js';
 
 const ListViewPresenter = observer(({ model }) => {
     const scrollContainerRef = useRef(null);
@@ -91,6 +92,52 @@ const ListViewPresenter = observer(({ model }) => {
             case 'credits':
                 return sortedCourses.sort((a, b) => 
                     direction * (parseFloat(a.credits) - parseFloat(b.credits)));
+            
+            
+            // indexes: 0 -> overall rating; 1 -> difficulty; 2->teacher rating
+            case 'avg_rating':
+                return sortedCourses.sort((a, b) => {
+                    let aScore = 0;
+                    let bScore = 0;
+                    
+                    if (model.avgRatings[a.code] != null && model.avgRatings[a.code][0] != null) {
+                        aScore = model.avgRatings[a.code][0] + 10; // +10 so courses with no reviews are shown before those with bad reviews (0/5 stars) 
+                    }
+                    
+                    if (model.avgRatings[b.code] != null && model.avgRatings[b.code][0] != null) {
+                        bScore = model.avgRatings[b.code][0] + 10;
+                    }
+                    return direction * (aScore - bScore);
+                });
+            case 'diff_rating':
+            return sortedCourses.sort((a, b) => {
+                let aScore = 0;
+                let bScore = 0;
+                
+                if (model.avgRatings[a.code] != null && model.avgRatings[a.code][1] != null) {
+                    aScore = model.avgRatings[a.code][1] + 10; // +10 so courses with no reviews are shown before those with bad reviews (0/5 stars) 
+                }
+                
+                if (model.avgRatings[b.code] != null && model.avgRatings[b.code][1] != null) {
+                    bScore = model.avgRatings[b.code][1] + 10;
+                }
+
+                return direction * (aScore - bScore);
+            });
+            case 'teacher_rating':
+            return sortedCourses.sort((a, b) => {
+                let aScore = 0;
+                let bScore = 0;
+                
+                if (model.avgRatings[a.code] != null && model.avgRatings[a.code][2] != null) {
+                    aScore = model.avgRatings[a.code][2] + 10; // +10 so courses with no reviews are shown before those with bad reviews (0/5 stars) 
+                }
+                
+                if (model.avgRatings[b.code] != null && model.avgRatings[b.code][2] != null) {
+                    bScore = model.avgRatings[b.code][2] + 10;
+                }
+                return direction * (aScore - bScore);
+            });
             case 'relevance':
                 return direction === -1 ? sortedCourses : sortedCourses.reverse();
             default:
@@ -103,11 +150,7 @@ const ListViewPresenter = observer(({ model }) => {
         setSortedCourses(sorted);
     }, [model.currentSearch, sortBy, sortDirection]);
 
-
-    window.addEventListener('popstate', () => {
-        model.handleUrlChange();
-    });
-
+    
     function indexOfNth(string, char, n) {
         let count = 0;
         for (let i = 0; i < string.length; i++) {
@@ -121,19 +164,23 @@ const ListViewPresenter = observer(({ model }) => {
         return -1;
     }
 
+    window.addEventListener('popstate', () => {
+        model.handleUrlChange();
+    });
+
     model.onCoursesSet((courses) => {
         let current_url = window.location.href;
-        if (indexOfNth(current_url, '/', 3) != current_url.length - 1) {
-            window.history.replaceState({}, '', '/');
-            /*
-            setTimeout(() => {
-                const newPath = '/' + current_url.slice(indexOfNth(current_url, '/', 3) + 1);
-                window.history.pushState({}, '', newPath);
-              }, 50); 
-            }
-            */
-        model.handleUrlChange();
+        if (current_url.indexOf("#") != -1) {return;}
+        let course_code = "";
+        let start_index = indexOfNth(current_url, '/', 3) + 2;
+        if (start_index > 1) {
+            course_code = current_url.slice(start_index);
         }
+        if (start_index != current_url.length && course_code.length >= 6) {
+            window.history.replaceState({}, '', '/');
+            window.history.pushState({}, '', '/?' + course_code);
+        }
+        model.handleUrlChange();
     })
 
     const preP = <PrerequisitePresenter
@@ -183,4 +230,4 @@ const ListViewPresenter = observer(({ model }) => {
     />;
 });
 
-export { ListViewPresenter }; 
+export { ListViewPresenter };
