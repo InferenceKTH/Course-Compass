@@ -46,5 +46,5 @@ export function makeRouter(reactiveModel) {
 createRoot(document.getElementById("root")).render(
   <RouterProvider router={makeRouter(reactiveModel)} />
 );
-
-window.myModel = reactiveModel;
+// give user access for debugging purpose
+// window.myModel = reactiveModel;
