@@ -16,6 +16,12 @@ import '@xyflow/react/dist/style.css';
 import { model } from "../model";
 
 
+/* 
+PrerequisitePresenter.jsx contains the logic for the graph that displays the prerequistes for each corse. To determine the positiosn of the cells it uses dagre.
+*/
+
+
+
 export const PrerequisitePresenter = observer((props) => {
 
     let uniqueCounter = 0;
@@ -50,6 +56,9 @@ export const PrerequisitePresenter = observer((props) => {
 
     loadTree();
 
+
+
+    // Function for generating the node positions using dagre
     const getLayoutedElements = (nodes, edges, direction = 'LR') => {
         const isHorizontal = direction === 'LR';
         dagreGraph.setGraph({ rankdir: direction, nodesep: 30});
@@ -86,6 +95,9 @@ export const PrerequisitePresenter = observer((props) => {
         'LR' // force horizontal layout initially
     );
 
+
+
+    // get the poition of a node
     const getNodeAbsolutePosition = (nodeId) => {
         const nodeElement = document.querySelector(`[data-id="${nodeId}"]`);
         if (nodeElement) {
@@ -96,6 +108,8 @@ export const PrerequisitePresenter = observer((props) => {
       };
       
 
+
+    // handels the logic for when the user hovers a cell
     function handleMouseEnter(event, node) {
         if (node["data"]["label"] === "One of these" || node["data"]["label"] === "All of these" ||
             node["data"]["label"] === "No Prerequisites" || node["data"]["label"] === "Unable to load") {return;}
@@ -150,12 +164,15 @@ export const PrerequisitePresenter = observer((props) => {
 
     }
 
-    
+    // handels the logic for when the user stops hovering a cell
     function handleMouseLeave(event, node) { // eslint-disable-line no-unused-vars
         hover_popup.style.display = "none";
     }
 
+
+    //This function returnes the finished tree to the popup
     const Flow = () => {
+        // eslint-disable-next-line no-unused-vars
         const [nodes, setNodes, onNodesChange] = useNodesState(layoutedNodes);
         const [edges, setEdges, onEdgesChange] = useEdgesState(layoutedEdges);
 
@@ -198,14 +215,9 @@ export const PrerequisitePresenter = observer((props) => {
 
     };
 
-    function setLabel(id, label) {
-        setNodes((nodes) =>
-          nodes.map((n) =>
-            n.id === id ? { ...n, data: { ...n.data, label } } : n
-          )
-        );
-    }
     
+
+    //creates a node 
     function createNode(id, name, node_type) {
         return {
             id: id,
@@ -226,15 +238,21 @@ export const PrerequisitePresenter = observer((props) => {
             }
         };
     }
+    
+    //conects two nodes together with a line from node s to node t
     function createEdge(s, t) {
         return { id: s + " " + t, source: s, target: t, type: edgeType, animated: true };
     }
 
 
+
+    //coment internaly
+    //reeds the model and converts it into the tree
     function prereq_convert(courses_taken, current_object, previous_key, previous_node_id) {
-        let current_node = null; let last_course_num = null; let param_key = null; 
+        let current_node = null;
         try {
             current_object.length;
+            // eslint-disable-next-line no-unused-vars
         } catch (err) {return;}
         
         if (!Array.isArray(current_object)) {   // Is object
@@ -437,6 +455,8 @@ export const PrerequisitePresenter = observer((props) => {
         
     }
 
+
+    //generates tree return eligebility
     function generateTree(courses_taken, prereqs) {
         prereq_convert(courses_taken, prereqs, null, props.selectedCourse.code);
         let key = Object.keys(prereqs);
@@ -450,6 +470,7 @@ export const PrerequisitePresenter = observer((props) => {
     }
 
 
+    //eror handeling and data checking
     function loadTree() {
         
         if (!props.selectedCourse?.prerequisites || props.selectedCourse.prerequisites.length == 0) {
@@ -469,7 +490,6 @@ export const PrerequisitePresenter = observer((props) => {
                     }
                 }
                 //console.log(local);
-                code_to_name = model.getCourseNames(courses_taken);
                 let eligible = generateTree(courses_taken, copy);
                 if (eligible) {
                     root["style"]["backgroundColor"] = "lightgreen";
@@ -489,7 +509,6 @@ export const PrerequisitePresenter = observer((props) => {
 
     }
 
-    /* return <PrerequisiteTreeView initialNodes={initialNodes} initialEdges={initialEdges} /> */
     return <Flow />
 });
 
