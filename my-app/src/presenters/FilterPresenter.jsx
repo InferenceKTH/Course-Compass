@@ -6,7 +6,7 @@ import { SearchbarPresenter } from './SearchbarPresenter.jsx';
 /* FilterPresenter is responsible for applying the logic necessary to filter out the courses from the overall list */
 const FilterPresenter = observer(({ model }) => {
     /* global variable for the scope of this presenter, all the smaller functions depend on it instead of passing it back and forth as params */
-    var localFilteredCourses = []; //might need to declare out of scope. idk js
+    var localFilteredCourses = [];
 
     /*  functions declared here are generally things the main function of this observer takes and runs if the given filters are enabled,
      *  this is determined through model.filterOptions.apply*Insert filter name* flags.
@@ -21,6 +21,9 @@ const FilterPresenter = observer(({ model }) => {
         /* this should be either weak/moderate/strong */
         const eligibilitytype = model.filterOptions.eligibility;
 
+        /* I am doing this trick in a multitude of filters, essentially the best fitting courses should appear first in the
+         * list view on the right side, so we just filter for those and at the very end merge them back together into a single array
+         */
         let strongcourses = [];
         let zerocourses = [];
         let moderatecourses = [];
@@ -60,6 +63,7 @@ const FilterPresenter = observer(({ model }) => {
 
         });
 
+        /* If user selects strong matching he should get all courses which might be strongly fitting (so strong courses and zero/missing prereq courses) */
         switch (eligibilitytype) {
             case "strong":
                 {

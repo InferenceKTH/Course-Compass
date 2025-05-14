@@ -84,18 +84,18 @@ export default function CourseTranscriptList(props) {
                     {items.map((item, index) => (
                         <div
                             key={index}
-                            className="flex items-center bg-[#aba8e0] px-3 py-1 rounded-md shadow-md text-sm min-w-18"
+                            className="flex items-center bg-[#aba8e0] px-3 py-1 rounded-md shadow-md text-sm min-w-18 relative"
                         >
                             <div className="relative">
                                 <span className="flex-auto mr-2 peer">{item?.id}</span>
 
                                 <div className={tooltipClasses}>
-                                    {item?.name}
+                                    {item?.name + (item?.is_in_DB ? "" : " (Course discontinued)")}
                                 </div>
                             </div>
                             <button
                                 onClick={() => removeItem(index)}
-                                className="text-violet-600 hover:text-red-700 font-bold text-sm hover:bg-red-300 rounded-md"
+                                className="text-violet-600 hover:text-red-700 font-bold text-sm hover:bg-red-300 rounded-md absolute right-2 top-1/2 -translate-y-1/2"
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
