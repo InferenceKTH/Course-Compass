@@ -21,10 +21,10 @@ const CollapsibleCheckboxes = (props) => {
       ...prev,
       [id]: !prev[id],
     }));
-    let label = rows.find(item => item.id === id).label;
+    let label = rows.find(item => item?.id === id).label;
     subItems.map((_, index) => {
       setSubCheckbox(id, index)
-      if (rows.find(item => item.id === id)?.subItems && rows.find(item => item.id === id)?.subItems.length>0 && rows.find(item => item.id === id)?.subItems[0]) {
+      if (rows.find(item => item?.id === id)?.subItems && rows.find(item => item.id === id)?.subItems.length>0 && rows.find(item => item.id === id)?.subItems[0]) {
         props.HandleFilterChange([paramFieldType, props.filterName,
           label + "/" + rows.find(item => item.id === id).subItems[index]
         ]);

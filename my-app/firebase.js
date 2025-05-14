@@ -134,6 +134,10 @@ export function syncScrollPositionToFirebase(model, containerRef) {
 function saveCoursesToCache(courses, timestamp) {
 	const request = indexedDB.open("CourseDB", 1);
 
+	function validateCourseData(course) {
+		return course && typeof course === 'object' && course.code;
+	}
+
 	request.onupgradeneeded = (event) => {
 		const db = event.target.result;
 		if (!db.objectStoreNames.contains("courses")) {
@@ -151,7 +155,7 @@ function saveCoursesToCache(courses, timestamp) {
 		const metaStore = tx.objectStore("metadata");
 
 		courseStore.clear();
-		courses.forEach((course) => courseStore.put(course));
+		courses.filter(validateCourseData).forEach((course) => courseStore.put(course));
 		metaStore.put({ key: "timestamp", value: timestamp });
 
 		tx.oncomplete = () => console.log("Saved courses to IndexedDB");
@@ -179,6 +183,8 @@ export async function addCourse(course) {
         throw new Error('User must be authenticated');
     if (!course?.code) 
         throw new Error('Invalid course data');
+	if (!course || typeof course !== 'object') throw new Error('Invalid course object');
+		if (!course.code || typeof course.code !== 'string') throw new Error('Invalid course code');
  	const myRef = ref(db, `courses/${course.code}`);
     await set(myRef, course);
 	updateLastUpdatedTimestamp();
@@ -283,6 +289,8 @@ async function loadCoursesFromCacheOrFirebase(model) {
 				getAllReq.onsuccess = () => resolve(getAllReq.result);
 				getAllReq.onerror = () => resolve([]);
 			});
+			if(!cachedCourses)
+				throw new Error("No courses found in IndexedDB");
 			model.setCourses(cachedCourses);
 			return;
 		}

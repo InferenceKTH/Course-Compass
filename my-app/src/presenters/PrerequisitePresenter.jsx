@@ -2,7 +2,7 @@ import { observer } from "mobx-react-lite";
 import PrerequisiteTreeView from "../views/PrerequisiteTreeView";
 
 import dagre from '@dagrejs/dagre';
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 
 import {
     Background,
@@ -17,6 +17,10 @@ import { model } from "../model";
 
 
 export const PrerequisitePresenter = observer((props) => {
+    const nodes = useMemo(() => {
+        if (!props.selectedCourse?.prerequisites) return [];
+        return createNodes(props.selectedCourse.prerequisites);
+    }, [props.selectedCourse?.prerequisites]);
 
     let uniqueCounter = 0;
     let textCounter = 0;
@@ -480,7 +484,7 @@ export const PrerequisitePresenter = observer((props) => {
             initialNodes.push(display_node);
         } else {
             try {
-                let root = createNode(props.selectedCourse.code, props.selectedCourse.code, "input");
+                let root = createNode(props?.selectedCourse?.code, props?.selectedCourse?.code, "input");
                 let copy = JSON.parse(JSON.stringify(props.selectedCourse.prerequisites));
                 let courses_taken = [];
                 if (localStorage.getItem("completedCourses") != null) {
