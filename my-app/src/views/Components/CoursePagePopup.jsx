@@ -105,8 +105,8 @@ function CoursePagePopup({
 	if (!isOpen || !course) return null;
 	return (
 		<div
-			className={`fixed  backdrop-blur-lg inset-0  flex justify-center z-50 ${sidebarIsOpen ? 'pl-[400px]' : 'w-full'
-				}`}
+			className={`fixed backdrop-blur-lg inset-0  flex justify-center z-50 
+			${sidebarIsOpen ? 'sm:pl-[400px] flex flex-auto h-screen w-screen ' : 'w-full'}`}
 			onClick={onClose}
 		>
 			<div
@@ -116,7 +116,7 @@ function CoursePagePopup({
 					setShowOverlay(true);
 				}}
 			>
-				<div className="flex-1">
+				<div className="flex-1 overflow-auto">
 					<div className="px-10 py-10 md:px-20 md:py-16 text-slate-900 space-y-8 font-sans">
 						{/* Course Title Section */}
 						<div>
@@ -154,39 +154,47 @@ function CoursePagePopup({
 									</svg>
 								</button>
 
-								<span className="ml-4 text-lg text-violet-700 whitespace-nowrap">
-									({course.credits} Credits)
-								</span>
 							</h2>
 							<div className="my-6 h-1.5 w-full bg-violet-500"></div>
 						</div>
 
 						{/* Course Info Section */}
-						<div className="flex flex-col space-y-4 bg-white/40 p-6 rounded-xl shadow-md">
+						<div className="sm:flex-col inline-flex flex-row flex-wrap space-y-4 bg-white/40 p-6 rounded-xl shadow-md">
 							{/* Top Row - Basic Info */}
-							<div className="grid grid-cols-2 gap-4">
+							<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 								<div className="flex flex-col space-y-2">
 									<div className="flex items-center gap-2">
 										<span className="text-sm font-medium text-violet-800">Academic Level:</span>
-										<span className="px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-sm font-medium">
+										<span
+											className="px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-sm font-medium">
 											{course.academicLevel || 'Not specified'}
 										</span>
 									</div>
 									<div className="flex items-center gap-2">
+										<span className="text-sm font-medium text-violet-800">Credits:</span>
+										<span
+											className="px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-sm font-medium">
+											{course.credits || 'Not specified'}
+										</span>
+									</div>
+									<div className="flex items-center gap-2">
 										<span className="text-sm font-medium text-violet-800">Department:</span>
-										<span className="px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-sm font-medium">
+										<span
+											className="px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-sm font-medium">
 											{course.department || 'Not specified'}
 										</span>
 									</div>
 									<div className="flex items-center gap-2">
 										<span className="text-sm font-medium text-violet-800">Language:</span>
-										<span className="px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-sm font-medium">
+										<span
+											className="px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-sm font-medium">
 											{handlePeriodsAndLanguages(course?.language) || 'Languages not specified'}
 										</span>
 									</div>
 									<div className="flex items-center gap-2">
 										<span className="text-sm font-medium text-violet-800">Course Periods:</span>
-										<span className="px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-sm font-medium">
+										<span
+											className="px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-sm font-medium">
 											{handlePeriodsAndLanguages(course?.periods) || 'Periods not specified'}
 										</span>
 									</div>
@@ -194,8 +202,8 @@ function CoursePagePopup({
 								</div>
 
 								<div className="flex flex-col space-y-4">
-									<div className="flex flex-col space-y-4">
-										<div className="flex flex-col bg-violet-50 p-4 rounded-lg space-y-4">
+									<div className="flex flex-wrap flex-col space-y-4">
+										<div className="flex flex-col flex-wrap bg-violet-50 p-4 rounded-lg space-y-4">
 											<div className="flex flex-col">
 												<span className="text-sm font-medium text-violet-800 mb-1">Overall Rating:</span>
 												<div className="flex items-center gap-2">

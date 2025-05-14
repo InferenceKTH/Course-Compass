@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { getAuth, signInWithPopup, signOut, GoogleAuthProvider } from "firebase/auth";
-import { observer } from "mobx-react-lite";
 import project_logo from "../assets/project_icon.png";
 import FavouritesDropdown from "./Components/FavouriteDropdown.jsx";
 
-function SearchbarView(props) {
+export function SearchbarView(props) {
 //   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState(null);
   const [showFavourites, setShowFavourites] = useState(false);
@@ -44,24 +43,27 @@ function SearchbarView(props) {
     };
 
   return (
-    <div className="w-full px-6 py-6 flex items-center justify-between" onClick={handleClickOutside}>
+    <div
+        className=" w-full sm:px-6 sm:py-6 pt-4 pb-4 sm:flex p-2 items-center sm:justify-between"
+         onClick={handleClickOutside}>
       <a href="https://course-compass.se/"
-         className="flex items-center h-[90px] w-auto">
+         className="flex justify-center sm:h-[90px] h-[120px] w-auto ">
         <img src={project_logo} className="h-[90px] w-auto" alt="KTH Logo" />
       </a>
 
+    <div className="flex justify-center sm:pr-20">
       <input
         type="text"
-        placeholder="What course are you looking for?"
-        value={props.searchQuery}  // Changed from searchQuery to props.searchQuery
+        placeholder="Search for courses..."
+        value={props.searchQuery}
         onChange={(e) => handleSearch(e.target.value)}
         onClick={(e) => e.stopPropagation()}
-        className="w-[400px] h-[44px] pl-14 pr-4 bg-white text-black rounded-full"
+        className="sm:w-[400px] max-w-full h-[44px] pl-4 pr-4 bg-white text-black rounded-full "
       />
+    </div>
 
-      <div className="flex gap-6 items-center">
+      <div className=" flex sm:gap-4 gap-1 pt-4 sm:pr-0">
         {props.share}
-
         <a
           className="flex items-center justify-center w-[120px] h-[44px] bg-[#003399] text-white rounded-full border border-[#000061] cursor-pointer hover:bg-[#001a4d] transition-all duration-200"
           href = "https://inferencekth.github.io/Course-Compass/"
@@ -96,7 +98,7 @@ function SearchbarView(props) {
                     )}
                 </div>
 
-          <div className="flex items-center cursor-pointer">
+          <div className=" flex items-center cursor-pointer">
               {user ? (
                   <button
                       onClick={handleSignOut}
@@ -112,18 +114,20 @@ function SearchbarView(props) {
 
               )}
 
+              {user && (
+                  <img
+                      src={user.photoURL}
+                      alt="Profile"
+                      className="w-[44px] h-[44px] rounded-full border border-[#000061] ml-2"
+                  />
+              )}
+
           </div>
 
-          {user && (
-              <img
-                  src={user.photoURL}
-                  alt="Profile"
-                  className="w-[44px] h-[44px] rounded-full border border-[#000061]"
-              />
-          )}
+
       </div>
     </div>
   );
 }
 
-export default observer(SearchbarView);
+export default SearchbarView;

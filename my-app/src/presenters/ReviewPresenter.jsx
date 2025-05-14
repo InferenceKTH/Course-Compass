@@ -41,29 +41,33 @@ export const ReviewPresenter = observer(({ model, course }) => {
             setErrorMessage("You need to be logged in to post a comment - Posting anonymously is possible.");
             return;
         }
-        if (formData.text.trim()) {
-            const review = {
-                userName: postAnonymous ? "Anonymous" : model.user?.displayName,
-                uid: model?.user?.uid,
-                timestamp: Date.now(),
-                ...formData,
 
-            };
-            if(!await model.addReview(course.code, review)){    
-                setErrorMessage("Something went wrong when posting. Are you logged in?")
-                return;
-            }
-            const updatedReviews = await model.getReviews(course.code);
-            setReviews(updatedReviews);
-            setFormData({
-                text: "",
-                overallRating: 0,
-                difficultyRating: 0,
-                professorName: "",
-                grade: "",
-                recommended: false,
-            });
+        if (!formData.text.trim() && formData.overallRating === 0) {
+            setErrorMessage("Please provide either a review text or an overall rating.");
+            return;
         }
+
+        const review = {
+            userName: postAnonymous ? "Anonymous" : model.user?.displayName,
+            uid: model?.user?.uid,
+            timestamp: Date.now(),
+            ...formData,
+        };
+        
+        if(!await model.addReview(course.code, review)){    
+            setErrorMessage("Something went wrong when posting. Are you logged in?")
+            return;
+        }
+        const updatedReviews = await model.getReviews(course.code);
+        setReviews(updatedReviews);
+        setFormData({
+            text: "",
+            overallRating: 0,
+            difficultyRating: 0,
+            professorName: "",
+            grade: "",
+            recommended: false,
+        });
     };
 
 

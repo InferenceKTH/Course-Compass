@@ -1,18 +1,69 @@
-import React from 'react';
 import { observer } from "mobx-react-lite";
+import { useMemo, useEffect } from "react";
 import eligibility from "../scripts/eligibility_refined.js";
-import { SearchbarPresenter } from './SearchbarPresenter.jsx';
 
 /* FilterPresenter is responsible for applying the logic necessary to filter out the courses from the overall list */
 const FilterPresenter = observer(({ model }) => {
+   
     /* global variable for the scope of this presenter, all the smaller functions depend on it instead of passing it back and forth as params */
-    var localFilteredCourses = [];
+    var localFilteredCourses = [...model?.courses];
+
+    const filteredCourses = useMemo(() => {
+        if (model.courses.length === 0 || !model.filtersChange) {
+            return model.filteredCourses;
+        }
+        
+        if (model.filterOptions.applyRemoveNullCourses) {
+            updateNoNullcourses();
+        }
+        if(model.filterOptions.applyPeriodFilter){
+            updatePeriods();
+        }
+        if (model.filterOptions.applyLocationFilter) {
+            updateLocations();
+        }
+        if (model.filterOptions.applyLevelFilter) {
+            updateLevels();
+        }
+        if (model.filterOptions.applyLanguageFilter) {
+            updateLanguages();
+        }
+        if (model.filterOptions.applyCreditsFilter) {
+            updateCredits();
+        }
+        if (model.filterOptions.applyTranscriptFilter) {
+            applyTranscriptEligibility();
+        }
+        if (model.filterOptions.applyDepartmentFilter) {
+            updateDepartments();
+        }
+        model.filtersChange = false;
+        model.setFiltersCalculated();
+        return localFilteredCourses;
+
+    }, [model.courses,
+        model.filtersChange,
+        model.filterOptions
+    ]);
+
+    useEffect(() => {
+        model.filteredCourses = filteredCourses;
+    }, [filteredCourses]);
 
     /*  functions declared here are generally things the main function of this observer takes and runs if the given filters are enabled,
      *  this is determined through model.filterOptions.apply*Insert filter name* flags.
      *  This presenter should be changed such that it uses side-effects instead model.filtersChange flag, since
      */
 
+<<<<<<< HEAD
+=======
+
+    /*  functions declared here are generally things the main function of this observer takes and runs if the given filters are enabled,
+     *  this is determined through model.filterOptions.apply*Insert filter name* flags.
+     *  This presenter should be changed such that it uses side-effects instead model.filtersChange flag, since
+     */
+
+>>>>>>> 7acc78b2f82573c9310117ab0388a336d954c69e
     /* functions  */
     function applyTranscriptEligibility() {
         if (localFilteredCourses.length == 0)
@@ -370,49 +421,11 @@ const FilterPresenter = observer(({ model }) => {
     }
 
     /* function that should run every single time the model changes (see note below) */
-    async function run() {
-        if (model.courses.length == 0) {
-            return;
-        }
-        if (model.filtersChange) {
-            localFilteredCourses = [...model.courses];
-
-            if (model.filterOptions.applyRemoveNullCourses) {
-                updateNoNullcourses();
-            }
-            if(model.filterOptions.applyPeriodFilter){
-                updatePeriods();
-            }
-            if (model.filterOptions.applyLocationFilter) {
-                updateLocations();
-            }
-            if (model.filterOptions.applyLevelFilter) {
-                updateLevels();
-            }
-            if (model.filterOptions.applyLanguageFilter) {
-                updateLanguages();
-            }
-            if (model.filterOptions.applyCreditsFilter) {
-                updateCredits();
-            }
-            if (model.filterOptions.applyTranscriptFilter) {
-                applyTranscriptEligibility();
-            }
-            if (model.filterOptions.applyDepartmentFilter) {
-                updateDepartments();
-            }
-
-            model.filteredCourses = [...localFilteredCourses];
-            model.filtersChange = false;
-            model.setFiltersCalculated();
-        }
-    }
-
     /*  the problem is that unless using sideeffects, the run() not being async and/or it setting the filterschange = false very early can mean
      *  that 0 courses will get put into the model.filtered courses (which is the list of courses getting passed to search, and then listview)
      *  therefore TODO: rework it to stop using this dumb flags we started before learning anything about react,observers,js
     */
-    run();
+    // run();
     
 });
 

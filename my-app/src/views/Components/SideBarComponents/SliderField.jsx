@@ -30,6 +30,7 @@ export default function UploadField(props) {
     }, [props?.initialValues, values]); // Empty dependency array ensures this runs only once
 
 
+
     const handleDrag = (e, thumbType) => {
         const slider = sliderRef.current;
         if (!slider) return;

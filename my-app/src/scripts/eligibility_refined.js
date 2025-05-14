@@ -52,6 +52,12 @@ function prereq_convert(courses_taken, current_object, previous_key, hash_bool, 
 
 
 function eligibility_check(courses_taken, prereqs_object, hash_bool, count_object) {
+    if (!Array.isArray(courses_taken)) {
+        throw new Error('Courses taken must be an array');
+    }
+    if (!prereqs_object || typeof prereqs_object !== 'object') {
+        throw new Error('Prerequisites must be an object');
+    }
     prereq_convert(courses_taken, prereqs_object, null, hash_bool, count_object);
     let key = Object.keys(prereqs_object);
     return prereqs_object[key];
