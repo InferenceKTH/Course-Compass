@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import RatingComponent from "../views/Components/RatingComponent.jsx";
+import { getCommentsForReview, addCommentToReview, auth } from "../../firebase";
 
 export function ReviewView(props) {
   const grades = ["A", "B", "C", "D", "E", "F"];
@@ -9,14 +10,25 @@ export function ReviewView(props) {
   const [showRecommendOptions, setShowRecommendOptions] = useState(false);
   const [showDifficultyOptions, setShowDifficultyOptions] = useState(false);
   const [expandedReviews, setExpandedReviews] = useState({});
-  const [showPostAnonymously, setShowPostAnonymously] = useState(false);
-  const [anonState, setAnonState] = useState(props.postAnonymously);
+  const [commentTexts, setCommentTexts] = useState({});
+  const [commentsByReview, setCommentsByReview] = useState({});
+
+  useEffect(() => {
+    async function fetchComments() {
+      const result = {};
+      for (let rev of props.reviews) {
+        const list = await getCommentsForReview(rev.courseCode, rev.uid);
+        result[rev.uid] = list;
+      }
+      setCommentsByReview(result);
+    }
+    if (props.reviews?.length) fetchComments();
+  }, [props.reviews]);
+
   const gradeRef = useRef(null);
   const recommendRef = useRef(null);
   const difficultyRef = useRef(null);
-  const anonymousRef = useRef(null);
 
-  // Function to get user initials from their name
   const getInitials = (name) => {
     if (!name) return "N/A";
     const words = name.trim().split(" ");
@@ -37,9 +49,6 @@ export function ReviewView(props) {
       if (difficultyRef.current && !difficultyRef.current.contains(event.target)) {
         setShowDifficultyOptions(false);
       }
-      if (anonymousRef.current && !anonymousRef.current.contains(event.target)) {
-        setShowPostAnonymously(false);
-      }
     }
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -48,11 +57,6 @@ export function ReviewView(props) {
     };
   }, []);
 
-  useEffect(() => {
-    setAnonState(props.postAnonymously);
-  }, [props.postAnonymously]);
-
-  // Function to toggle expanded state for a review
   const toggleExpanded = (index) => {
     setExpandedReviews((prev) => ({
       ...prev,
@@ -67,32 +71,23 @@ export function ReviewView(props) {
           <div className="flex flex-wrap justify-center gap-4">
             {/* Overall Rating */}
             <div className="text-center">
-              <p className="font-semibold text-gray-700 text-sm mb-1">
-                Overall Rating
-              </p>
+              <p className="font-semibold text-gray-700 text-sm mb-1">Overall Rating</p>
               <RatingComponent
                 className="flex gap-1 text-base justify-center"
                 value={formData.overallRating}
-                onChange={(val) =>
-                  setFormData({ ...formData, overallRating: val })
-                }
+                onChange={(val) => setFormData({ ...formData, overallRating: val })}
               />
             </div>
 
             {/* Professor Rating */}
             <div className="text-center">
-              <p className="font-semibold text-gray-700 text-sm mb-1">
-                Professor Rating
-              </p>
+              <p className="font-semibold text-gray-700 text-sm mb-1">Professor Rating</p>
               <RatingComponent
                 className="flex gap-1 text-base justify-center"
                 value={formData.professorRating}
-                onChange={(val) =>
-                  setFormData({ ...formData, professorRating: val })
-                }
+                onChange={(val) => setFormData({ ...formData, professorRating: val })}
               />
             </div>
-
             {/* Difficulty Rating */}
             <div className="relative" ref={difficultyRef}>
               <div className="flex items-center justify-center gap-2">
@@ -212,55 +207,6 @@ export function ReviewView(props) {
               </div>
             </div>
           </div>
-          {/* Anonymous Section */}
-          <div className="relative" ref={anonymousRef}>
-            <div className="flex items-center justify-center gap-2 mt-4">
-              <p className="font-semibold text-gray-700 text-sm">
-                Post Anonymously?
-              </p>
-              <div className="relative">
-                <div
-                  className="px-3 py-1.5 border border-gray-300 rounded-md text-sm cursor-pointer text-gray-700 bg-white hover:bg-gray-50 transition-colors duration-200"
-                  onClick={() => setShowPostAnonymously((prev) => !prev)}
-                >
-                  {anonState ? "Yes" : "No"}
-                </div>
-                {showPostAnonymously && (
-                  <div className="absolute left-1/2 -translate-x-1/2 mt-2 bg-white p-2 rounded-md shadow-lg z-10 flex space-x-2 animate-fadeIn">
-                    <button
-                      onClick={() => {
-                        props.setAnonymous(true);
-                        setAnonState(true);
-                        setShowPostAnonymously(false);
-                      }}
-                      className={`px-3 py-1 rounded-md text-sm ${
-                        props.postAnonymously
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-100 hover:bg-gray-200"
-                      } transition-colors duration-200`}
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => {
-                        props.setAnonymous(false);
-                        setAnonState(false);
-                        setShowPostAnonymously(false);
-                      }}
-                      className={`px-3 py-1 rounded-md text-sm ${
-                        props.postAnonymously === false
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-100 hover:bg-gray-200"
-                      } transition-colors duration-200`}
-                    >
-                      No
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
           <div className="mt-4">
             <input
               type="text"
@@ -391,10 +337,58 @@ export function ReviewView(props) {
                         </button>
                       )}
                     </div>
+
+                    {/* Comment Section */}
+                    <div className="mt-4 border-t pt-4">
+                      <p className="text-sm font-semibold text-gray-700 mb-1">Add a Comment</p>
+                      <textarea
+                        placeholder="Write your comment here..."
+                        value={commentTexts[rev.uid] || ""}
+                        onChange={(e) =>
+                          setCommentTexts((prev) => ({ ...prev, [rev.uid]: e.target.value }))
+                        }
+                        className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                      />
+                      <button
+                        onClick={async () => {
+                          const text = (commentTexts[rev.uid] || "").trim();
+                          if (!text) return;
+                          const comment = {
+                            userName: auth.currentUser?.displayName || "Anonymous",
+                            text,
+                            timestamp: Date.now(),
+                          };
+                          await addCommentToReview(rev.courseCode, rev.uid, comment);
+                          const updated = await getCommentsForReview(rev.courseCode, rev.uid);
+                          setCommentsByReview((prev) => ({ ...prev, [rev.uid]: updated }));
+                          setCommentTexts((prev) => ({ ...prev, [rev.uid]: "" }));
+                        }}
+                        className="mt-2 bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700 text-sm"
+                      >
+                        Submit Comment
+                      </button>
+
+                      {commentsByReview[rev.uid] && commentsByReview[rev.uid].length > 0 && (
+                        <div className="mt-4 space-y-2">
+                          <p className="text-sm font-semibold text-gray-700">Comments:</p>
+                          {commentsByReview[rev.uid].map((comment, idx) => (
+                            <div
+                              key={idx}
+                              className="ml-4 bg-gray-100 p-2 rounded text-sm text-gray-700 border border-gray-200"
+                            >
+                              <span className="font-semibold text-xs">{comment.userName}:</span>
+                              <span className="ml-2 text-sm">{comment.text}</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 );
               })}
-            {props.reviews.length === 0 && <p className="text-sm text-gray-600">No reviews yet.</p>}
+            {props.reviews.length === 0 && (
+              <p className="text-sm text-gray-600">No reviews yet.</p>
+            )}
           </div>
         </div>
       </div>
