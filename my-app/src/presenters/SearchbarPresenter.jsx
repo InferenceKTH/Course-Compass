@@ -48,7 +48,7 @@ const SearchbarPresenter = observer(({ model }) => {
             model.setCurrentSearch(sortedResults.map(r => r.item));
             model.searchQueryModel = query;
         }
-    }, 500), []);
+    }, 500), [model, fuseOptions]);
 
     const addFavourite = (course) => {
         model.addFavourite(course);

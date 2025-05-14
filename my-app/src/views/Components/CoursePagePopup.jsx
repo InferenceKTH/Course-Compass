@@ -56,21 +56,21 @@ function CoursePagePopup({
 			try {
 				const avg = await model.getAverageRating(course.code, "avg");
 				setAverageRating(avg);
-
+			// eslint-disable-next-line no-unused-vars
 			} catch (error) {
 				setAverageRating(null);
 			}
 			try {
 				const avg = await model.getAverageRating(course.code, "diff");
 				setDifficultyRating(avg);
-
+			// eslint-disable-next-line no-unused-vars
 			} catch (error) {
 				setDifficultyRating(null);
 			}
 			try {
 				const avg = await model.getAverageRating(course.code, "prof");
 				setProfessorRating(avg);
-
+			// eslint-disable-next-line no-unused-vars
 			} catch (error) {
 				setProfessorRating(null);
 			}
@@ -409,7 +409,7 @@ function CoursePagePopup({
 								</p>
 							)}
 						</div>
-						<div class="mb-3 h-0.5 w-full bg-violet-500"></div>
+						<div className="mb-3 h-0.5 w-full bg-violet-500"></div>
 						{/* Reviews Section */}
 						{reviewPresenter && (
 							<div className="bg-white/30 rounded-xl p-6 shadow-sm">

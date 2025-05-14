@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { DotPulse, Quantum } from 'ldrs/react';
 import 'ldrs/react/Quantum.css';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useNavigate, Link } from 'react-router-dom';
 
 // Add this helper function at the top of your component
 const highlightText = (text, query) => {
@@ -20,9 +19,6 @@ function ListView(props) {
     const [hasMore, setHasMore] = useState(true);
     const [readMore, setReadMore] = useState({});
     const [isLoading, setIsLoading] = useState(true);
-    const [sortBy, setSortBy] = useState('relevance');
-    const [sortDirection, setSortDirection] = useState('asc');
-    const navigate = useNavigate();
 
     const toggleReadMore = (courseCode) => {
         setReadMore(prevState => ({
@@ -52,10 +48,6 @@ function ListView(props) {
         } else {
             return;
         }
-    };
-
-    const handleClickBackArrow = (course_name) => {
-        navigate(course_name);
     };
 
 
@@ -90,13 +82,13 @@ function ListView(props) {
             props.persistantScrolling(fetchMoreCourses, hasMore);
             setIsRestoringScroll(false);
         }
-    }, [props.targetScroll, hasMore, displayedCourses.length]);
+    }, [props.targetScroll, hasMore, displayedCourses.length, fetchMoreCourses, isRestoringScroll, props]);
    
     useEffect(() => {
     if (props.targetScroll === 0 && props.scrollContainerRef?.current) {
         props.scrollContainerRef.current.scrollTop = 0;
     }
-}, [props.targetScroll]);
+}, [props.targetScroll, fetchMoreCourses, isRestoringScroll, props]);
 
     if (!props.sortedCourses) {
         return (
