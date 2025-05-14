@@ -7,7 +7,9 @@ export default function ToggleField(props) {
     let paramFieldType = "toggle";
 
     const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
-    const [prop1Set, setprop1Set] = useState((props.initialValues=="both") || (props.initialValues==String(props.fields[0]).charAt(0).toLowerCase() + String(props.fields[0]).slice(1)));
+    //eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [prop1Set, setprop1Set] = useState((props.initialValues == "both") || (props.initialValues == String(props.fields[0]).charAt(0).toLowerCase() + String(props.fields[0]).slice(1)));
+    //eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [prop2Set, setprop2Set] = useState((props.initialValues=="both") || (props.initialValues==String(props.fields[1]).charAt(0).toLowerCase() + String(props.fields[1]).slice(1)));
 
     const checkboxRef = useRef(null);
@@ -36,7 +38,7 @@ export default function ToggleField(props) {
                         checkboxRef.current.click();
                     }
             }}>
-                <div className="flex flex-col sm:flex-row md:flex-row rounded-lg shadow-2xs w-full items-center
+                <div className="flex sm:flex-row rounded-lg shadow-2xs w-full items-center
              font-medium text-white bg-[#aba8e0] ">
                     <label className="flex-auto py-3 px-4 inline-flex gap-x-2 -mt-px -ms-px 
                 first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 s

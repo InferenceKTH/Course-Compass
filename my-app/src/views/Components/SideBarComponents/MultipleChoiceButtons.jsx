@@ -11,7 +11,7 @@ export default function MultipleChoiceButtons(props) {
 
     useEffect(() => {
         setFilterEnabled(props.filterEnable);
-    })
+    },[props.filterEnable])
 
     const handleClick = (index) => {
         setSelectedItems((prev) => {
@@ -36,17 +36,18 @@ export default function MultipleChoiceButtons(props) {
             return "default-button-class"; // Fallback class for invalid index
         }
 
-        const baseClasses = `flex-auto py-1 px-4 inline-flex items-center gap-x-2 text-sm
-      font-medium focus:z-10 border border-gray-200 shadow-2xs hover:bg-[#8785ac]
-      focus:outline-hidden disabled:opacity-50 disabled:pointer-events-none pl-8`;
+        const baseClasses = `flex-auto py-1 px-4 inline-flex items-center text-sm
+          font-medium focus:z-10 border border-gray-200 shadow-2xs hover:bg-[#8785ac]
+          focus:outline-hidden sm:pl-7 pl-4 text-center`;
         const activeClass = selectedItems[index] ? "bg-violet-500" : "bg-transparent";
         const roundedClasses =
             index === 0
-                ? "rounded-l-lg"
-                : index === props.items.length - 1
-                    ? "rounded-r-lg"
-                    : "border-l-0";
-        return `${baseClasses} ${activeClass} ${roundedClasses}`;
+            ? "rounded-l-lg"
+            : index === props.items.length - 1
+                ? "rounded-r-lg"
+                : "border-l-0 ";
+        const mobileClasses = "w-full sm:w-auto"; // Adjust for mobile
+        return `${baseClasses} ${activeClass} ${roundedClasses} ${mobileClasses}`;
     };
 
     return (
@@ -74,7 +75,7 @@ export default function MultipleChoiceButtons(props) {
             }}>
 
                 <div className="my-1">
-                    <div className="flex flex-col sm:inline-flex sm:flex-row rounded-lg shadow-2xs 
+                    <div className="flex  sm:inline-flex rounded-lg shadow-2xs 
       w-full items-center font-medium text-white bg-[#aba8e0]">
                         {props.items.map((item, index) => (
                             <button

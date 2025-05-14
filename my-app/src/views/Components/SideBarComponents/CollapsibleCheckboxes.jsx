@@ -3,7 +3,6 @@ import FilterEnableCheckbox from "./FilterEnableCheckbox";
 import Tooltip from "./ToolTip";
 
 const CollapsibleCheckboxes = (props) => {
-  const [expandedLabel, setExpandedLabel] = useState(props?.initialValues?.map(i => i?.label));
   const [expanded, setExpanded] = useState([]);
   const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
   const [checkedSubItems, setCheckedSubItems] = useState({});
@@ -83,7 +82,7 @@ const CollapsibleCheckboxes = (props) => {
       setInitalLoad(false);
       setExpanded(tempExpanded);
     }
-  }, [rows]);
+  }, [rows, initalLoad, props?.initialValues]);
   
 
 
