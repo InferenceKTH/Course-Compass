@@ -11,8 +11,11 @@ import { JsonToDatabase } from "./presenters/Tests/JsonToDatabase";
 import { AllCoursesPresenter } from "./presenters/Tests/AllCoursesPresenter.jsx";
 
 
-configure({ enforceActions: "observed", reactionScheduler: (f) => setTimeout(f, 0),});
+/**
+ * This file contains the bootstrapping, as well as the router used in our webapp.
+ */
 
+configure({ enforceActions: "observed", reactionScheduler: (f) => setTimeout(f, 0),});
 const reactiveModel = makeAutoObservable(model);
 connectToFirebase(reactiveModel);
 
@@ -27,14 +30,15 @@ export function makeRouter(reactiveModel) {
       //element: <SharedView />,
       element: <SharedView model={reactiveModel} />,
     },
-    {
-      path: "/button",
-      element: <JsonToDatabase model={reactiveModel} />,
-    },
-    {
-      path: "/all",
-      element: <AllCoursesPresenter model={reactiveModel} />,
-    }, 
+    // Testcases, which are disabled for deployment:
+    // {
+    //   path: "/button",
+    //   element: <JsonToDatabase model={reactiveModel} />,
+    // },
+    // {
+    //   path: "/all",
+    //   element: <AllCoursesPresenter model={reactiveModel} />,
+    // }, 
     
   ]);
 }

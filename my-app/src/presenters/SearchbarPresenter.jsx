@@ -8,6 +8,10 @@ import SearchbarView from "../views/SearchbarView.jsx";
 import Fuse from 'fuse.js'
 import debounce from 'lodash.debounce';
 
+/**
+ * This presenter handles searches. The searching is done via a debounced fuzzy search engine called "fuse.js".
+ * Favourites are handled here as well.
+ */
 const SearchbarPresenter = observer(({ model }) => {
     const [searchQuery, setSearchQuery] = useState("");
 
