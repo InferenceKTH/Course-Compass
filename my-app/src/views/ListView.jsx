@@ -274,7 +274,7 @@ function ListView(props) {
                 </div>
             )}
             {props.popup}
-            {!isLoading && props.targetScroll > 1000 && (
+            {!isLoading && !props.isPopupOpen && props.targetScroll > 1000 && (
                 <button
                     onClick={() => props.setTargetScroll(0)}
                 className="fixed bottom-6 right-6 z-50 bg-[#000061] text-white p-3 rounded-full shadow-lg hover:bg-[#1a1a80] transition-all"
