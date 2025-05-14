@@ -38,7 +38,7 @@ export default function ToggleField(props) {
                         checkboxRef.current.click();
                     }
             }}>
-                <div className="flex flex-col sm:flex-row md:flex-row rounded-lg shadow-2xs w-full items-center
+                <div className="flex sm:flex-row rounded-lg shadow-2xs w-full items-center
              font-medium text-white bg-[#aba8e0] ">
                     <label className="flex-auto py-3 px-4 inline-flex gap-x-2 -mt-px -ms-px 
                 first:rounded-t-md last:rounded-b-md sm:first:rounded-s-md sm:mt-0 sm:first:ms-0 s

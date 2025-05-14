@@ -31,7 +31,7 @@ export default function ButtonGroupField(props) {
   };
   return (
     <div className="my-1">
-        <div className="flex flex-col sm:inline-flex sm:flex-row rounded-lg shadow-2xs 
+        <div className="flex sm:inline-flex rounded-lg shadow-2xs 
       w-full items-center font-medium text-white bg-[#aba8e0]">
           {props.items.map((item, index) => (
             <button

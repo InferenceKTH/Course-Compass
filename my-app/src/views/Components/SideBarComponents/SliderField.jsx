@@ -1,15 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
 import Tooltip from "./ToolTip";
 
 export default function UploadField(props) {
     let paramFieldType = "slider";
 
-    const values = [
+
+    const values = useMemo(() => [
         1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5,
         6, 7, 7.5, 8, 8.5, 9, 10, 11, 12, 13.5,
         14, 15, 20, 22.5, 30, 45
-    ];
+    ], []);
 
     const [minIndex, setMinIndex] = useState(0);
     const [maxIndex, setMaxIndex] = useState(values.length - 1);
@@ -19,14 +20,15 @@ export default function UploadField(props) {
 
     useEffect(() => {
         for (let i = 0; i < values.length; i++) {
-            if (values[i] === props.initialValues[0]) {
+            if (values[i] === props?.initialValues[0]) {
                 setMinIndex(i);
             }
-            if (values[i] === props.initialValues[1]) {
+            if (values[i] === props?.initialValues[1]) {
                 setMaxIndex(i);
             }
         }
-    }, []); // Empty dependency array ensures this runs only once
+    }, [props?.initialValues, values]); // Empty dependency array ensures this runs only once
+
 
 
     const handleDrag = (e, thumbType) => {
