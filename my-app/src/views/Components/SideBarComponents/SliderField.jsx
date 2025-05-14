@@ -28,6 +28,7 @@ export default function UploadField(props) {
         }
     }, []); // Empty dependency array ensures this runs only once
 
+
     const handleDrag = (e, thumbType) => {
         const slider = sliderRef.current;
         if (!slider) return;
@@ -104,6 +105,7 @@ export default function UploadField(props) {
                                 const up = () => {
                                     window.removeEventListener("mousemove", move);
                                     window.removeEventListener("mouseup", up);
+                                    //props.HandleFilterChange([paramFieldType, props.filterName, [values[minIndex], values[maxIndex]]]);
                                 };
                                 window.addEventListener("mousemove", move);
                                 window.addEventListener("mouseup", up);
@@ -113,6 +115,7 @@ export default function UploadField(props) {
                                 const end = () => {
                                     window.removeEventListener("touchmove", move);
                                     window.removeEventListener("touchend", end);
+                                    //props.HandleFilterChange([paramFieldType, props.filterName, [values[minIndex], values[maxIndex]]]);
                                 };
                                 window.addEventListener("touchmove", move);
                                 window.addEventListener("touchend", end);
@@ -131,7 +134,7 @@ export default function UploadField(props) {
                                 const move = (ev) => handleDrag(ev, "max");
                                 const up = () => {
                                     window.removeEventListener("mousemove", move);
-                                    window.removeEventListener("mouseup", up);
+                                    window.removeEventListener("mouseup", up);    
                                 };
                                 window.addEventListener("mousemove", move);
                                 window.addEventListener("mouseup", up);

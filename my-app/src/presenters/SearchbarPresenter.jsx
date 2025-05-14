@@ -13,8 +13,8 @@ const SearchbarPresenter = observer(({ model }) => {
 
     const fuseOptions = {
         keys: [
-            { name: 'code', weight: 0.6 },   
-            { name: 'name', weight: 0.3 },  
+            { name: 'code', weight: 0.5 },   
+            { name: 'name', weight: 0.4 },  
             { name: 'description', weight: 0.1 }, 
         ],
         threshold: 0.3141592653589793238,           // adjust this for sensitivity
