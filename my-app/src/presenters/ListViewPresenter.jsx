@@ -2,6 +2,7 @@ import React from 'react';
 import { observer } from "mobx-react-lite";
 import { useState, useEffect, useRef } from 'react';
 import ListView from "../views/ListView.jsx";
+import SearchbarView from "../views/SearchbarView.jsx";
 import CoursePagePopup from '../views/Components/CoursePagePopup.jsx';
 import PrerequisitePresenter from './PrerequisitePresenter.jsx';
 import {ReviewPresenter} from "./ReviewPresenter.jsx"
@@ -10,20 +11,23 @@ import { model } from '../model.js';
 
 const ListViewPresenter = observer(({ model }) => {
     const scrollContainerRef = useRef(null);
-    const[themeMode, setThemeMode]=useState(()=>{
-        return localStorage.getItem('themeMode') || 'light';
-    });
+    // const[themeMode, setThemeMode]=useState(()=>{
+    //     return localStorage.getItem('themeMode') || 'light';
+    // });
+    const themeMode = model.getThemeMode();
     let attempts = 0;
     const MAX_Depth = 49;
 
-    useEffect(()=>{
-        localStorage.setItem('themeMode', themeMode);
-        if(themeMode==='dark'){
+    useEffect(() => {
+        const mode = model.getThemeMode(); // or model.themeMode
+        localStorage.setItem('themeMode', mode);
+        if (mode === 'dark') {
             document.documentElement.classList.add('dark');
-        }else{
+        } else {
             document.documentElement.classList.remove('dark');
         }
-    }, [themeMode]);
+    }, [model.themeMode]); // reacts to observable change
+    
 
 
     function persistantScrolling(fetchMoreCourses, hasMore){
@@ -224,29 +228,42 @@ const ListViewPresenter = observer(({ model }) => {
         themeMode={themeMode}
     />;
 
-    return <ListView
-        favouriteCourses={model.favourites}
-        addFavourite={addFavourite}
-        removeFavourite={removeFavourite}
-        handleFavouriteClick={handleFavouriteClick}
+    
 
-        isPopupOpen={model.isPopupOpen}
-        setPopupOpen={(isOpen) => model.setPopupOpen(isOpen)}
-        setSelectedCourse={(course) => model.setSelectedCourse(course)}
-        popup={popup}
-        query={model.searchQueryModel}
-        targetScroll={model.scrollPosition}
-        setTargetScroll={setTargetScroll}
-        scrollContainerRef={scrollContainerRef}
-        persistantScrolling={persistantScrolling}
+    return (
+        <>
+            {/* <SearchbarPresenter
+                toggleThemeMode={() => model.toggleThemeMode()} 
+                themeMode={model.themeMode}              
+            /> */}
 
-        sortedCourses={sortedCourses}
-        sortBy={sortBy}
-        setSortBy={setSortBy}
-        sortDirection={sortDirection}
-        setSortDirection={setSortDirection}
-        currentSearchLenght={sortedCourses.length}
-    />;
+            <ListView
+                favouriteCourses={model.favourites}
+                addFavourite={addFavourite}
+                removeFavourite={removeFavourite}
+                handleFavouriteClick={handleFavouriteClick}
+                isPopupOpen={model.isPopupOpen}
+                setPopupOpen={(isOpen) => model.setPopupOpen(isOpen)}
+                setSelectedCourse={(course) => model.setSelectedCourse(course)}
+                popup={popup}
+                query={model.searchQueryModel}
+                targetScroll={model.scrollPosition}
+                setTargetScroll={setTargetScroll}
+                scrollContainerRef={scrollContainerRef}
+                persistantScrolling={persistantScrolling}
+                sortedCourses={sortedCourses}
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+                sortDirection={sortDirection}
+                setSortDirection={setSortDirection}
+                currentSearchLenght={sortedCourses.length}
+            />
+        </>
+    );
+    
+
+    
+
 });
 
 export { ListViewPresenter };

@@ -10,18 +10,18 @@ import debounce from 'lodash.debounce';
 
 const SearchbarPresenter = observer(({ model }) => {
     const [searchQuery, setSearchQuery] = useState("");
-    // const[themeMode, setThemeMode]=useState(()=>{
-    //     return localStorage.getItem('themeMode') || 'light';
-    // });
+    const[themeMode, setThemeMode]=useState(()=>{
+        return localStorage.getItem('themeMode') || 'light';
+    });
 
-    // useEffect(()=>{
-    //     localStorage.setItem('themeMode', themeMode);
-    //     if(themeMode==='dark'){
-    //         document.documentElement.classList.add('dark');
-    //     }else{
-    //         document.documentElement.classList.remove('dark');
-    //     }
-    // }, [themeMode]);
+    useEffect(()=>{
+        localStorage.setItem('themeMode', themeMode);
+        if(themeMode==='dark'){
+            document.documentElement.classList.add('dark');
+        }else{
+            document.documentElement.classList.remove('dark');
+        }
+    }, [themeMode]);
 
     const fuseOptions = {
         keys: [
@@ -85,9 +85,9 @@ const SearchbarPresenter = observer(({ model }) => {
         model.setFavourite([]);
     }
 
-    // const toggleThemeMode=() =>{
-    //     setThemeMode(themeMode ==='light'?'dark':'light');
-    // };
+    const toggleThemeMode=() =>{
+        setThemeMode(themeMode ==='light'?'dark':'light');
+    };
 
     const preP = <PrerequisitePresenter 
         model={model}
@@ -131,6 +131,8 @@ const SearchbarPresenter = observer(({ model }) => {
             handleFavouriteClick={handleFavouriteClick}
             totalCredits={creditsSum(model.favourites)}
             resetScrollPosition={resetScoll}
+            toggleThemeMode={toggleThemeMode}
+            themeMode={themeMode}        
         />
     );
 });
