@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import CourseTranscriptList from './CourseTranscriptList';
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
 //import * as scraper from '../../../../src/scripts/transcript-scraper/transcript-scraper.js';
@@ -12,10 +12,6 @@ export default function UploadField(props) {
     const [fileUploaded, setfileUploaded] = useState(false);
 
     const checkboxRef = useRef(null);
-
-    useState(() => {
-        setfileUploaded(localStorage.getItem("completedCourses") != undefined)
-    });
 
     const handleDragOver = (event) => {
         event.preventDefault(); // Prevent default behavior (to allow drop)
@@ -31,6 +27,8 @@ export default function UploadField(props) {
         setIsDragging(false);
         if (event.dataTransfer.files.length > 0) {
             props.handleFileChange({ target: { files: event.dataTransfer.files } });
+            setfileUploaded(localStorage.getItem("completedCourses") != undefined);
+            console.log(localStorage.getItem("completedCourses") != undefined);
         }
     };
 
@@ -76,7 +74,14 @@ export default function UploadField(props) {
                             <p className=" text-sm "><span className="font-semibold">Click to upload</span> or drag and drop</p>
                             <p className="text-xs">KTH transcript of records in PDF format</p>
                         </div>
-                        <input id="PDF-Scraper-Input" type="file" className="hidden" onChange={props.handleFileChange} />
+                        <input
+                            id="PDF-Scraper-Input" 
+                            type="file" 
+                            className="hidden" 
+                            onChange={(event) => {
+                                props.handleFileChange(event);
+                                setfileUploaded(true);
+                            }}  />
                     </label>
                 </div>
                 <ButtonGroupField
@@ -94,6 +99,7 @@ export default function UploadField(props) {
                 }`}>
                 <CourseTranscriptList
                     reApplyFilter={props.reApplyFilter}
+                    ref={checkboxRef}
                 />
             </div>
         </div>

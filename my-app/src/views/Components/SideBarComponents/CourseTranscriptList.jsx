@@ -1,11 +1,13 @@
-import { useState, useRef } from "react";
+import { useState, useRef, forwardRef } from "react";
 import Tooltip from "./ToolTip";
 
 export default function CourseTranscriptList(props) {
     let local = [];
     if (localStorage.getItem("completedCourses"))
         local = JSON.parse(localStorage.getItem("completedCourses"));
-
+    
+    const [items, setItems] = useState(local);
+    
     // eslint-disable-next-line no-unused-vars
     window.addEventListener("completedCourses changed", event => {
         if (localStorage.getItem("completedCourses"))
@@ -13,8 +15,6 @@ export default function CourseTranscriptList(props) {
         setItems(local);
     });
 
-
-    const [items, setItems] = useState(local);
 
     function removeItem(index) {
         var newItems = [];
@@ -31,6 +31,9 @@ export default function CourseTranscriptList(props) {
         localStorage.setItem("completedCourses", JSON.stringify(newitems));
         window.dispatchEvent(new Event("completedCourses changed"));
         props.reApplyFilter();
+        if (props.checkboxRef && props.checkboxRef.current) {
+            props.checkboxRef.current.click();
+        }
     };
 
 
