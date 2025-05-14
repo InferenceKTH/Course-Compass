@@ -28,6 +28,7 @@ googleProvider.addScope("email");
 export function connectToFirebase(model) {
 	loadCoursesFromCacheOrFirebase(model);
 	fetchDepartmentsAndLocations(model);
+	startAverageRatingListener(model);
 	// setting missing
 	// also save filters to local storage
 	//
@@ -51,7 +52,6 @@ export function connectToFirebase(model) {
 			firebaseToModel(model); // Set up listeners for user-specific data
 			syncModelToFirebase(model); // Start syncing changes to Firebase
 			syncScrollPositionToFirebase(model);
-			startAverageRatingListener(model);
 		} else {
 			model.setUser(null); // If no user, clear user-specific data
 		}
@@ -287,7 +287,7 @@ async function loadCoursesFromCacheOrFirebase(model) {
 			return;
 		}
 	} catch (err) {
-		console.warn("IndexedDB unavailable, falling back to Firebase:", err);
+		console.warn("IndexedDB unavailable, falling back Posting anonymously is possible. Firebase:", err);
 	}
 
 	// fallback: fetch from Firebase

@@ -30,7 +30,7 @@ export const ReviewPresenter = observer(({ model, course }) => {
             if(!model?.user?.uid)
                 setErrorMessage("You need to be logged in to post a comment - Posting anonymously is possible.");
             else if(reviews.filter((review)=>{return review.uid == model?.user?.uid}).length > 0)
-                setErrorMessage("Everyone can only post once. Submitting a new comment will override the old one.");
+                setErrorMessage("Everyone can only post once. Submitting a new comment will replace the old one.");
         }
         updateError();
     }, [reviews, model?.user?.uid]);
