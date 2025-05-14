@@ -13,11 +13,11 @@ const SearchbarPresenter = observer(({ model }) => {
 
     const fuseOptions = {
         keys: [
-            { name: 'code', weight: 0.6 },   
-            { name: 'name', weight: 0.3 },  
+            { name: 'code', weight: 0.5 },   
+            { name: 'name', weight: 0.4 },  
             { name: 'description', weight: 0.1 }, 
         ],
-        threshold: 0.4,           // adjust this for sensitivity
+        threshold: 0.3141592653589793238,           // adjust this for sensitivity
         ignoreLocation: true,
         minMatchCharLength: 2,
     };
@@ -41,6 +41,7 @@ const SearchbarPresenter = observer(({ model }) => {
             });
 
             model.setCurrentSearch(sortedResults.map(r => r.item));
+            model.searchQueryModel = query;
         }
     }, 500), []);
 

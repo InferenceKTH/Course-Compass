@@ -20,26 +20,49 @@ exports.updateCourseAvgRating = functions.https.onCall(async (data, context) => 
 		}
 
 		// Compute average from overallRating
-		let total = 0;
-		let count = 0;
+		let totalOverall = 0;
+		let countOverall = 0;
+		let totalDifficulty = 0;
+		let countDifficulty = 0;
+		let totalProfessor = 0;
+		let countProfessor = 0;
 
 		Object.values(reviews).forEach(review => {
 			if (typeof review.overallRating === 'number') {
-				total += review.overallRating;
-				count++;
+				totalOverall += review.overallRating;
+				countOverall++;
+			}
+			if (typeof review.difficultyRating === 'number') {
+				totalDifficulty += review.difficultyRating;
+				countDifficulty++;
+			}
+			if (typeof review.professorRating === 'number') {
+				totalProfessor += review.professorRating;
+				countProfessor++;
 			}
 		});
 
-		if (count === 0) {
+		let avgRatingOverall = 0;
+		let avgRatingDifficulty = 0;
+		let avgRatingProfessor = 0;
+
+		if (!(countOverall === 0)) {
+			avgRatingOverall = parseFloat((totalOverall / countOverall).toFixed(2));
+		}
+		if (!(countDifficulty === 0)) {
+			avgRatingDifficulty = parseFloat((totalDifficulty / countDifficulty).toFixed(2));
+		}
+		if (!(countProfessor === 0)) {
+			avgRatingProfessor = parseFloat((totalProfessor / countProfessor).toFixed(2));
+		}
+		if (countOverall === 0 && countDifficulty === 0 && countProfessor === 0) {
 			throw new functions.https.HttpsError('failed-precondition', 'No valid ratings');
 		}
 
-		const avgRating = parseFloat((total / count).toFixed(2));
-
 		// Update the avgRating in reviews
-		await db.ref(`reviews/${courseCode}`).update({ avgRating });
+		await db.ref(`reviews/${courseCode}`).update({"avgRating" :[avgRatingOverall, avgRatingDifficulty, avgRatingProfessor] } );
 
-		return { success: true, avgRating };
+		return { success: true, "avgRating": [avgRatingOverall, avgRatingDifficulty, avgRatingProfessor] };
 	} catch (error) {
 		throw new functions.https.HttpsError('internal', error.message);
 	}

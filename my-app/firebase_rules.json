@@ -1,0 +1,42 @@
+{
+    "rules": {
+      // Courses and Metadata
+      "courses": {
+        ".read": true,
+        ".write": "auth != null && (auth.uid === 'adminuid' || auth.uid === 'adminuid')"
+      },
+      "metadata": {
+        ".read": true,
+        ".write": "auth != null && (auth.uid === 'adminuid' || auth.uid === 'adminuid')"
+      },
+      "departments": {
+      ".read": true,
+      ".write": "auth != null && (auth.uid === 'adminuid' || auth.uid === 'adminuid')"
+      },
+      "locations": {
+      ".read": true,
+      ".write": "auth != null && (auth.uid === 'adminuid' || auth.uid === 'adminuid')"
+      },
+  
+      // Reviews
+      "reviews": {
+      ".read":true,
+      "$courseCode": {
+          "$userID": {
+            ".write": "auth != null && (auth.uid === $userID || data.child('uid').val() === auth.uid || !data.exists())",
+            ".validate": "newData.hasChildren(['text', 'timestamp']) &&
+                          newData.child('text').isString() &&
+                          newData.child('timestamp').isNumber()"
+          }
+        }
+      },
+  
+      // Users
+      "users": {
+        "$userID": {
+          ".read": "auth != null && auth.uid === $userID",
+          ".write": "auth != null && auth.uid === $userID"
+        }
+      }
+    }
+  }

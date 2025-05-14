@@ -4,6 +4,17 @@ import 'ldrs/react/Quantum.css';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useNavigate, Link } from 'react-router-dom';
 
+// Add this helper function at the top of your component
+const highlightText = (text, query) => {
+    if (!query || !text) return text;
+    
+    // Escape special regex characters in the query
+    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // const escapedQuery = query; //for testing purposes
+    const regex = new RegExp(`(${escapedQuery})`, 'gi');
+    return text.replace(regex, '<u>$1</u>');
+};
+
 function ListView(props) {
     const [displayedCourses, setDisplayedCourses] = useState([]);
     const [hasMore, setHasMore] = useState(true);
@@ -98,7 +109,7 @@ function ListView(props) {
     }
 
     return (
-        <div className="relative bg-white text-black p-2 flex flex-col gap-3 h-screen">
+        <div className="relative bg-gray-100 text-black p-2 flex flex-col gap-3 h-screen">
             {isLoading ? (
                 <div className="flex justify-center items-center h-full">
                     <Quantum size="400" speed="10" color="#000061" />
@@ -118,16 +129,19 @@ function ListView(props) {
                             <select
                                 value={props.sortBy}
                                 onChange={(e) => props.setSortBy(e.target.value)}
-                                className="bg-white border-2 border-[#000061] text-[#000061] font-semibold py-2 px-4 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
+                                className="bg-white  shadow-md text-[#000061] font-semibold py-2 px-4 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
                             >
                                 <option value="relevance">Sort by Relevance</option>
                                 <option value="name">Sort by Name</option>
                                 <option value="credits">Sort by Credits</option>
+                                <option value="avg_rating">Sort by Overall Rating</option>
+                                <option value="diff_rating">Sort by Difficulty Rating</option>
+                                <option value="teacher_rating">Sort by Professor Rating</option>
                             </select>
 
                             <button
                                 onClick={() => props.setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
-                                className="bg-white border-2 border-[#000061] text-[#000061] font-semibold p-2 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
+                                className="bg-white  shadow-md text-[#000061] font-semibold p-2 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
                                 aria-label={`Sort ${props.sortDirection === 'asc' ? 'ascending' : 'descending'}`}
                             >
                                 {props.sortDirection === 'desc' ? (
@@ -162,24 +176,34 @@ function ListView(props) {
                                 onClick={() => {
                                     props.setSelectedCourse(course);
                                     props.setPopupOpen(true);
-                                    //window.history.pushState({}, '', '/' + course.code);
+                                    window.history.pushState({}, '', '/?' + course.code);
                                 }}
                                 key={course.code}
-                                className="p-5 mb-3 hover:bg-blue-100 flex items-center border border-b-black border-solid w-full rounded-lg cursor-pointer"
+                               className="p-5 mb-3 hover:bg-blue-100 flex items-center bg-white w-full rounded-lg cursor-pointer shadow-md hover:shadow-lg transition-shadow duration-300"
                             >
                                 <div>
                                     <div className="codeNameContainer" style={{ display: 'flex' }}>
-                                    <p className="font-bold text-[#000061]">{course.code}</p>
-                                    <p className="font-bold text-[#000061]" style={{color: "GrayText", opacity: 0.5, marginLeft: "0.5em"}}>{handlePeriods(course?.periods)}</p>
+                                        <p className="font-bold text-[#000061]" 
+                                           dangerouslySetInnerHTML={{ 
+                                               __html: highlightText(course.code, props.query) 
+                                           }} 
+                                        />
+                                        <p className="font-bold text-[#000061]" 
+                                           style={{color: "GrayText", opacity: 0.5, marginLeft: "0.5em"}}>
+                                           {handlePeriods(course?.periods)}
+                                        </p>
                                     </div>
-                                    <p className="font-bold">{course.name} </p>
+                                    <p className="font-bold" 
+                                       dangerouslySetInnerHTML={{ 
+                                           __html: highlightText(course.name, props.query) 
+                                       }} 
+                                    />
                                     <p
                                         className="text-gray-600"
                                         dangerouslySetInnerHTML={{
                                             __html: readMore[course.code]
-
-                                                ? course?.description
-                                                : (course?.description?.slice(0, 200)+"..."),
+                                                ? highlightText(course?.description, props.query)
+                                                : highlightText(course?.description?.slice(0, 200) + "...", props.query)
                                         }}
                                     />
                                     {course?.description?.length > 150 && (
