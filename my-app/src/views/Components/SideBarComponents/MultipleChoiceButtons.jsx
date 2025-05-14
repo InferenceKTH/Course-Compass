@@ -4,7 +4,7 @@ import FilterEnableCheckbox from "./FilterEnableCheckbox";
 import Tooltip from "./ToolTip";
 
 export default function MultipleChoiceButtons(props) {
-    const [filterEnabled, setFilterEnabled] = useState(false);
+    const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
     const [selectedItems, setSelectedItems] = useState(props.initialValues || []);
     
     const checkboxRef = useRef(null);

@@ -3,10 +3,11 @@ import FilterEnableCheckbox from "./FilterEnableCheckbox";
 import Tooltip from "./ToolTip";
 
 const CollapsibleCheckboxes = (props) => {
-  const [expanded, setExpanded] = useState({});
+  const [expandedLabel, setExpandedLabel] = useState(props?.initialValues?.map(i => i?.label));
+  const [expanded, setExpanded] = useState([]);
   const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
   const [checkedSubItems, setCheckedSubItems] = useState({});
-  const [stupidLines, setStupidLines] = useState(0);
+  const [initalLoad, setInitalLoad] = useState(true);
 
   const strokeWidth = 5;
 
@@ -16,44 +17,74 @@ const CollapsibleCheckboxes = (props) => {
 
   const rows = props.fields;
 
-  const toggleExpand = (id, subItems) => {
+  const toggleExpand = (id, subItems) => {  
+    let entry = rows.find(item => item.id === id);
+    if (!entry?.subItems || (entry?.subItems.length == 1 && !entry?.subItems[0])) { 
+      props.HandleFilterChange([paramFieldType, props.filterName,
+        entry?.label
+      ]);
+    }else if (entry && entry?.label && entry?.subItems) {
+      subItems?.map((_, index) => {
+        if ((checkedSubItems[`${id}-${index}`] && expanded[id]) || (!expanded[id])) {
+            props.HandleFilterChange([paramFieldType, props.filterName,
+              entry?.label + "/" + entry?.subItems[index]
+              
+            ]);
+        }
+
+        setSubCheckbox(id, index);
+      });
+    }
     setExpanded((prev) => ({
       ...prev,
       [id]: !prev[id],
     }));
-    let label = rows.find(item => item.id === id).label;
-    subItems.map((_, index) => {
-      setSubCheckbox(id, index)
-      if (rows.find(item => item.id === id)?.subItems && rows.find(item => item.id === id)?.subItems.length>0 && rows.find(item => item.id === id)?.subItems[0]) {
-        props.HandleFilterChange([paramFieldType, props.filterName,
-          label + "/" + rows.find(item => item.id === id).subItems[index]
-        ]);
-      } else {
-        props.HandleFilterChange([paramFieldType, props.filterName,
-          label
-        ]);
-      }
-    });
   };
 
   const setSubCheckbox = (mainId, index) => {
     const key = `${mainId}-${index}`;
     setCheckedSubItems((prev) => ({
       ...prev,
-      [key]: true,
+      [key]: ((expanded[mainId] && prev[key]) || !expanded[mainId]) ? !prev[key]:false,
     }));
   };
 
   const toggleSubCheckbox = (mainId, index) => {
     const key = `${mainId}-${index}`;
+    props.HandleFilterChange([paramFieldType, props.filterName,
+      rows.find(item => item.id === mainId)?.label + "/" + rows.find(item => item.id === mainId)?.subItems[index]
+    ]);
     setCheckedSubItems((prev) => ({
       ...prev,
       [key]: !prev[key],
     }));
-    props.HandleFilterChange([paramFieldType, props.filterName,
-      rows.find(item => item.id === mainId).label + "/" + rows.find(item => item.id === mainId).subItems[index]
-    ]);
   };
+
+  React.useEffect(() => {
+    if (rows && rows.length > 0 && initalLoad) {
+      let tempExpanded = {};
+      let tempChecked = {};
+      rows.forEach(r => r.subItems.forEach((_, index) => {
+        tempChecked[`${r.id}-${index}`] = false;
+      }));
+      props?.initialValues?.forEach(i => {
+        let mainRow = rows.find((item) => item.label === i.label);
+        if (mainRow) {
+          tempExpanded[mainRow.id] = true;
+          i.subItems.forEach(s => {
+            let subItemIndex = mainRow.subItems.findIndex(item => item === s);
+            if (subItemIndex !== -1) {
+              tempChecked[`${mainRow.id}-${subItemIndex}`] = true;
+            }
+          });
+        }
+      });
+      setCheckedSubItems(tempChecked);
+      setInitalLoad(false);
+      setExpanded(tempExpanded);
+    }
+  }, [rows]);
+  
 
 
   return (
@@ -183,8 +214,8 @@ const CollapsibleCheckboxes = (props) => {
                           checked={!!checkedSubItems[key]}
                           onChange={() => toggleSubCheckbox(row.id, index)}
                         />
-                        <label htmlFor={checkboxId} className="cursor-pointer ml-2">
-                          {subItem?.substring(0, 25) + ((subItem?.substring(0, 25).length >= 25) ? "..." : "")}
+                        <label htmlFor={checkboxId} className="cursor-pointer ml-2 truncate max-w-xs">
+                          {subItem}
                         </label>
                       </div>
                     );

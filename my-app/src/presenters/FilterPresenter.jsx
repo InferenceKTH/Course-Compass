@@ -6,16 +6,24 @@ import { SearchbarPresenter } from './SearchbarPresenter.jsx';
 /* FilterPresenter is responsible for applying the logic necessary to filter out the courses from the overall list */
 const FilterPresenter = observer(({ model }) => {
     /* global variable for the scope of this presenter, all the smaller functions depend on it instead of passing it back and forth as params */
-    var localFilteredCourses = []; //might need to declare out of scope. idk js
+    var localFilteredCourses = [];
 
+    /*  functions declared here are generally things the main function of this observer takes and runs if the given filters are enabled,
+     *  this is determined through model.filterOptions.apply*Insert filter name* flags.
+     *  This presenter should be changed such that it uses side-effects instead model.filtersChange flag, since
+     */
 
+    /* functions  */
     function applyTranscriptEligibility() {
         if (localFilteredCourses.length == 0)
             return;
 
-        /*  */
+        /* this should be either weak/moderate/strong */
         const eligibilitytype = model.filterOptions.eligibility;
 
+        /* I am doing this trick in a multitude of filters, essentially the best fitting courses should appear first in the
+         * list view on the right side, so we just filter for those and at the very end merge them back together into a single array
+         */
         let strongcourses = [];
         let zerocourses = [];
         let moderatecourses = [];
@@ -24,7 +32,7 @@ const FilterPresenter = observer(({ model }) => {
         let storedFinishedCourses = [];
 
         if (localStorage.getItem("completedCourses"))
-            storedFinishedCourses = JSON.parse(localStorage.getItem("completedCourses"));
+            storedFinishedCourses = JSON.parse(localStorage.getItem("completedCourses")).map(obj => String(obj.id));
 
 
         localFilteredCourses.forEach(course => {
@@ -55,6 +63,7 @@ const FilterPresenter = observer(({ model }) => {
 
         });
 
+        /* If user selects strong matching he should get all courses which might be strongly fitting (so strong courses and zero/missing prereq courses) */
         switch (eligibilitytype) {
             case "strong":
                 {
@@ -73,7 +82,7 @@ const FilterPresenter = observer(({ model }) => {
                 }
             default:
                 {
-                    console.log("Error: somehow we got into a state where model.eligibility is no \"strong\"/\"moderate\"/\"weak\".");
+                    console.log("Error: somehow we got into a state where model.eligibility is not either \"strong\"/\"moderate\"/\"weak\".");
                     localFilteredCourses = [];
                     break;
                 }
@@ -182,8 +191,6 @@ const FilterPresenter = observer(({ model }) => {
         //course?.language.english (true/false/undefined)
         //course?.language.swedish (true/false/undefined)
 
-        //console.log(data);
-
         switch (languages) {
             case "none":
                 {
@@ -196,8 +203,7 @@ const FilterPresenter = observer(({ model }) => {
                         try {
                             return (course?.language?.english === true);
                         } catch (error) {
-                            console.log(course);
-                            console.log("BIG ERROR", error);
+                            console.log("BIG ERROR", error, course);
                             return false;
                         }
 
@@ -207,8 +213,7 @@ const FilterPresenter = observer(({ model }) => {
                         try {
                             return (course?.language === undefined);
                         } catch (error) {
-                            console.log(course);
-                            console.log("BIG ERROR");
+                            console.log("BIG ERROR", error, course);
                             return false;
                         }
 
@@ -221,8 +226,7 @@ const FilterPresenter = observer(({ model }) => {
                         try {
                             return (course?.language?.swedish === true);
                         } catch (error) {
-                            console.log(course);
-                            console.log("BIG ERROR");
+                            console.log("BIG ERROR", error, course);
                             return false;
                         }
 
@@ -232,8 +236,7 @@ const FilterPresenter = observer(({ model }) => {
                         try {
                             return (course?.language === undefined);
                         } catch (error) {
-                            console.log(course);
-                            console.log("BIG ERROR");
+                            console.log("BIG ERROR", error, course);
                             return false;
                         }
 
@@ -246,8 +249,7 @@ const FilterPresenter = observer(({ model }) => {
                         try {
                             return ((course?.language?.english === true) && (course?.language?.swedish === true));
                         } catch (error) {
-                            console.log(course);
-                            console.log("BIG ERROR");
+                            console.log("BIG ERROR", error, course);
                             return false;
                         }
 
@@ -258,8 +260,7 @@ const FilterPresenter = observer(({ model }) => {
                             return (((course?.language?.english === true) && (course?.language?.swedish === false))
                                 || ((course?.language?.english === false) && (course?.language?.swedish === true)));
                         } catch (error) {
-                            console.log(course);
-                            console.log("BIG ERROR");
+                            console.log("BIG ERROR", error, course);
                             return false;
                         }
 
@@ -269,8 +270,7 @@ const FilterPresenter = observer(({ model }) => {
                         try {
                             return (course?.language === undefined);
                         } catch (error) {
-                            console.log(course);
-                            console.log("BIG ERROR");
+                            console.log("BIG ERROR", error, course);
                             return false;
                         }
 
@@ -293,31 +293,16 @@ const FilterPresenter = observer(({ model }) => {
 
         localFilteredCourses = localFilteredCourses.filter(course => levels.includes(course?.academicLevel));
 
-        /*
-        let levels = model.filterOptions.level;
-        let stayingCourses = [];
-        
-        for(let i=0; i<localFilteredCourses.length; i++){
-            let stay = false;
-            for(let j=0; j<levels.length; j++){
-                if(localFilteredCourses[i].academicLevel === levels[j]){
-                    stay = true;
-                    break;
-                }
-            }
-            if(stay) stayingCourses.push(localFilteredCourses[i]);
-        }
-        localFilteredCourses = [...stayingCourses];*/
     }
 
     function updateDepartments() {
-        const deparments = model.filterOptions.deparment;
+        const departments = model.filterOptions.department;
         let bestCourses = [];
         let worstCourses = [];
 
         bestCourses = localFilteredCourses.filter(function (course) {
             try {
-                return (deparments.includes(course?.deparment));
+                return (departments.includes(course?.department));
             } catch (error) {
                 console.log("for some reason course?.department is: ", course?.department, error);
                 return false;
@@ -328,7 +313,7 @@ const FilterPresenter = observer(({ model }) => {
             try {
                 return (course?.department === undefined);
             } catch (error) {
-                console.log("BIG ERROR", error);
+                console.log("BIG ERROR", error, course);
                 return false;
             }
 
@@ -337,6 +322,10 @@ const FilterPresenter = observer(({ model }) => {
         localFilteredCourses = [...bestCourses, ...worstCourses];
     }
 
+    /* Function that deals with removing the courses that have no properties or have null properties in the categories the user 
+     * using for filtering. The "null" check is a remainder from a version where we didn't use the ?. property accessing yet,
+     * should be able to be removed without problem in the future.
+    */
     function updateNoNullcourses(){
         let local = [...localFilteredCourses];
 
@@ -380,6 +369,7 @@ const FilterPresenter = observer(({ model }) => {
         localFilteredCourses = [...local];
     }
 
+    /* function that should run every single time the model changes (see note below) */
     async function run() {
         if (model.courses.length == 0) {
             return;
@@ -408,17 +398,20 @@ const FilterPresenter = observer(({ model }) => {
             if (model.filterOptions.applyTranscriptFilter) {
                 applyTranscriptEligibility();
             }
-            if (model.filterOptions.applyDepartments) {
+            if (model.filterOptions.applyDepartmentFilter) {
                 updateDepartments();
             }
 
             model.filteredCourses = [...localFilteredCourses];
             model.filtersChange = false;
             model.setFiltersCalculated();
-            //console.log("filtered objects number of elements: ", model.filteredCourses.length);
         }
     }
 
+    /*  the problem is that unless using sideeffects, the run() not being async and/or it setting the filterschange = false very early can mean
+     *  that 0 courses will get put into the model.filtered courses (which is the list of courses getting passed to search, and then listview)
+     *  therefore TODO: rework it to stop using this dumb flags we started before learning anything about react,observers,js
+    */
     run();
     
 });

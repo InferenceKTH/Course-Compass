@@ -9,12 +9,10 @@ function prereq_convert(courses_taken, current_object, previous_key, hash_bool, 
             if (typeof current_object[i] == "string") {
                 if (current_object[i][0] == '#') {
                     current_object[i] = hash_bool;
-                    //console.log(JSON.stringify(prereqs, null, 4)); 
                 } else if (courses_taken.includes(current_object[i])) {
                     current_object[i] = true;
                     if (count_object != undefined) {count_object["count"]++;}
                 } else {
-                    //console.log(current_object[i])
                     current_object[i] = false;
                     if (count_object != undefined) {count_object["count"]++;}
                 }
@@ -28,11 +26,8 @@ function prereq_convert(courses_taken, current_object, previous_key, hash_bool, 
     if (typeof current_object == "object" && !Array.isArray(current_object)) {
         let key = Object.keys(current_object)[0];
         let object_array = current_object[key];
-        //console.log(key);
-        //console.log(object_array);
         let num_of_matches = 0;
         for (let i = 0; i < object_array.length; i++) {
-            //console.log(current_object[i])
             if (Array.isArray(object_array[i])) {
                 let num_of_inner_matches = 0;
                 for (let j = 0; j < object_array[i].length; j++) {
@@ -40,7 +35,6 @@ function prereq_convert(courses_taken, current_object, previous_key, hash_bool, 
                         num_of_inner_matches ++;
                     }
                 }
-                //console.log("key: " + key + " num of matc ")
                 if (key == "or" && num_of_inner_matches > 0) {object_array[i] = true; num_of_matches++; continue;}
                 if (key == "and" && num_of_inner_matches == object_array[i].length) {object_array[i] = true; num_of_matches++; continue;}
                 object_array[i] = false;
@@ -49,15 +43,9 @@ function prereq_convert(courses_taken, current_object, previous_key, hash_bool, 
                 if (object_array[i][inner_key]) {num_of_matches++;}
             } else if(object_array[i]) {num_of_matches++}
         }
-        //console.log(num_of_matches);
         if (key == "or" && num_of_matches > 0) {current_object[key] = true}
         else if (key == "and" && num_of_matches == object_array.length) {current_object[key] = true}
         else {current_object[key] = false}
-
-
-        
-        //console.log(JSON.stringify(prereqs, null, 4)); 
-
     }
 
 }
