@@ -1,28 +1,32 @@
 import React, { useMemo, useCallback } from 'react';
 import { observer } from "mobx-react-lite";
 import { useState } from 'react';
-import CoursePagePopup from '../views/Components/CoursePagePopup.jsx';
-import PrerequisitePresenter from './PrerequisitePresenter.jsx';
-import { ReviewPresenter } from "./ReviewPresenter.jsx";
 import SearchbarView from "../views/SearchbarView.jsx";
 import Fuse from 'fuse.js'
 import debounce from 'lodash.debounce';
 
+/**
+ * This presenter handles searches. The searching is done via a debounced fuzzy search engine called "fuse.js".
+ * Favourites are handled here as well.
+ */
 const SearchbarPresenter = observer(({ model }) => {
     const [searchQuery, setSearchQuery] = useState("");
 
+    // the search uses fuse.js
     const fuseOptions = useMemo(() => ({
         keys: [
             { name: 'code', weight: 0.5 },   
             { name: 'name', weight: 0.4 },  
             { name: 'description', weight: 0.1 }, 
         ],
+        // eslint-disable-next-line no-loss-of-precision
         threshold: 0.3141592653589793238,
         ignoreLocation: true,
         minMatchCharLength: 2,
     }), []); // Options never change
 
-    // Debounced search function
+    // Debounced search function - afterwards we sort with startWith() by hand
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     const searchCourses = useCallback(debounce((query) => {
         if(!model?.filteredCourses)
             return;
@@ -45,7 +49,7 @@ const SearchbarPresenter = observer(({ model }) => {
             model.setCurrentSearch(sortedResults.map(r => r.item));
             model.searchQueryModel = query;
         }
-    }, 750), []);
+    }, 500), [model, fuseOptions]);
 
     const addFavourite = (course) => {
         model.addFavourite(course);
@@ -74,28 +78,6 @@ const SearchbarPresenter = observer(({ model }) => {
     function removeAllFavourites() {
         model.setFavourite([]);
     }
-
-    const preP = <PrerequisitePresenter 
-        model={model}
-        selectedCourse={model.selectedCourse}
-    />;
-    const reviewPresenter = <ReviewPresenter 
-        model={model} 
-        course={model.selectedCourse} 
-    />;
-
-    //Popup is displayed only in the list view now, to change the displayed course use model.setSelectedCourse(course)
-    // const popup = <CoursePagePopup
-    //     favouriteCourses={model.favourites}
-    //     addFavourite={addFavourite}
-    //     removeFavourite={removeFavourite}
-    //     handleFavouriteClick={handleFavouriteClick}
-    //     isOpen={model.isPopupOpen}
-    //     onClose={() => model.setPopupOpen(false)}
-    //     course={model.selectedCourse}
-    //     reviewPresenter={reviewPresenter}
-    //     prerequisiteTree={preP}
-    // />;
 
     if(model.filtersCalculated){
         searchCourses(searchQuery);

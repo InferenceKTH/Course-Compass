@@ -1,10 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import CourseTranscriptList from './CourseTranscriptList';
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
 //import * as scraper from '../../../../src/scripts/transcript-scraper/transcript-scraper.js';
 import ButtonGroupField from './ButtonGroupField';
 import ToolTip from './ToolTip';
+import UploadGif from "../../../assets/upload.gif";
 
+
+/**
+ * Shows a field to upload a file with. Used in SearchbarView.
+ * @param {*} props 
+ */
 export default function UploadField(props) {
 
     const [isDragging, setIsDragging] = useState(false);
@@ -27,8 +33,7 @@ export default function UploadField(props) {
         setIsDragging(false);
         if (event.dataTransfer.files.length > 0) {
             props.handleFileChange({ target: { files: event.dataTransfer.files } });
-            setfileUploaded(localStorage.getItem("completedCourses") != undefined);
-            console.log(localStorage.getItem("completedCourses") != undefined);
+            setfileUploaded(true);
         }
     };
 
@@ -39,7 +44,7 @@ export default function UploadField(props) {
                     <h3>{String(props.filterName).charAt(0).toUpperCase() + String(props.filterName).slice(1)} scraper</h3>
                 </div>
 
-                <div className={`pt-1 flex-none ${!fileUploaded? "hidden" : ""}`}>
+                <div className={`pt-1 flex-none ${!fileUploaded ? "hidden" : ""}`}>
 
                     <FilterEnableCheckbox
                         ref={checkboxRef}
@@ -47,12 +52,12 @@ export default function UploadField(props) {
                         onToggle={() => {
                             setFilterEnabled(!filterEnabled);
                             props.HandleFilterEnable(["transcript", !filterEnabled]);
-                        }} 
+                        }}
                     />
                 </div>
             </div>
             <div></div>
-            <div className={`${(!fileUploaded) ? ("opacity-100") : (filterEnabled? "opacity-100": "opacity-50")}`} onClick={() => {
+            <div className={`${(!fileUploaded) ? ("opacity-100") : (filterEnabled ? "opacity-100" : "opacity-50")}`} onClick={() => {
                 if (!filterEnabled && checkboxRef.current) {
                     checkboxRef.current.click();
                 }
@@ -73,32 +78,34 @@ export default function UploadField(props) {
                             />
                         </div>
                         <div className="flex flex-col items-center justify-center pt-5">
-                            <img src="..\..\..\..\src\assets\upload.gif" alt="Upload GIF" className="object-contain" />
+                            <img src={UploadGif} alt="Upload GIF" className="object-contain" />
                             <p className=" text-sm "><span className="font-semibold">Click to upload</span> or drag and drop</p>
                             <p className="text-xs">National Official Transcript of Records in PDF format</p>
                         </div>
                         <input
-                            id="PDF-Scraper-Input" 
-                            type="file" 
-                            className="hidden" 
+                            id="PDF-Scraper-Input"
+                            type="file"
+                            className="hidden"
                             onChange={(event) => {
                                 props.handleFileChange(event);
                                 setfileUploaded(true);
-                            }}  />
+                            }} />
                     </label>
                 </div>
-                <ButtonGroupField
-                    items={["Weak", "Moderate", "Strong"]}
-                    HandleFilterChange={props.HandleFilterChange}
-                    initialValue={props.initialValue}
-                />
+                <div className={`${(!fileUploaded) ? ("opacity-50 pointer-events-none") : (filterEnabled ? "opacity-100" : "opacity-50")}`}>
+                    <ButtonGroupField
+                        items={["Weak", "Moderate", "Strong"]}
+                        HandleFilterChange={props.HandleFilterChange}
+                        initialValue={props.initialValue}
+                    />
+                </div>
             </div>
             <div className='max-w-70'>
                 <pre id="PDF-Scraper-Error" className={`text-red-500 text-xs text-wrap ${props.errorVisibility}`}>
                     {props.errorMessage}
                 </pre>
             </div>
-            <div className={`${(filterEnabled? "opacity-100": "opacity-50")} ${filterEnabled ? "pointer-events-auto" : "pointer-events-none user-select-none"
+            <div className={`${(filterEnabled ? "opacity-100" : "opacity-50")} ${filterEnabled ? "pointer-events-auto" : "pointer-events-none user-select-none"
                 }`}>
                 <CourseTranscriptList
                     reApplyFilter={props.reApplyFilter}

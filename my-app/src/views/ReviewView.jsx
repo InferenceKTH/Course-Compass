@@ -2,6 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import RatingComponent from "../views/Components/RatingComponent.jsx";
 import { getCommentsForReview, addCommentToReview, auth } from "../../firebase";
 
+/**
+ * Displays the user an interface to give a review for a specified course. Invoked by the ReviewPresenter.
+ * @param {*} props 
+ * @returns 
+ */
 export function ReviewView(props) {
   const grades = ["A", "B", "C", "D", "E", "F"];
   const difficulties = ["Very Easy", "Easy", "Medium", "Hard", "Very Hard"];
@@ -265,6 +270,7 @@ export function ReviewView(props) {
             className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
             onClick={() => props.handleReviewSubmit(anonState)}
           >
+            
             Submit Review
           </button>
         </div>

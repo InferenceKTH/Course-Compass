@@ -2,14 +2,17 @@ import React from 'react';
 import ToggleField from "./Components/SideBarComponents/ToggleField.jsx";
 import SliderField from "./Components/SideBarComponents/SliderField.jsx";
 import DropDownField from "./Components/SideBarComponents/DropDownField.jsx";
-//import { UploadTranscriptPresenter } from '../presenters/UploadTranscriptPresenter.jsx';
 import CollapsibleCheckboxes from './Components/SideBarComponents/CollapsibleCheckboxes.jsx';
 import Tooltip from './Components/SideBarComponents/ToolTip.jsx';
 import UploadField from './Components/SideBarComponents/UploadField';
 import MultipleChoiceButtons from './Components/SideBarComponents/MultipleChoiceButtons.jsx';
 
 
-
+/**
+ * Represents the sidebar and consists of an upload field, dropdown field, toggle fields, sliders, etc. 
+ * It shows the filters and settings for the search. The view is invoked by the SidebarPresenter.
+ * @param {*} props
+ */
 function SidebarView(props) {
     return (
         <div className='object-center text-white p-3 pt-2  flex-col h-screen

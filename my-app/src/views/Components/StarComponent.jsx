@@ -1,5 +1,8 @@
 import React from 'react';
 
+/**
+ * Allows to rate things from 0 to 5 stars.
+ */
 const StarComponent = ({ index, rating, onRatingChange, onHover, readOnly = false }) => {
     const handleLeftClick = () => {
         if (!readOnly) onRatingChange(index, true);

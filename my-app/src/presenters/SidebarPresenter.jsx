@@ -16,7 +16,7 @@ const SidebarPresenter = observer(({ model }) => {
     
     useEffect(() => {
         model.setFiltersChange();
-    },[]);
+    },[model]);
 
     function handleLanguageFilterChange(param) {
         if (param === "English") {
@@ -219,9 +219,9 @@ const SidebarPresenter = observer(({ model }) => {
     const handleFileChange = (event) => {
         const  truncatedCourses = model.courses.map(({ id, name }) => ({ id, name }));
         const file = event.target.files[0];
-        //document.getElementById('PDF-Scraper-Error').style.visibility = "visible";
+        document.getElementById('PDF-Scraper-Error').style.visibility = "visible";
         transcriptScraperFunction(file, setErrorMessage, setErrorVisibility, reApplyFilter, truncatedCourses);
-        //document.getElementById('PDF-Scraper-Input').value = '';
+        document.getElementById('PDF-Scraper-Input').value = '';
         setFileInputValue('');
 
         

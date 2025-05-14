@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { TestWithButtonView } from "../../views/TestWithButtonView";
+import { TestWithButtonView } from "../../views/Tests/TestWithButtonView";
 import data from "../../assets/example.json";
 
 export const JsonToDatabase = observer(

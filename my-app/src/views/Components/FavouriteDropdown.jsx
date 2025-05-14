@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { observer } from "mobx-react-lite";
 
+/**
+ * Shows the dropdown menu to see the favourite flagged courses.
+ */
 const FavouritesDropdown = observer((props) => {
-    const [shareUrl, setShareUrl] = useState("");
     const [copied, setCopied] = useState(false);
 
     function handleShareCourses() {
@@ -23,10 +25,10 @@ const FavouritesDropdown = observer((props) => {
 
     return (
         <div>
-            <div className="fixed mt-3 w-[32rem] right-4 bg-indigo-300/75 backdrop-blur-lg border border-violet-500 rounded-lg z-20 shadow-lg flex flex-col max-h-[calc(100vh-8rem)]">
+            <div className="sm:fixed absolute mt-3  sm:w-[32rem] sm:right-4 sm:-translate-x-0  bg-indigo-300/75 backdrop-blur-lg border border-violet-500 rounded-lg z-20 shadow-lg flex flex-col max-h-[calc(100vh-8rem)]">
                 {/* Fixed Header */}
                 <div className="sticky top-0 p-3 rounded-t-md bg-violet-500 flex justify-between items-center w-full border-b border-solid border-violet-600 font-semibold">
-                    <p className="text-white w-1/4">Code</p>
+                    <p className="text-white w-1/2">Code</p>
                     <p className="text-white w-1/2">Name</p>
                     <p className="text-white w-1/4 text-center">Credits</p>
                     <div className="w-8"></div>
@@ -44,9 +46,9 @@ const FavouritesDropdown = observer((props) => {
                                     
                                 }}
                                 key={course.code}
-                                className="p-3 hover:bg-indigo-400/50 cursor-pointer flex justify-between items-center w-full border-b border-solid border-violet-400"
+                                className="p-3 gap-1 hover:bg-indigo-400/50 cursor-pointer flex justify-between items-center w-full border-b border-solid border-violet-400"
                             >
-                                <p className="text-violet-700 font-semibold w-1/4">{course.code}</p>
+                                <p className="text-violet-700 font-semibold w-1/2">{course.code}</p>
                                 <p className="text-slate-900 font-semibold w-1/2">{course.name}</p>
                                 <p className="text-slate-900 font-semibold w-1/4 text-center">{course.credits} hp</p>
                                 <button
@@ -69,7 +71,7 @@ const FavouritesDropdown = observer((props) => {
 
                 {/* Fixed Footer */}
                 <div className="sticky bottom-0 border-t border-solid border-violet-400 bg-indigo-300/75 backdrop-blur-lg">
-                    <div className='p-3 flex justify-between items-center bg-violet-400/30'>
+                    <div className='sm:p-3 p-0 flex  items-center bg-violet-400/30'>
                         <p className='text-slate-900 font-bold w-1/2'>Total:</p>
                         <p className='text-slate-900 font-bold w-1/4'></p>
                         <p className='text-slate-900 font-bold w-1/4 text-center'>{props.totalCredits} hp</p>

@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import ToolTip from './ToolTip';
 
+/**
+ * The ButtonGroupField is used as a selector for the period.
+ * Used by the SidebarView.
+ * @param {*} props 
+ * @returns 
+ */
 export default function ButtonGroupField(props) {
   
   const [activeIndex, setActiveIndex] = useState(0);
@@ -31,7 +37,7 @@ export default function ButtonGroupField(props) {
   };
   return (
     <div className="my-1">
-        <div className="flex flex-col sm:inline-flex sm:flex-row rounded-lg shadow-2xs 
+        <div className="flex sm:inline-flex rounded-lg shadow-2xs 
       w-full items-center font-medium text-white bg-[#aba8e0]">
           {props.items.map((item, index) => (
             <button

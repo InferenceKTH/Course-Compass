@@ -2,9 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { DotPulse, Quantum } from 'ldrs/react';
 import 'ldrs/react/Quantum.css';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { useNavigate, Link } from 'react-router-dom';
 
-// Add this helper function at the top of your component
 const highlightText = (text, query) => {
     if (!query || !text) return text;
     
@@ -15,14 +13,16 @@ const highlightText = (text, query) => {
     return text.replace(regex, '<u>$1</u>');
 };
 
+/**
+ * The view displays the courses that match a certain query, filtering etc.
+ * @param {*} props 
+ * @returns 
+ */
 function ListView(props) {
     const [displayedCourses, setDisplayedCourses] = useState([]);
     const [hasMore, setHasMore] = useState(true);
     const [readMore, setReadMore] = useState({});
     const [isLoading, setIsLoading] = useState(true);
-    const [sortBy, setSortBy] = useState('relevance');
-    const [sortDirection, setSortDirection] = useState('asc');
-    const navigate = useNavigate();
 
     const toggleReadMore = (courseCode) => {
         setReadMore(prevState => ({
@@ -52,10 +52,6 @@ function ListView(props) {
         } else {
             return;
         }
-    };
-
-    const handleClickBackArrow = (course_name) => {
-        navigate(course_name);
     };
 
 
@@ -90,13 +86,13 @@ function ListView(props) {
             props.persistantScrolling(fetchMoreCourses, hasMore);
             setIsRestoringScroll(false);
         }
-    }, [props.targetScroll, hasMore, displayedCourses.length]);
+    }, [props.targetScroll, hasMore, displayedCourses.length, fetchMoreCourses, isRestoringScroll, props]);
    
     useEffect(() => {
     if (props.targetScroll === 0 && props.scrollContainerRef?.current) {
         props.scrollContainerRef.current.scrollTop = 0;
     }
-}, [props.targetScroll]);
+}, [props.targetScroll, fetchMoreCourses, isRestoringScroll, props]);
 
     if (!props.sortedCourses) {
         return (
@@ -109,10 +105,10 @@ function ListView(props) {
     }
 
     return (
-        <div className="relative bg-gray-100 text-black p-2 flex flex-col gap-3 h-screen">
-            {isLoading ? (
-                <div className="flex justify-center items-center h-full">
-                    <Quantum size="400" speed="10" color="#000061" />
+        <div
+            className="overflow-hidden relative w-full h-screen bg-gray-100 p-4 sm:p-3 text-black flex flex-col gap-1 sm:gap-2 overflow-y-auto">            {isLoading ? (
+            <div className="flex justify-center items-center h-full ">
+                <Quantum size="400" speed="10" color="#000061" />
                 </div>
             ) : (
                 <div className="overflow-y-auto h-full" id="scrollableDiv" ref={props.scrollContainerRef}>
@@ -129,9 +125,9 @@ function ListView(props) {
                             <select
                                 value={props.sortBy}
                                 onChange={(e) => props.setSortBy(e.target.value)}
-                                className="bg-white  shadow-md text-[#000061] font-semibold py-2 px-4 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
+                                className=" w-[90px] sm:w-full bg-white overflow-hidden shadow-md text-[#000061] font-semibold py-2 px-4 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
                             >
-                                <option value="relevance">Sort by Relevance</option>
+                                <option value ="relevance">Sort by Relevance</option>
                                 <option value="name">Sort by Name</option>
                                 <option value="credits">Sort by Credits</option>
                                 <option value="avg_rating">Sort by Overall Rating</option>
@@ -141,7 +137,7 @@ function ListView(props) {
 
                             <button
                                 onClick={() => props.setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc')}
-                                className="bg-white  shadow-md text-[#000061] font-semibold p-2 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
+                                className="bg-white flex flex-wrap shadow-md text-[#000061] font-semibold p-2 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors duration-200"
                                 aria-label={`Sort ${props.sortDirection === 'asc' ? 'ascending' : 'descending'}`}
                             >
                                 {props.sortDirection === 'desc' ? (

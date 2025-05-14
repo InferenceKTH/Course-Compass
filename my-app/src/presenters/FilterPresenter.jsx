@@ -50,8 +50,6 @@ const FilterPresenter = observer(({ model }) => {
         model.filteredCourses = filteredCourses;
     }, [filteredCourses]);
 
-
-
     /*  functions declared here are generally things the main function of this observer takes and runs if the given filters are enabled,
      *  this is determined through model.filterOptions.apply*Insert filter name* flags.
      *  This presenter should be changed such that it uses side-effects instead model.filtersChange flag, since
@@ -414,7 +412,6 @@ const FilterPresenter = observer(({ model }) => {
     }
 
     /* function that should run every single time the model changes (see note below) */
-
     /*  the problem is that unless using sideeffects, the run() not being async and/or it setting the filterschange = false very early can mean
      *  that 0 courses will get put into the model.filtered courses (which is the list of courses getting passed to search, and then listview)
      *  therefore TODO: rework it to stop using this dumb flags we started before learning anything about react,observers,js

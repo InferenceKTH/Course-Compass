@@ -1,6 +1,8 @@
 import React from 'react';
 import StarComponent from "./StarComponent.jsx";
-
+/**
+ * Component that handles reviews in the form of stars. StarComponent is used for the actual stars.
+ */
 const RatingComponent = ({ value = 0, onChange, readOnly = false, className = "" }) => {
     const handleRating = (starIndex, isLeftHalf) => {
         if (readOnly) return;

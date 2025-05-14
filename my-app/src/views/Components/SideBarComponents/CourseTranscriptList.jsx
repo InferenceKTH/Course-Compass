@@ -1,7 +1,9 @@
-import { useState, useRef, forwardRef } from "react";
-import Tooltip from "./ToolTip";
-
-export default function CourseTranscriptList(props) {
+import { useState, forwardRef } from "react";
+/**
+ * Shows a list of taken courses after uploading a transcript of records. 
+ * Used by the SidebarView.
+ */
+const CourseTranscriptList = forwardRef((props,ref) => {
     let local = [];
     if (localStorage.getItem("completedCourses"))
         local = JSON.parse(localStorage.getItem("completedCourses"));
@@ -31,14 +33,11 @@ export default function CourseTranscriptList(props) {
         localStorage.setItem("completedCourses", JSON.stringify(newitems));
         window.dispatchEvent(new Event("completedCourses changed"));
         props.reApplyFilter();
-        if (props.checkboxRef && props.checkboxRef.current) {
-            props.checkboxRef.current.click();
-        }
+        ref.current.click();
     };
 
 
     //=====================================
-    const tooltipRef = useRef(null);
 
     const tooltipClasses = [
         "absolute",
@@ -80,25 +79,25 @@ export default function CourseTranscriptList(props) {
                 <div
                     className="absolute inset-0 mt-30 pointer-events-none bg-gradient-to-b from-transparent to-[#553d65] z-100"
                 ></div>
-                <div className="grid grid-cols-3 w-full max-[1200px]:grid-cols-2 max-[700px]:grid-cols-1 gap-1 sm:gap-2 overflow-y-auto overflow-x-hidden max-h-[180px] pb-10" style={{
+                <div className="grid grid-cols-3 w-full max-[1200px]:grid-cols-2 gap-1 sm:gap-2 overflow-y-auto overflow-x-hidden max-h-[180px] pb-10" style={{
                     scrollbarWidth: "thin",
                     scrollbarColor: "#888 #f1f1f1",
                 }}>
                     {items.map((item, index) => (
                         <div
                             key={index}
-                            className="flex items-center bg-[#aba8e0] px-3 py-1 rounded-md shadow-md text-sm min-w-18 relative"
+                            className="flex items-center bg-[#aba8e0] px-3 py-1 rounded-md shadow-md text-sm min-w-18"
                         >
                             <div className="relative">
                                 <span className="flex-auto mr-2 peer">{item?.id}</span>
 
                                 <div className={tooltipClasses}>
-                                    {item?.name + (item?.is_in_DB ? "" : " (Course discontinued)")}
+                                    {item?.name}
                                 </div>
                             </div>
                             <button
                                 onClick={() => removeItem(index)}
-                                className="text-violet-600 hover:text-red-700 font-bold text-sm hover:bg-red-300 rounded-md absolute right-2 top-1/2 -translate-y-1/2"
+                                className="text-violet-600 hover:text-red-700 font-bold text-sm hover:bg-red-300 rounded-md"
                             >
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -120,4 +119,6 @@ export default function CourseTranscriptList(props) {
             </div>
         </div>
     );
-}
+});
+
+export default CourseTranscriptList;
