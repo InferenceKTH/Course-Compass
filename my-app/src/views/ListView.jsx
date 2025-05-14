@@ -3,7 +3,6 @@ import { DotPulse, Quantum } from 'ldrs/react';
 import 'ldrs/react/Quantum.css';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
-// Add this helper function at the top of your component
 const highlightText = (text, query) => {
     if (!query || !text) return text;
     
@@ -14,6 +13,11 @@ const highlightText = (text, query) => {
     return text.replace(regex, '<u>$1</u>');
 };
 
+/**
+ * The view displays the courses that match a certain query, filtering etc.
+ * @param {*} props 
+ * @returns 
+ */
 function ListView(props) {
     const [displayedCourses, setDisplayedCourses] = useState([]);
     const [hasMore, setHasMore] = useState(true);

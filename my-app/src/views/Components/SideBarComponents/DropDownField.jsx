@@ -3,6 +3,12 @@ import { useRef, useEffect } from "react";
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
 import Tooltip from "./ToolTip";
 
+/**
+ * Used for selecting the level of a course. 
+ * See SidebarView for more.
+ * @param {*} props 
+ * @returns 
+ */
 export default function DropDownField(props) {
 
 

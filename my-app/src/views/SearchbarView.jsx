@@ -3,6 +3,10 @@ import { getAuth, signInWithPopup, signOut, GoogleAuthProvider } from "firebase/
 import project_logo from "../assets/project_icon.png";
 import FavouritesDropdown from "./Components/FavouriteDropdown.jsx";
 
+/**
+ * Displays a searchbar, which accepts user input, e.g. a course id.
+ * @param {*} props 
+ */
 export function SearchbarView(props) {
 //   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState(null);

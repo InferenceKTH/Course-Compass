@@ -2,6 +2,12 @@ import React, { useState, useRef, useEffect, useMemo } from "react";
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
 import Tooltip from "./ToolTip";
 
+
+/**
+ * A slider component used to select the credits in the SidebarView.
+ * @param {} props 
+ * @returns 
+ */
 export default function UploadField(props) {
     let paramFieldType = "slider";
 

@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import RatingComponent from "./RatingComponent.jsx";
 import { model } from "../../model.js";
 
+/**
+ * Handles the popup for a specific course page.
+ */
 
 function CoursePagePopup({
 	favouriteCourses,

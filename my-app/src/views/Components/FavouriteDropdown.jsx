@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { observer } from "mobx-react-lite";
 
+/**
+ * Shows the dropdown menu to see the favourite flagged courses.
+ */
 const FavouritesDropdown = observer((props) => {
     const [copied, setCopied] = useState(false);
 
