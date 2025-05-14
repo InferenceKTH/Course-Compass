@@ -1,12 +1,12 @@
 import React from 'react';
 import { observer } from "mobx-react-lite";
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import ListView from "../views/ListView.jsx";
 import CoursePagePopup from '../views/Components/CoursePagePopup.jsx';
 import PrerequisitePresenter from './PrerequisitePresenter.jsx';
 import {ReviewPresenter} from "./ReviewPresenter.jsx"
 import {syncScrollPositionToFirebase} from "../../firebase.js"
-import { model } from '../model.js';
+import { useCallback } from 'react';
 
 const ListViewPresenter = observer(({ model }) => {
     const scrollContainerRef = useRef(null);
@@ -50,12 +50,12 @@ const ListViewPresenter = observer(({ model }) => {
         if (savedPosition) {
             model.setScrollPosition(parseInt(savedPosition, 10));
         }
-    }, [model.user]);
+    }, [model, model.user]);
 
     useEffect(() => {
         const cleanup = syncScrollPositionToFirebase(model, scrollContainerRef);
         return () => cleanup;
-    }, [model.user, model.currentSearch, scrollContainerRef]);
+    }, [model, model.user, model.currentSearch, scrollContainerRef]);
 
     const addFavourite = (course) => {
         model.addFavourite(course);
@@ -77,9 +77,8 @@ const ListViewPresenter = observer(({ model }) => {
 
     const [sortBy, setSortBy] = useState('relevance');
     const [sortDirection, setSortDirection] = useState('desc');
-    const [sortedCourses, setSortedCourses] = useState([]);
 
-    const sortCourses = (courses, sortType) => {
+    const sortCourses = useCallback((courses, sortType) => {
         if (!courses) return [];
         
         const sortedCourses = [...courses];
@@ -143,12 +142,12 @@ const ListViewPresenter = observer(({ model }) => {
             default:
                 return direction === 1 ? sortedCourses : sortedCourses.reverse();
         }
-    };
+    }, [sortDirection, model.avgRatings]);
 
-    useEffect(() => {
-        const sorted = sortCourses(model.currentSearch, sortBy);
-        setSortedCourses(sorted);
-    }, [model.currentSearch, sortBy, sortDirection]);
+    const sortedCourses = useMemo(() => {
+        if (!model.currentSearch) return [];
+        return sortCourses(model.currentSearch, sortBy);
+    }, [model.currentSearch, sortBy,sortCourses]);
 
     
     function indexOfNth(string, char, n) {
@@ -167,8 +166,8 @@ const ListViewPresenter = observer(({ model }) => {
     window.addEventListener('popstate', () => {
         model.handleUrlChange();
     });
-
-    model.onCoursesSet((courses) => {
+    
+    model.onCoursesSet((courses) => { // eslint-disable-line no-unused-vars
         let current_url = window.location.href;
         if (current_url.indexOf("#") != -1) {return;}
         let course_code = "";

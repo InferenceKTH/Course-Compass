@@ -1,9 +1,26 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, onAuthStateChanged } from "firebase/auth";
-import { getFunctions, httpsCallable } from 'firebase/functions';
-import { get, getDatabase, ref, set, onValue, onChildRemoved, onChildAdded, runTransaction } from "firebase/database";
+import { getFunctions, httpsCallable } from "firebase/functions";
+import {
+	get,
+	getDatabase,
+	ref,
+	set,
+	onValue,
+	onChildRemoved,
+	onChildAdded,
+	runTransaction,
+} from "firebase/database";
 import { reaction, toJS } from "mobx";
 import { push } from "firebase/database";
+
+/**
+ * Firebase configuration and initialization.
+ * This code connects to Firebase, sets up authentication and allows to save and fetch courses as well as user data.
+ * Data Synchronization and caching are also handled. 
+ * The firebase realtime database is used to store courses, user data, and reviews.
+ * If you would like to reuse this project, make sure to configure rules as shown in firebas_rules.json.
+ */
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -26,8 +43,13 @@ export const googleProvider = new GoogleAuthProvider();
 googleProvider.addScope("profile");
 googleProvider.addScope("email");
 
-export function connectToFirebase(model) {
-	loadCoursesFromCacheOrFirebase(model);
+/**
+ * Startup hook to connect the model to Firebase.
+ * This function sets up the Firebase connection, fetches initial data and starts listener for syncing data.
+ * @param {object} model The reactive model
+ */
+export async function connectToFirebase(model) {
+	await loadCoursesFromCacheOrFirebase(model);
 	fetchDepartmentsAndLocations(model);
 	startAverageRatingListener(model);
 	// setting missing
@@ -38,14 +60,16 @@ export function connectToFirebase(model) {
 		model.setFilterOptions(options);
 	}
 
+	// automaticaly save filter options to local storage whenever they change
 	reaction(
 		() => ({ filterOptions: JSON.stringify(model.filterOptions) }),
-		// eslint-disable-next-line no-unused-vars
 		({ filterOptions }) => {
 			localStorage.setItem("filterOptions", filterOptions);
 		}
 	);
-
+	/**
+	 * Hook to start synchronization when user is authenticated.
+	 */
 	onAuthStateChanged(auth, (user) => {
 		if (user) {
 			model.setUser(user); // Set the user ID once authenticated
@@ -60,48 +84,59 @@ export function connectToFirebase(model) {
 
 // fetches all relevant information to create the model
 async function firebaseToModel(model) {
-    const userRef = ref(db, `users/${model.user.uid}`);
-    onValue(userRef, async (snapshot) => {
-        if (!snapshot.exists()) return;
-        const data = snapshot.val();
+	const userRef = ref(db, `users/${model.user.uid}`);
+	onValue(userRef, async (snapshot) => {
+		if (!snapshot.exists()) return;
+		const data = snapshot.val();
 
-        // Use a transaction to ensure atomicity
-        await runTransaction(userRef, (currentData) => {
-            if (currentData) {
-                if (data?.favourites) model.setFavourite(data.favourites);
-                if (data?.currentSearchText) model.setCurrentSearchText(data.currentSearchText);
-                // Add other fields as needed
-            }
-            return currentData; // Return the current data to avoid overwriting
-        });
-    });
+		// Use a transaction to ensure atomicity
+		await runTransaction(userRef, (currentData) => {
+			if (currentData) {
+				if (data?.favourites) model.setFavourite(data.favourites);
+				if (data?.currentSearchText)
+					model.setCurrentSearchText(data.currentSearchText);
+				// Add other fields as needed
+			}
+			return currentData; // Return the current data to avoid overwriting
+		});
+	});
 }
 
+/**
+ * If the userid, favourites or search changes, sync to firebase.
+ * @param {object} model reactive model object 
+ */
 export function syncModelToFirebase(model) {
-    reaction(
-        () => ({
-            userId: model?.user.uid,
-            favourites: toJS(model.favourites),
-            currentSearchText: toJS(model.currentSearchText),
-        }),
-        async ({ userId, favourites, currentSearchText }) => {
-            if (!userId) return;
+	reaction(
+		() => ({
+			userId: model?.user.uid,
+			favourites: toJS(model.favourites),
+			currentSearchText: toJS(model.currentSearchText),
+		}),
+		async ({ userId, favourites, currentSearchText }) => {
+			if (!userId) return;
 
-            const userRef = ref(db, `users/${userId}`);
-            await runTransaction(userRef, (currentData) => {
-                // Merge the new data with the existing data
-                return {
-                    ...currentData,
-                    favourites,
-                    currentSearchText,
-                };
-            }).catch((error) => {
-                console.error('Error syncing model to Firebase:', error);
-            });
-        }
-    );
+			const userRef = ref(db, `users/${userId}`);
+			await runTransaction(userRef, (currentData) => {
+				// Merge the new data with the existing data
+				return {
+					...currentData,
+					favourites,
+					currentSearchText,
+				};
+			}).catch((error) => {
+				console.error("Error syncing model to Firebase:", error);
+			});
+		}
+	);
 }
 
+/**
+ * Synchronizes the scroll position of the container to Firebase / local storage.
+ * @param {object} model 
+ * @param {*} containerRef 
+ * @returns 
+ */
 export function syncScrollPositionToFirebase(model, containerRef) {
 	if (!containerRef?.current) return;
 	let lastSavedPosition = 0;
@@ -129,10 +164,17 @@ export function syncScrollPositionToFirebase(model, containerRef) {
 		containerRef.current?.removeEventListener("scroll", handleScroll);
 }
 
-
-
+/**
+ * Caches the courses to IndexedDB.
+ * @param {Array} courses The course array to save
+ * @param {number} timestamp The last update of the course array
+ */
 function saveCoursesToCache(courses, timestamp) {
 	const request = indexedDB.open("CourseDB", 1);
+
+	function validateCourseData(course) {
+		return course && typeof course === "object" && course.code;
+	}
 
 	request.onupgradeneeded = (event) => {
 		const db = event.target.result;
@@ -151,7 +193,9 @@ function saveCoursesToCache(courses, timestamp) {
 		const metaStore = tx.objectStore("metadata");
 
 		courseStore.clear();
-		courses.forEach((course) => courseStore.put(course));
+		courses
+			.filter(validateCourseData)
+			.forEach((course) => courseStore.put(course));
 		metaStore.put({ key: "timestamp", value: timestamp });
 
 		tx.oncomplete = () => console.log("Saved courses to IndexedDB");
@@ -174,16 +218,26 @@ async function fetchLastUpdatedTimestamp() {
 	return snapshot.exists() ? snapshot.val() : 0;
 }
 
+/**
+ * Admin function to add a course to the database.
+ * @param {Array} course 
+ */
 export async function addCourse(course) {
-    if (!auth.currentUser) 
-        throw new Error('User must be authenticated');
-    if (!course?.code) 
-        throw new Error('Invalid course data');
- 	const myRef = ref(db, `courses/${course.code}`);
-    await set(myRef, course);
+	if (!auth.currentUser) throw new Error("User must be authenticated");
+	if (!course?.code) throw new Error("Invalid course data");
+	if (!course || typeof course !== "object")
+		throw new Error("Invalid course object");
+	if (!course.code || typeof course.code !== "string")
+		throw new Error("Invalid course code");
+	const myRef = ref(db, `courses/${course.code}`);
+	await set(myRef, course);
 	updateLastUpdatedTimestamp();
 }
 
+/**
+ * Fetches all courses from the database.
+ * @returns {Array} Array of courses
+ */
 export async function fetchAllCourses() {
 	const myRef = ref(db, `courses`);
 	const snapshot = await get(myRef);
@@ -198,6 +252,12 @@ export async function fetchAllCourses() {
 	return courses;
 }
 
+/**
+ * Admin function to upload departments and locations to the database.
+ * @param {} departments 
+ * @param {*} locations 
+ * @returns 
+ */
 export async function uploadDepartmentsAndLocations(departments, locations) {
 	if (departments) {
 		const departmentsRef = ref(db, "departments");
@@ -220,6 +280,11 @@ export async function uploadDepartmentsAndLocations(departments, locations) {
 	return true;
 }
 
+/**
+ * Fetches departments and locations from the database.
+ * @param {object} model 
+ * @returns {Array} Array of departments and locations
+ */
 export async function fetchDepartmentsAndLocations(model) {
 	const departmentsRef = ref(db, "departments");
 	const locationsRef = ref(db, "locations");
@@ -243,6 +308,12 @@ export async function fetchDepartmentsAndLocations(model) {
 	}
 }
 
+/**
+ * Try to restore the courses from IndexedDB.
+ * @param {object} model 
+ * @returns void
+ * @throws Error if IndexedDB is not available or no courses are found
+ */
 async function loadCoursesFromCacheOrFirebase(model) {
 	const firebaseTimestamp = await fetchLastUpdatedTimestamp();
 	const dbPromise = new Promise((resolve, reject) => {
@@ -280,11 +351,15 @@ async function loadCoursesFromCacheOrFirebase(model) {
 				getAllReq.onsuccess = () => resolve(getAllReq.result);
 				getAllReq.onerror = () => resolve([]);
 			});
+			if (!cachedCourses) throw new Error("No courses found in IndexedDB");
 			model.setCourses(cachedCourses);
 			return;
 		}
 	} catch (err) {
-		console.warn("IndexedDB unavailable, falling back Posting anonymously is possible. Firebase:", err);
+		console.warn(
+			"IndexedDB unavailable, falling back Posting anonymously is possible. Firebase:",
+			err
+		);
 	}
 
 	// fallback: fetch from Firebase
@@ -293,18 +368,43 @@ async function loadCoursesFromCacheOrFirebase(model) {
 	saveCoursesToCache(courses, firebaseTimestamp);
 }
 
+/**
+ * Function to add a review for a course. The firebase rules disallow to have more than one course per person.
+ * Adding a review will automatically update the average rating of the course.
+ * @param {string} courseCode The course code
+ * @param {object} review The review object containing the review data
+ * @param {string} review.userName The name of the user
+ * @param {string} review.uid The user ID
+ * @param {number} review.timestamp The timestamp of the review
+ * @param {string} review.text The review text
+ * @param {number} review.overallRating The overall rating
+ * @param {number} review.difficultyRating The difficulty rating
+ * @param {string} review.professorName The name of the professor
+ * @param {string} review.grade The grade received
+ * @param {boolean} review.recommended Whether the course is recommended
+ * @throws {Error} If there is an error adding the review or updating the average rating
+ */
 export async function addReviewForCourse(courseCode, review) {
 	try {
 		const reviewsRef = ref(db, `reviews/${courseCode}/${review.uid}`);
 		await set(reviewsRef, review);
 		const updateCourseAvgRating = httpsCallable(functions, 'updateCourseAvgRating');
-   		const result = await updateCourseAvgRating({ courseCode });
+   		await updateCourseAvgRating({ courseCode });
 		
 	} catch (error) {
-		console.error("Error when adding a course to firebase or updating the average:", error);
+		console.error(
+			"Error when adding a course to firebase or updating the average:",
+			error
+		);
 	}
 }
 
+/**
+ * Adding a course triggers a firebase function to update the average rating of the course. 
+ * This function sets up a listener for the average rating of each course, to update the model onChange.
+ * It also fetches the initial average ratings if the model is not initialized.
+ * @param {object} model 
+ */
 function startAverageRatingListener(model) {
 	const coursesRef = ref(db, "reviews");
 
@@ -324,7 +424,7 @@ function startAverageRatingListener(model) {
 				}
 			});
 			model.setAverageRatings(initialRatings);
-		})
+		});
 	}
 
 	// Step 2: listener for each courses avgRating
@@ -349,17 +449,22 @@ function startAverageRatingListener(model) {
 	});
 }
 
+/**
+ * Fetches reviews for a specific course. 
+ * @param {string} courseCode 
+ * @returns 
+ */
 export async function getReviewsForCourse(courseCode) {
 	const reviewsRef = ref(db, `reviews/${courseCode}`);
 	const snapshot = await get(reviewsRef);
 	if (!snapshot.exists()) return [];
 	const reviews = [];
 	snapshot.forEach((childSnapshot) => {
-		if(childSnapshot.key!="avgRating")
-		reviews.push({
-			id: childSnapshot.key,
-			...childSnapshot.val(),
-		});
+		if (childSnapshot.key != "avgRating")
+			reviews.push({
+				id: childSnapshot.key,
+				...childSnapshot.val(),
+			});
 	});
 	return reviews;
 }
