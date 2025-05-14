@@ -215,11 +215,6 @@ export const model = {
         this.setFiltersChange();
     },
 
-    setApplyRemoveNullCourses() {
-        this.filterOptions.applyRemoveNullCourses = !this.filterOptions.applyRemoveNullCourses;
-        this.setFiltersChange();
-    },
-
     updateLevelFilter(level) {
         this.filterOptions.level = level;
     },
@@ -240,10 +235,6 @@ export const model = {
     },
     updateTranscriptElegibilityFilter(eligibility) {
         this.filterOptions.eligibility = eligibility;
-    },
-
-    updateDepartmentFilter(department) {
-        this.filterOptions.department = department;
     },
 
     updatePeriodFilter(period) {
