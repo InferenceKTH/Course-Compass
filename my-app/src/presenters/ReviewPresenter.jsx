@@ -4,7 +4,6 @@ import { ReviewView } from '../views/ReviewView.jsx';
 
 export const ReviewPresenter = observer(({ model, course }) => {
     const [reviews, setReviews] = useState([]);
-    const [postAnonymous, setAnonymous] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [formData, setFormData] = useState({
         text: "",
@@ -25,20 +24,21 @@ export const ReviewPresenter = observer(({ model, course }) => {
         fetchReviews();
     }, [course.code, model]);
 
-    useEffect(() => {
-        async function updateError() {
-            if(!model?.user?.uid)
-                setErrorMessage("You need to be logged in to post a comment - Posting anonymously is possible.");
-            else if(reviews.filter((review)=>{return review.uid == model?.user?.uid}).length > 0)
-                setErrorMessage("Everyone can only post once. Submitting a new comment will replace the old one.");
-        }
-        updateError();
-    }, [reviews, model?.user?.uid]);
+    const hasPreviousReview = !!model?.user?.uid && reviews.some(r => r.uid === model.user.uid);
 
- 
-    const handleReviewSubmit = async () => {
-        if(!model?.user){
-            setErrorMessage("You need to be logged in to post a comment - Posting anonymously is possible.");
+    useEffect(() => {
+        if (!model?.user?.uid) {
+            setErrorMessage("You need to be logged in to post a review - Posting anonymously is possible.");
+        } else if (hasPreviousReview) {
+            setErrorMessage("Everyone can only post once. Submitting a new review will replace the old one.");
+        } else {
+            setErrorMessage(""); 
+        }
+    }, [reviews, model?.user?.uid, hasPreviousReview]);
+
+    const handleReviewSubmit = async (anonState) => {
+        if (!model?.user) {
+            setErrorMessage("You need to be logged in to post a review - Posting anonymously is possible.");
             return;
         }
 
@@ -48,16 +48,18 @@ export const ReviewPresenter = observer(({ model, course }) => {
         }
 
         const review = {
-            userName: postAnonymous ? "Anonymous" : model.user?.displayName,
+            userName: anonState ? "Anonymous" : model.user?.displayName,
             uid: model?.user?.uid,
             timestamp: Date.now(),
             ...formData,
         };
-        
-        if(!await model.addReview(course.code, review)){    
-            setErrorMessage("Something went wrong when posting. Are you logged in?")
+
+        const success = await model.addReview(course.code, review);
+        if (!success) {
+            setErrorMessage("Something went wrong when posting. Are you logged in?");
             return;
         }
+
         const updatedReviews = await model.getReviews(course.code);
         setReviews(updatedReviews);
         setFormData({
@@ -65,11 +67,12 @@ export const ReviewPresenter = observer(({ model, course }) => {
             overallRating: 0,
             difficultyRating: 0,
             professorName: "",
+            professorRating: 0,
             grade: "",
-            recommended: false,
+            recommend: null,
+            avgRating: 0,
         });
     };
-
 
     return (
         <ReviewView
@@ -80,9 +83,7 @@ export const ReviewPresenter = observer(({ model, course }) => {
             handleReviewSubmit={handleReviewSubmit}
             errorMessage={errorMessage}
             setErrorMessage={setErrorMessage}
-            postAnonymous={postAnonymous}
-            setAnonymous={setAnonymous}
+            hasPreviousReview={hasPreviousReview}
         />
-
     );
 });
