@@ -110,7 +110,7 @@ export default function UploadField(props) {
                                 window.addEventListener("mousemove", move);
                                 window.addEventListener("mouseup", up);
                             }}
-                            onTouchStart={(e) => {
+                            onTouchStart={() => {
                                 const move = (ev) => handleDrag(ev, "min");
                                 const end = () => {
                                     window.removeEventListener("touchmove", move);
@@ -139,7 +139,7 @@ export default function UploadField(props) {
                                 window.addEventListener("mousemove", move);
                                 window.addEventListener("mouseup", up);
                             }}
-                            onTouchStart={(e) => {
+                            onTouchStart={() => {
                                 const move = (ev) => handleDrag(ev, "max");
                                 const end = () => {
                                     window.removeEventListener("touchmove", move);

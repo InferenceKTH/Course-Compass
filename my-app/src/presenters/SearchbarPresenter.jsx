@@ -1,9 +1,6 @@
 import React, { useMemo, useCallback } from 'react';
 import { observer } from "mobx-react-lite";
 import { useState } from 'react';
-import CoursePagePopup from '../views/Components/CoursePagePopup.jsx';
-import PrerequisitePresenter from './PrerequisitePresenter.jsx';
-import { ReviewPresenter } from "./ReviewPresenter.jsx";
 import SearchbarView from "../views/SearchbarView.jsx";
 import Fuse from 'fuse.js'
 import debounce from 'lodash.debounce';
@@ -22,6 +19,7 @@ const SearchbarPresenter = observer(({ model }) => {
             { name: 'name', weight: 0.4 },  
             { name: 'description', weight: 0.1 }, 
         ],
+        // eslint-disable-next-line no-loss-of-precision
         threshold: 0.3141592653589793238,
         ignoreLocation: true,
         minMatchCharLength: 2,
@@ -79,28 +77,6 @@ const SearchbarPresenter = observer(({ model }) => {
     function removeAllFavourites() {
         model.setFavourite([]);
     }
-
-    const preP = <PrerequisitePresenter 
-        model={model}
-        selectedCourse={model.selectedCourse}
-    />;
-    const reviewPresenter = <ReviewPresenter 
-        model={model} 
-        course={model.selectedCourse} 
-    />;
-
-    //Popup is displayed only in the list view now, to change the displayed course use model.setSelectedCourse(course)
-    // const popup = <CoursePagePopup
-    //     favouriteCourses={model.favourites}
-    //     addFavourite={addFavourite}
-    //     removeFavourite={removeFavourite}
-    //     handleFavouriteClick={handleFavouriteClick}
-    //     isOpen={model.isPopupOpen}
-    //     onClose={() => model.setPopupOpen(false)}
-    //     course={model.selectedCourse}
-    //     reviewPresenter={reviewPresenter}
-    //     prerequisiteTree={preP}
-    // />;
 
     if(model.filtersCalculated){
         searchCourses(searchQuery);

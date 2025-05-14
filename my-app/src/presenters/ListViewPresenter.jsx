@@ -203,9 +203,8 @@ const ListViewPresenter = observer(({ model }) => {
 	window.addEventListener("popstate", () => {
 		model.handleUrlChange();
 	});
-
-	model.onCoursesSet((courses) => {
-		// eslint-disable-line no-unused-vars
+	// eslint-disable-next-line no-unused-vars
+	model.onCoursesSet((courses) => { 
 		let current_url = window.location.href;
 		if (current_url.indexOf("#") != -1) {
 			return;
