@@ -6,6 +6,9 @@ import "reactflow/dist/style.css";
  * Displays a ReactFlow window, that is used in the context of a prerequisite tree.
  * @param {} props 
  */
+
+// redundent file functionality exist in PrerequisitePresenter.jsx
+
 function PrerequisiteTreeView(props) {
     return (
         <div className="w-full h-[500px] rounded-lg">
