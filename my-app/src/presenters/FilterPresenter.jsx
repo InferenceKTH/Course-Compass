@@ -55,15 +55,6 @@ const FilterPresenter = observer(({ model }) => {
      *  This presenter should be changed such that it uses side-effects instead model.filtersChange flag, since
      */
 
-<<<<<<< HEAD
-=======
-
-    /*  functions declared here are generally things the main function of this observer takes and runs if the given filters are enabled,
-     *  this is determined through model.filterOptions.apply*Insert filter name* flags.
-     *  This presenter should be changed such that it uses side-effects instead model.filtersChange flag, since
-     */
-
->>>>>>> 7acc78b2f82573c9310117ab0388a336d954c69e
     /* functions  */
     function applyTranscriptEligibility() {
         if (localFilteredCourses.length == 0)
