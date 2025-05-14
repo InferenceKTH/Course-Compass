@@ -35,9 +35,6 @@ export const PrerequisitePresenter = observer((props) => {
     hover_popup.style.padding = "5px";
     document.body.appendChild(hover_popup);
 
-
-    let code_to_name;
-
     let input_text_obj = {};
 
     const position = { x: 0, y: 0 };
@@ -153,7 +150,8 @@ export const PrerequisitePresenter = observer((props) => {
 
     }
 
-    function handleMouseLeave(event, node) {
+    
+    function handleMouseLeave(event, node) { // eslint-disable-line no-unused-vars
         hover_popup.style.display = "none";
     }
 
@@ -467,7 +465,7 @@ export const PrerequisitePresenter = observer((props) => {
                 if (localStorage.getItem("completedCourses") != null) {
                     courses_taken = localStorage.getItem("completedCourses");
                 }
-                code_to_name = model.getCourseNames(courses_taken);
+                //code_to_name = model.getCourseNames(courses_taken);
                 
                 let eligible = generateTree(courses_taken, copy);
                 if (eligible) {

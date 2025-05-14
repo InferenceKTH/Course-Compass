@@ -4,15 +4,11 @@ import { SearchbarPresenter } from '../presenters/SearchbarPresenter.jsx';
 import { ListViewPresenter } from '../presenters/ListViewPresenter.jsx';
 import { FilterPresenter } from "../presenters/FilterPresenter.jsx";
 import { slide as Menu } from 'react-burger-menu';
-import { observer } from 'mobx-react-lite';
 
 
 
 function App({ model }) {
 	const [sidebarIsOpen, setSidebarIsOpen] = useState(model.sidebarIsOpen);
-	const toggleSidebar = () => {
-		setSidebarIsOpen(!sidebarIsOpen);
-	}
 
 	return (
 			/* The sidebar styling(under the menu)*/

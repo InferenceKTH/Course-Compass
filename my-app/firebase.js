@@ -47,8 +47,8 @@ googleProvider.addScope("email");
  * This function sets up the Firebase connection, fetches initial data and starts listener for syncing data.
  * @param {object} model The reactive model
  */
-export function connectToFirebase(model) {
-	loadCoursesFromCacheOrFirebase(model);
+export async function connectToFirebase(model) {
+	await loadCoursesFromCacheOrFirebase(model);
 	fetchDepartmentsAndLocations(model);
 	startAverageRatingListener(model);
 	// setting missing
@@ -62,7 +62,6 @@ export function connectToFirebase(model) {
 	// automaticaly save filter options to local storage whenever they change
 	reaction(
 		() => ({ filterOptions: JSON.stringify(model.filterOptions) }),
-		// eslint-disable-next-line no-unused-vars
 		({ filterOptions }) => {
 			localStorage.setItem("filterOptions", filterOptions);
 		}
@@ -382,7 +381,6 @@ async function loadCoursesFromCacheOrFirebase(model) {
  * @param {string} review.professorName The name of the professor
  * @param {string} review.grade The grade received
  * @param {boolean} review.recommended Whether the course is recommended
- * @returns {Promise<void>} A promise that resolves when the review is added
  * @throws {Error} If there is an error adding the review or updating the average rating
  */
 export async function addReviewForCourse(courseCode, review) {
@@ -390,7 +388,7 @@ export async function addReviewForCourse(courseCode, review) {
 		const reviewsRef = ref(db, `reviews/${courseCode}/${review.uid}`);
 		await set(reviewsRef, review);
 		const updateCourseAvgRating = httpsCallable(functions, 'updateCourseAvgRating');
-   		const result = await updateCourseAvgRating({ courseCode });
+   		await updateCourseAvgRating({ courseCode });
 		
 	} catch (error) {
 		console.error(

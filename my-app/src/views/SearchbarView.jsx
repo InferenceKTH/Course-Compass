@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { getAuth, signInWithPopup, signOut, GoogleAuthProvider } from "firebase/auth";
-import { observer } from "mobx-react-lite";
 import project_logo from "../assets/project_icon.png";
 import FavouritesDropdown from "./Components/FavouriteDropdown.jsx";
 
-function SearchbarView(props) {
+export function SearchbarView(props) {
 //   const [searchQuery, setSearchQuery] = useState("");
   const [user, setUser] = useState(null);
   const [showFavourites, setShowFavourites] = useState(false);
@@ -126,4 +125,4 @@ function SearchbarView(props) {
   );
 }
 
-export default observer(SearchbarView);
+export default SearchbarView;

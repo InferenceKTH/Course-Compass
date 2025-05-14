@@ -1,4 +1,3 @@
-import { query } from "firebase/database";
 import {
 	addCourse,
 	addReviewForCourse,
@@ -73,12 +72,7 @@ export const model = {
 		this._coursesListeners.push(callback);
 	},
 
-	_coursesListeners: [], //  internal list of listeners
 	urlStackPointer: 0,
-
-	onCoursesSet(callback) {
-		this._coursesListeners.push(callback);
-	},
 
 	setUser(user) {
 		if (!this.user) this.user = user;
@@ -233,21 +227,10 @@ export const model = {
 		this.setFiltersChange();
 	},
 
-	setApplyRemoveNullCourses() {
-		this.filterOptions.applyRemoveNullCourses =
-			!this.filterOptions.applyRemoveNullCourses;
-		this.setFiltersChange();
-	},
-
 	updateLevelFilter(level) {
 		this.filterOptions.level = level;
 		console.log(level);
 	},
-
-    updateLevelFilter(level) {
-        this.filterOptions.level = level;
-    },
-
 	updateLanguageFilter(languages) {
 		this.filterOptions.language = languages;
 	},
@@ -260,10 +243,6 @@ export const model = {
 	},
 	updateTranscriptElegibilityFilter(eligibility) {
 		this.filterOptions.eligibility = eligibility;
-	},
-
-	updateDepartmentFilter(department) {
-		this.filterOptions.department = department;
 	},
 
 	updatePeriodFilter(period) {
@@ -316,50 +295,6 @@ export const model = {
 		);
 		return fields;
 	},
-    setApplyTranscriptFilter(transcriptFilterState) {
-        this.filterOptions.applyTranscriptFilter = transcriptFilterState;
-    },
-    setApplyLevelFilter(levelFilterState) {
-        this.filterOptions.applyLevelFilter = levelFilterState;
-    },
-    setApplyLanguageFilter(languageFilterState) {
-        this.filterOptions.applyLanguageFilter = languageFilterState;
-    },
-    setApplyLocationFilter(locationFilterState) {
-        this.filterOptions.applyLocationFilter = locationFilterState;
-    },
-    setApplyCreditsFilter(creditsFilterState) {
-        this.filterOptions.applyCreditsFilter = creditsFilterState;
-    },
-    setApplyDepartmentFilter(departmentFilterState) {
-        this.filterOptions.applyDepartmentFilter = departmentFilterState;
-    },
-    setApplyPeriodFilter(periodfilterState) {
-        this.filterOptions.applyPeriodFilter = periodfilterState;
-    },
-    //for better display we would like the departments in a structured format based on school 
-    formatDepartments() {
-        const grouped = this?.departments.reduce((acc, item) => {
-            const [school, department] = item.split("/");
-            if (!acc[school]) {
-                acc[school] = [];
-            }
-            acc[school].push(department?.trim());
-            return acc;
-        }, {});
-        const sortedGrouped = Object.keys(grouped)
-            .sort()
-            .reduce((acc, key) => {
-                acc[key] = grouped[key].sort();
-                return acc;
-            }, {});
-        const fields = Object.entries(sortedGrouped).map(([school, departments], index) => ({
-            id: index + 1,
-            label: school,
-            subItems: departments,
-        }));
-        return fields;
-    },
     async getAverageRating(courseCode, option) {
         const reviews = await getReviewsForCourse(courseCode);
         if (!reviews || reviews.length === 0) return null;
