@@ -6,6 +6,11 @@ import ButtonGroupField from './ButtonGroupField';
 import ToolTip from './ToolTip';
 import UploadGif from "../../../assets/upload.gif";
 
+
+/**
+ * Shows a field to upload a file with. Used in SearchbarView.
+ * @param {*} props 
+ */
 export default function UploadField(props) {
 
     const [isDragging, setIsDragging] = useState(false);

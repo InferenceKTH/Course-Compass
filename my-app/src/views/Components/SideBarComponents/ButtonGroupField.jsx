@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import ToolTip from './ToolTip';
 
+/**
+ * The ButtonGroupField is used as a selector for the period.
+ * Used by the SidebarView.
+ * @param {*} props 
+ * @returns 
+ */
 export default function ButtonGroupField(props) {
   
   const [activeIndex, setActiveIndex] = useState(0);

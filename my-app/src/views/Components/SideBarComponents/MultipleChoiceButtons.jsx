@@ -3,6 +3,11 @@ import { useRef, useEffect } from "react";
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
 import Tooltip from "./ToolTip";
 
+/**
+ * A multiple choice selector used to select the period in the SidebarView.
+ * @param {} props 
+ * @returns 
+ */
 export default function MultipleChoiceButtons(props) {
     const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
     const [selectedItems, setSelectedItems] = useState(props.initialValues || []);
