@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import RatingComponent from "./RatingComponent.jsx";
 import { model } from "../../model.js";
 
+/**
+ * Handles the popup for a specific course page.
+ */
 
 function CoursePagePopup({
 	favouriteCourses,
@@ -56,21 +59,21 @@ function CoursePagePopup({
 			try {
 				const avg = await model.getAverageRating(course.code, "avg");
 				setAverageRating(avg);
-
+			// eslint-disable-next-line no-unused-vars
 			} catch (error) {
 				setAverageRating(null);
 			}
 			try {
 				const avg = await model.getAverageRating(course.code, "diff");
 				setDifficultyRating(avg);
-
+			// eslint-disable-next-line no-unused-vars
 			} catch (error) {
 				setDifficultyRating(null);
 			}
 			try {
 				const avg = await model.getAverageRating(course.code, "prof");
 				setProfessorRating(avg);
-
+			// eslint-disable-next-line no-unused-vars
 			} catch (error) {
 				setProfessorRating(null);
 			}

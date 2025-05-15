@@ -2,6 +2,11 @@ import React, { useState, useRef } from "react";
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
 import Tooltip from "./ToolTip";
 
+/**
+ * Basic Toggle field used in the SidebarView to select courses in English or Swedish.
+ * @param {} props 
+ * @returns 
+ */
 export default function ToggleField(props) {
 
     let paramFieldType = "toggle";

@@ -27,14 +27,15 @@ export function makeRouter(reactiveModel) {
       //element: <SharedView />,
       element: <SharedView model={reactiveModel} />,
     },
-    {
-      path: "/button",
-      element: <JsonToDatabase model={reactiveModel} />,
-    },
-    {
-      path: "/all",
-      element: <AllCoursesPresenter model={reactiveModel} />,
-    }, 
+    // Testcases, which are disabled for deployment:
+    // {
+    //   path: "/button",
+    //   element: <JsonToDatabase model={reactiveModel} />,
+    // },
+    // {
+    //   path: "/all",
+    //   element: <AllCoursesPresenter model={reactiveModel} />,
+    // }, 
     
   ]);
 }
@@ -42,5 +43,5 @@ export function makeRouter(reactiveModel) {
 createRoot(document.getElementById("root")).render(
   <RouterProvider router={makeRouter(reactiveModel)} />
 );
-
-window.myModel = reactiveModel;
+// give user access for debugging purpose
+// window.myModel = reactiveModel;

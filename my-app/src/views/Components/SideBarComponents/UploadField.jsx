@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import CourseTranscriptList from './CourseTranscriptList';
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
 //import * as scraper from '../../../../src/scripts/transcript-scraper/transcript-scraper.js';
@@ -6,6 +6,11 @@ import ButtonGroupField from './ButtonGroupField';
 import ToolTip from './ToolTip';
 import UploadGif from "../../../assets/upload.gif";
 
+
+/**
+ * Shows a field to upload a file with. Used in SearchbarView.
+ * @param {*} props 
+ */
 export default function UploadField(props) {
 
     const [isDragging, setIsDragging] = useState(false);

@@ -1,5 +1,9 @@
 import React, { forwardRef } from "react";
 
+/**
+ * A basic checkbox to enable the filters. 
+ * Used in the SidebarView.
+ */
 const FilterEnableCheckbox = forwardRef(({ initialValue, onToggle }, ref) => {
     return (
         <div className='mr-3'>

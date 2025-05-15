@@ -3,6 +3,12 @@ import FilterEnableCheckbox from "./FilterEnableCheckbox";
 import Tooltip from "./ToolTip";
 import Slider from '@mui/material/Slider';
 
+
+/**
+ * A slider component used to select the credits in the SidebarView.
+ * @param {} props 
+ * @returns 
+ */
 export default function UploadField(props) {
     let paramFieldType = "slider";
 
