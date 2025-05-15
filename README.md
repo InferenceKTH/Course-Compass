@@ -98,40 +98,61 @@ model.populateDatabase(data);
 
 ```json
 {
-    "rules": {
-      "courses": {
-        ".read": true,
-        ".write": "auth != null && (auth.uid === 'adminuid' || auth.uid === 'adminuid')"
-      },
-      "metadata": {
-        ".read": true,
-        ".write": "auth != null && (auth.uid === 'adminuid' || auth.uid === 'adminuid')"
-      },
-      "departments": {
-        ".read": true,
-        ".write": "auth != null && (auth.uid === 'adminuid' || auth.uid === 'adminuid')"
-      },
-      "locations": {
-        ".read": true,
-        ".write": "auth != null && (auth.uid === 'adminuid' || auth.uid === 'adminuid')"
-      },
-      "reviews": {
-        ".read": true,
-        "$courseCode": {
-          "$userID": {
-            ".write": "auth != null && (auth.uid === $userID || data.child('uid').val() === auth.uid || !data.exists())",
-            ".validate": "newData.hasChildren(['text', 'timestamp']) && newData.child('text').isString() && newData.child('timestamp').isNumber()"
+  "rules": {
+    // Courses and Metadata
+    "courses": {
+      ".read": true,
+      ".write": "auth != null && (auth.uid === '6qKa992eL4fRkGKzp3OG5Sjjk983' || auth.uid === 'wa9HoCfWe2Vpw6J7oiq5oCxNYz52')"
+    },
+    "metadata": {
+      ".read": true,
+      ".write": "auth != null && (auth.uid === '6qKa992eL4fRkGKzp3OG5Sjjk983' || auth.uid === 'wa9HoCfWe2Vpw6J7oiq5oCxNYz52')"
+    },
+    "departments": {
+      ".read": true,
+      ".write": "auth != null && (auth.uid === '6qKa992eL4fRkGKzp3OG5Sjjk983' || auth.uid === 'wa9HoCfWe2Vpw6J7oiq5oCxNYz52')"
+    },
+    "locations": {
+      ".read": true,
+      ".write": "auth != null && (auth.uid === '6qKa992eL4fRkGKzp3OG5Sjjk983' || auth.uid === 'wa9HoCfWe2Vpw6J7oiq5oCxNYz52')"
+    },
+
+    // Reviews and Comments
+    "reviews": {
+      ".read": true,
+      "$courseCode": {
+        "$reviewUserID": {
+          // Only the original author can write the main review
+          ".write": "auth != null && (auth.uid === $reviewUserID || data.child('uid').val() === auth.uid || !data.exists())",
+          ".validate": "newData.hasChildren(['text', 'timestamp']) &&
+                        newData.child('text').isString() &&
+                        newData.child('text').val().length <= 2501 &&
+                        newData.child('timestamp').isNumber()",
+
+          // Allow any signed-in user to write comments under the review
+          "comments": {
+            ".write": "auth != null",
+            "$commentId": {
+              ".validate": "newData.hasChildren(['text', 'userName', 'timestamp']) &&
+                            newData.child('text').isString() &&
+                            newData.child('userName').isString() &&
+                            newData.child('timestamp').isNumber()"
+            }
           }
         }
-      },
-      "users": {
-        "$userID": {
-          ".read": "auth != null && auth.uid === $userID",
-          ".write": "auth != null && auth.uid === $userID"
-        }
+      }
+    },
+
+    // User-specific Data
+    "users": {
+      "$userID": {
+        ".read": "auth != null && auth.uid === $userID",
+        ".write": "auth != null && auth.uid === $userID"
       }
     }
+  }
 }
+
 ```
 </details>
 
