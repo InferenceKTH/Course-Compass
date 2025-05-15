@@ -498,3 +498,44 @@ export async function getCommentsForReview(courseCode, reviewUserId) {
 	});
 	return comments;
 }
+/**
+ * Delete a review for a course (by userId).
+ * @param {string} courseCode 
+ * @param {string} userId 
+ */
+export async function deleteReview(courseCode, userId) {
+	const reviewRef = ref(db, `reviews/${courseCode}/${userId}`);
+	await set(reviewRef, null);
+}
+
+/**
+ * Delete a specific comment from a review.
+ * @param {string} courseCode 
+ * @param {string} reviewUserId - UID of the review's author
+ * @param {string} commentId - ID of the comment (Firebase push key)
+ */
+export async function deleteComment(courseCode, reviewUserId, commentId) {
+	const commentRef = ref(db, `reviews/${courseCode}/${reviewUserId}/comments/${commentId}`);
+	await set(commentRef, null);
+}
+// Delete a review or comment by its ID
+export const deleteReviewById = async (courseCode, commentId, parentId = null) => {
+  const db = getDatabase();
+
+  if (!parentId) {
+    // Top-level review
+    const reviewRef = ref(db, `reviews/${courseCode}/${commentId}`);
+    await remove(reviewRef);
+  } else {
+    // Nested reply - remove it from the parent's replies array
+    const parentRef = ref(db, `reviews/${courseCode}/${parentId}`);
+    const snapshot = await get(parentRef);
+    if (snapshot.exists()) {
+      const parentData = snapshot.val();
+      const replies = parentData.replies || [];
+
+      const updatedReplies = replies.filter((r) => r.id !== commentId);
+      await update(parentRef, { replies: updatedReplies });
+    }
+  }
+};
