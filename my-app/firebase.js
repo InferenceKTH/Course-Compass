@@ -12,6 +12,7 @@ import {
 	runTransaction,
 } from "firebase/database";
 import { reaction, toJS } from "mobx";
+import { push } from "firebase/database";
 
 /**
  * Firebase configuration and initialization.
@@ -466,4 +467,34 @@ export async function getReviewsForCourse(courseCode) {
 			});
 	});
 	return reviews;
+}
+/**
+ * Add a comment to a specific review
+ * @param {string} courseCode - Course code (e.g. "A11HIB")
+ * @param {string} reviewUserId - The user ID of the person who wrote the main review
+ * @param {Object} commentObj - Object with { userName, text, timestamp }
+ */
+export async function addCommentToReview(courseCode, reviewUserId, commentObj) {
+	const commentsRef = ref(db, `reviews/${courseCode}/${reviewUserId}/comments`);
+	await push(commentsRef, commentObj);
+}
+
+/**
+ * Get comments for a specific review
+ * @param {string} courseCode 
+ * @param {string} reviewUserId 
+ * @returns {Promise<Array<Object>>} Array of comments: { id, userName, text, timestamp }
+ */
+export async function getCommentsForReview(courseCode, reviewUserId) {
+	const commentsRef = ref(db, `reviews/${courseCode}/${reviewUserId}/comments`);
+	const snapshot = await get(commentsRef);
+	if (!snapshot.exists()) return [];
+	const comments = [];
+	snapshot.forEach((childSnapshot) => {
+		comments.push({
+			id: childSnapshot.key,
+			...childSnapshot.val()
+		});
+	});
+	return comments;
 }
