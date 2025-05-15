@@ -7,8 +7,8 @@ import { ReviewView } from '../views/ReviewView.jsx';
  */
 export const ReviewPresenter = observer(({ model, course }) => {
     const [reviews, setReviews] = useState([]);
-    const [postAnonymous, setAnonymous] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [anonState, setAnonState] = useState(false);
     const [formData, setFormData] = useState({
         text: "",
         overallRating: 0,
@@ -20,7 +20,7 @@ export const ReviewPresenter = observer(({ model, course }) => {
         avgRating: 0,
     });
 
-    // fetch reviews when the current course code or model updates.
+    // Fetch reviews when the current course code or model updates
     useEffect(() => {
         async function fetchReviews() {
             const data = await model.getReviews(course.code);
@@ -29,25 +29,25 @@ export const ReviewPresenter = observer(({ model, course }) => {
         fetchReviews();
     }, [course.code, model]);
 
-    /**
-     * Set an error message if the user is not logged in or posted already.
-     */
+    const hasPreviousReview = !!model?.user?.uid && reviews.some(r => r.uid === model.user.uid);
+
+    // Set error message based on login state or review existence
     useEffect(() => {
-        async function updateError() {
-            if(!model?.user?.uid)
-                setErrorMessage("You need to be logged in to post a comment - Posting anonymously is possible.");
-            else if(reviews.filter((review)=>{return review.uid == model?.user?.uid}).length > 0)
-                setErrorMessage("Everyone can only post once. Submitting a new comment will replace the old one.");
+        if (!model?.user?.uid) {
+            setErrorMessage("You need to be logged in to post a review - Posting anonymously is possible.");
+        } else if (hasPreviousReview) {
+            setErrorMessage("Everyone can only post once. Submitting a new review will replace the old one.");
+        } else {
+            setErrorMessage("");
         }
-        updateError();
-    }, [reviews, model?.user?.uid]);
+    }, [reviews, model?.user?.uid, hasPreviousReview]);
 
     /**
-     * Handle the submssion of a review and set errors if needed.
-     * @returns void
+     * Handle the submission of a review and set errors if needed.
+     * @param {boolean} anon - whether to post anonymously
      */
-    const handleReviewSubmit = async () => {
-        if(!model?.user){
+    const handleReviewSubmit = async (anon) => {
+        if (!model?.user) {
             setErrorMessage("You need to be logged in to post a comment - Posting anonymously is possible.");
             return;
         }
@@ -57,31 +57,33 @@ export const ReviewPresenter = observer(({ model, course }) => {
             return;
         }
 
-        // create the post object - look into firebase rules if you want to change this.
         const review = {
-            userName: postAnonymous ? "Anonymous" : model.user?.displayName,
+            userName: anon ? "Anonymous" : model.user?.displayName,  
             uid: model?.user?.uid,
             timestamp: Date.now(),
             ...formData,
         };
-        
-        if(!await model.addReview(course.code, review)){    
-            setErrorMessage("Something went wrong when posting. Are you logged in?")
+
+        const success = await model.addReview(course.code, review);
+        if (!success) {
+            setErrorMessage("Something went wrong when posting. Are you logged in?");
             return;
         }
-        // refetch after submission
+
         const updatedReviews = await model.getReviews(course.code);
         setReviews(updatedReviews);
+
         setFormData({
             text: "",
             overallRating: 0,
             difficultyRating: 0,
             professorName: "",
+            professorRating: 0,
             grade: "",
-            recommended: false,
+            recommend: null,
+            avgRating: 0,
         });
     };
-
 
     return (
         <ReviewView
@@ -92,9 +94,9 @@ export const ReviewPresenter = observer(({ model, course }) => {
             handleReviewSubmit={handleReviewSubmit}
             errorMessage={errorMessage}
             setErrorMessage={setErrorMessage}
-            postAnonymous={postAnonymous}
-            setAnonymous={setAnonymous}
+            hasPreviousReview={hasPreviousReview}
+            anonState={anonState}
+            setAnonState={setAnonState}
         />
-
     );
 });

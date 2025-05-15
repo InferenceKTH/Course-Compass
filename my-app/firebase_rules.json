@@ -1,42 +1,52 @@
 {
-    "rules": {
-      // Courses and Metadata
-      "courses": {
-        ".read": true,
-        ".write": "auth != null && (auth.uid === 'adminuid' || auth.uid === 'adminuid')"
-      },
-      "metadata": {
-        ".read": true,
-        ".write": "auth != null && (auth.uid === 'adminuid' || auth.uid === 'adminuid')"
-      },
-      "departments": {
+  "rules": {
+    // Courses and Metadata
+    "courses": {
       ".read": true,
-      ".write": "auth != null && (auth.uid === 'adminuid' || auth.uid === 'adminuid')"
-      },
-      "locations": {
+      ".write": "auth != null && auth.uid === 'adminuid'"
+    },
+    "metadata": {
       ".read": true,
-      ".write": "auth != null && (auth.uid === 'adminuid' || auth.uid === 'adminuid')"
-      },
-  
-      // Reviews
-      "reviews": {
-      ".read":true,
+      ".write": "auth != null && auth.uid === 'adminuid'"
+    },
+    "departments": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'adminuid'"
+    },
+    "locations": {
+      ".read": true,
+      ".write": "auth != null && auth.uid === 'adminuid'"
+    },
+
+    // Reviews and Comments
+    "reviews": {
+      ".read": true,
       "$courseCode": {
-          "$userID": {
-            ".write": "auth != null && (auth.uid === $userID || data.child('uid').val() === auth.uid || !data.exists())",
-            ".validate": "newData.hasChildren(['text', 'timestamp']) &&
-                          newData.child('text').isString() &&
-                          newData.child('timestamp').isNumber()"
+        "$userID": {
+          // Only the review owner can write the main review fields (not including comments)
+          ".write": "auth != null && (auth.uid === $userID)",
+
+          // Allow anyone to write a comment
+          "comments": {
+            ".read": true,
+            "$commentId": {
+              ".write": "auth != null",
+              ".validate": "newData.hasChildren(['userName', 'text', 'timestamp']) &&
+                            newData.child('userName').isString() &&
+                            newData.child('text').isString() &&
+                            newData.child('timestamp').isNumber()"
+            }
           }
         }
-      },
-  
-      // Users
-      "users": {
-        "$userID": {
-          ".read": "auth != null && auth.uid === $userID",
-          ".write": "auth != null && auth.uid === $userID"
-        }
+      }
+    },
+
+    // Users
+    "users": {
+      "$userID": {
+        ".read": "auth != null && auth.uid === $userID",
+        ".write": "auth != null && auth.uid === $userID"
       }
     }
   }
+}
