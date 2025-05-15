@@ -25,7 +25,6 @@ export function SearchbarView(props) {
   const handleSearch = (query) => {
     props.resetScrollPosition();
     props.setSearchQuery(query);
-    props.searchCourses(query);
   };
 
   const handleSignIn = async () => {
