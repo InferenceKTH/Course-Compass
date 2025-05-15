@@ -26,6 +26,12 @@ function App({ model }) {
 	// 	  window.removeEventListener("unload", clearStorageOnUnload);
 	// 	};
 	//   }, []);
+	
+	useState(() => {
+		if (window.innerWidth < 700) {
+			setSidebarIsOpen(false);
+		}
+	});
 
 	return (
 		/* The sidebar styling(under the menu)*/
@@ -38,7 +44,7 @@ function App({ model }) {
 					width={
 						window.innerWidth < 700
 							? "100%"
-							: Math.max(window.innerWidth * 0.26, 300)
+							: Math.min(Math.max(window.innerWidth * 0.26, 300), 400)
 					}
 					isOpen={sidebarIsOpen}
 					onStateChange={(state) => setSidebarIsOpen(state.isOpen)}
