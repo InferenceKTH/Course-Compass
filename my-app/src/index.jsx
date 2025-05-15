@@ -11,7 +11,7 @@ import { JsonToDatabase } from "./presenters/Tests/JsonToDatabase";
 import { AllCoursesPresenter } from "./presenters/Tests/AllCoursesPresenter.jsx";
 
 
-configure({ enforceActions: "observed", reactionScheduler: (f) => setTimeout(f, 0),});
+configure({ enforceActions: "never", reactionScheduler: (f) => setTimeout(f, 0),});
 
 const reactiveModel = makeAutoObservable(model);
 connectToFirebase(reactiveModel);

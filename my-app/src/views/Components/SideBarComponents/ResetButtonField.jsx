@@ -12,8 +12,8 @@ export default function DropDownField(props) {
     return(
         <div className="m-2">
         <button
-            onClick={resetFiltersFunction}
-            className="absolute justify-center text-center w-90 bottom-5 right-5 bg-violet-500 text-white px-4 py-2 rounded-md shadow-xl focus:outline-none hover:bg-[#aba8e0] z-100"
+            onClick={props.resetAllFilters}
+            className="absolute justify-center text-center w-60 bottom-5 right-1/5 bg-[#DC143C] text-white px-2 py-1 rounded-4xl shadow-xl focus:outline-none hover:bg-[#800520] z-100"
             >
             Reset filters
         </button>

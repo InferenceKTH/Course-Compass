@@ -10,7 +10,7 @@ export default function UploadField(props) {
 
     const [isDragging, setIsDragging] = useState(false);
     const [filterEnabled, setFilterEnabled] = useState(props.filterEnable);
-    const [fileUploaded, setfileUploaded] = useState(false);
+    const [fileUploaded, setfileUploaded] = useState(localStorage.getItem("completedCourses"));
 
     const checkboxRef = useRef(null);
 
