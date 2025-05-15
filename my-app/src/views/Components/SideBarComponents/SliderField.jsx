@@ -12,7 +12,7 @@ export default function UploadField(props) {
         14, 15, 20, 22.5, 30, 45
     ], []);
 
-    const [value, setValue] = useState(props.initialValues);
+    const [value, setValue] = useState([0,values.length-1]);
 
     const [minIndex, setMinIndex] = useState(0);
     const [maxIndex, setMaxIndex] = useState(values.length - 1);
@@ -26,7 +26,7 @@ export default function UploadField(props) {
         
         if (!isChanging && props.initialValues && props.initialValues[0] != 0) {
             console.log(props.initialValues);
-            setValue(props.initialValues);
+            setValue([values.indexOf(values.find((c) => c == props.initialValues[0])), values.indexOf(values.find((c) => c == props.initialValues[1]))]);
             setChanging(true);
         }
     }, [props.initialValues, isChanging])
