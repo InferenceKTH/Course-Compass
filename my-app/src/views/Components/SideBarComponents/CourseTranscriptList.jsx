@@ -92,7 +92,7 @@ const CourseTranscriptList = forwardRef((props,ref) => {
                                 <span className="flex-auto mr-2 peer">{item?.id}</span>
 
                                 <div className={tooltipClasses}>
-                                    {item?.name}
+                                    {item?.name + (item?.is_in_DB ? "" : " (Course discontinued")}
                                 </div>
                             </div>
                             <button
