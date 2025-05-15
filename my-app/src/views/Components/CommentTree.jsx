@@ -1,17 +1,20 @@
 import React, { useState } from "react";
 import RatingComponent from "./RatingComponent.jsx";
-import { model } from "../../model.js"; // Adjust the path if needed
-import { addReviewForCourse } from "../../firebase"; // Adjust the path if needed
+import { model } from "../../model.js";
+import { addReviewForCourse, deleteReviewById } from "../../firebase"; // we will add deleteReviewById
 
 function CommentTree({ courseCode, comment, level = 0 }) {
   const [showReply, setShowReply] = useState(false);
   const [replyText, setReplyText] = useState("");
+
+  const currentUserId = model.user?.uid;
 
   const handleReplySubmit = async () => {
     if (replyText.trim().length === 0) return;
 
     const reply = {
       userName: model.user?.displayName || "Anonymous",
+      userId: model.user?.uid || "anonymous",
       text: replyText,
       timestamp: Date.now(),
       overallRating: 0,
@@ -23,7 +26,14 @@ function CommentTree({ courseCode, comment, level = 0 }) {
     };
 
     await addReviewForCourse(courseCode, reply, comment.id);
-    window.location.reload(); // quick reload for now; optional optimization later
+    window.location.reload(); // quick reload for now
+  };
+
+  const handleDeleteComment = async () => {
+    if (!window.confirm("Are you sure you want to delete this comment?")) return;
+
+    await deleteReviewById(courseCode, comment.id, comment.parentId || null);
+    window.location.reload(); // quick reload
   };
 
   return (
@@ -38,12 +48,24 @@ function CommentTree({ courseCode, comment, level = 0 }) {
 
         <p className="text-sm text-gray-700 mb-1">{comment.text}</p>
 
-        <button
-          className="text-blue-500 text-sm hover:underline"
-          onClick={() => setShowReply(!showReply)}
-        >
-          {showReply ? "Cancel" : "Reply"}
-        </button>
+        <div className="flex gap-3 items-center">
+          <button
+            className="text-blue-500 text-sm hover:underline"
+            onClick={() => setShowReply(!showReply)}
+          >
+            {showReply ? "Cancel" : "Reply"}
+          </button>
+
+          {/* Show delete button only if current user is the comment author */}
+          {currentUserId && comment.userId === currentUserId && (
+            <button
+              className="text-red-500 text-sm hover:underline"
+              onClick={handleDeleteComment}
+            >
+              Delete
+            </button>
+          )}
+        </div>
 
         {showReply && (
           <div className="mt-2">
@@ -63,7 +85,6 @@ function CommentTree({ courseCode, comment, level = 0 }) {
         )}
       </div>
 
-      {/* Recursive rendering of replies */}
       {comment.replies && comment.replies.length > 0 && (
         <div className="mt-2 space-y-2">
           {comment.replies.map((child) => (
