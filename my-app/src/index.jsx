@@ -15,7 +15,7 @@ import { AllCoursesPresenter } from "./presenters/Tests/AllCoursesPresenter.jsx"
  * This file contains the bootstrapping, as well as the router used in our webapp.
  */
 
-configure({ enforceActions: "observed", reactionScheduler: (f) => setTimeout(f, 0),});
+
 const reactiveModel = makeAutoObservable(model);
 connectToFirebase(reactiveModel);
 
@@ -47,4 +47,4 @@ createRoot(document.getElementById("root")).render(
   <RouterProvider router={makeRouter(reactiveModel)} />
 );
 // give user access for debugging purpose
-// window.myModel = reactiveModel;
+ window.myModel = reactiveModel;

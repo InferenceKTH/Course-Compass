@@ -62,7 +62,6 @@ function App({ model }) {
 					<ListViewPresenter model={model} />
 				</div>
 
-				<FilterPresenter model={model} />
 			</div>
 		</div>
 	);

@@ -3,52 +3,53 @@ import { useMemo, useEffect } from "react";
 import eligibility from "../scripts/eligibility_refined.js";
 
 /* FilterPresenter is responsible for applying the logic necessary to filter out the courses from the overall list */
-const FilterPresenter = observer(({ model }) => {
+export class FilterPresenter{
    
     /* global variable for the scope of this presenter, all the smaller functions depend on it instead of passing it back and forth as params */
-    var localFilteredCourses = [...model?.courses];
 
-    const filteredCourses = useMemo(() => {
-        if (model.courses.length === 0 || !model.filtersChange) {
-            return model.filteredCourses;
+    constructor(model){
+        this.localFilteredCourses = [...model?.courses];
+        this.model = model;
+    };
+
+    filterCourses() {
+        if (this.model.courses.length === 0 || !this.model.filtersChange) {
+            return this.model.filteredCourses;
         }
         
-        if (model.filterOptions.applyRemoveNullCourses) {
-            updateNoNullcourses();
+        if (this.model.filterOptions.applyRemoveNullCourses) {
+            this.updateNoNullcourses();
         }
-        if(model.filterOptions.applyPeriodFilter){
-            updatePeriods();
+        if(this.model.filterOptions.applyPeriodFilter){
+            this.updatePeriods();
         }
-        if (model.filterOptions.applyLocationFilter) {
-            updateLocations();
+        if (this.model.filterOptions.applyLocationFilter) {
+            this.updateLocations();
         }
-        if (model.filterOptions.applyLevelFilter) {
-            updateLevels();
+        if (this.model.filterOptions.applyLevelFilter) {
+            this.updateLevels();
         }
-        if (model.filterOptions.applyLanguageFilter) {
-            updateLanguages();
+        if (this.model.filterOptions.applyLanguageFilter) {
+            this.updateLanguages();
         }
-        if (model.filterOptions.applyCreditsFilter) {
-            updateCredits();
+        if (this.model.filterOptions.applyCreditsFilter) {
+            this.updateCredits();
         }
-        if (model.filterOptions.applyTranscriptFilter) {
-            applyTranscriptEligibility();
+        if (this.model.filterOptions.applyTranscriptFilter) {
+            this.applyTranscriptEligibility();
         }
-        if (model.filterOptions.applyDepartmentFilter) {
-            updateDepartments();
+        if (this.model.filterOptions.applyDepartmentFilter) {
+            this.updateDepartments();
         }
-        model.filtersChange = false;
-        model.setFiltersCalculated();
-        return localFilteredCourses;
+        this.model.filtersChange = false;
+        this.model.setFiltersCalculated();
+        this.model.filteredCourses = this.localFilteredCourses;
 
-    }, [model.courses,
-        model.filtersChange,
-        model.filterOptions
-    ]);
+    };
 
-    useEffect(() => {
-        model.filteredCourses = filteredCourses;
-    }, [filteredCourses]);
+    // useEffect(() => {
+    //     model.setFilteredCourses(filteredCourses);
+    // }, [filteredCourses]);
 
     /*  functions declared here are generally things the main function of this observer takes and runs if the given filters are enabled,
      *  this is determined through model.filterOptions.apply*Insert filter name* flags.
@@ -56,12 +57,12 @@ const FilterPresenter = observer(({ model }) => {
      */
 
     /* functions  */
-    function applyTranscriptEligibility() {
-        if (localFilteredCourses.length == 0)
+    applyTranscriptEligibility() {
+        if (this.localFilteredCourses.length == 0)
             return;
 
         /* this should be either weak/moderate/strong */
-        const eligibilitytype = model.filterOptions.eligibility;
+        const eligibilitytype = this.model.filterOptions.eligibility;
 
         /* I am doing this trick in a multitude of filters, essentially the best fitting courses should appear first in the
          * list view on the right side, so we just filter for those and at the very end merge them back together into a single array
@@ -77,7 +78,7 @@ const FilterPresenter = observer(({ model }) => {
             storedFinishedCourses = JSON.parse(localStorage.getItem("completedCourses")).map(obj => String(obj.id));
 
 
-        localFilteredCourses.forEach(course => {
+        this.localFilteredCourses.forEach(course => {
             if (storedFinishedCourses.includes(course?.code))
                 return;
             if (course?.prerequisites && (course?.prerequisites !== "null"))
@@ -109,23 +110,23 @@ const FilterPresenter = observer(({ model }) => {
         switch (eligibilitytype) {
             case "strong":
                 {
-                    localFilteredCourses = [...strongcourses, ...zerocourses];
+                    this.localFilteredCourses = [...strongcourses, ...zerocourses];
                     break;
                 }
             case "moderate":
                 {
-                    localFilteredCourses = [...strongcourses, ...moderatecourses, ...zerocourses];
+                    this.localFilteredCourses = [...strongcourses, ...moderatecourses, ...zerocourses];
                     break;
                 }
             case "weak":
                 {
-                    localFilteredCourses = [...strongcourses, ...moderatecourses, ...weakcourses, ...zerocourses];
+                    this.localFilteredCourses = [...strongcourses, ...moderatecourses, ...weakcourses, ...zerocourses];
                     break;
                 }
             default:
                 {
                     console.log("Error: somehow we got into a state where model.eligibility is not either \"strong\"/\"moderate\"/\"weak\".");
-                    localFilteredCourses = [];
+                    this.localFilteredCourses = [];
                     break;
                 }
         }
@@ -133,16 +134,15 @@ const FilterPresenter = observer(({ model }) => {
 
     }
 
-    function updatePeriods(){
-        
-        if (localFilteredCourses.length == 0)
+    updatePeriods(){
+        if (this.localFilteredCourses.length == 0)
             return;
         
-        const periodArr = [...model.filterOptions.period]; //has 4 boolean values one for each period
+        const periodArr = [...this.model.filterOptions.period]; //has 4 boolean values one for each period
         //  [true, false, false, false] means we are only looking for P1 courses.
         let bestcourses = [];
         let worstcourses = [];
-        bestcourses = localFilteredCourses.filter(function (course){
+        bestcourses = this.localFilteredCourses.filter(function (course){
             try {
                 if(course?.periods === undefined)
                     return false;
@@ -162,22 +162,22 @@ const FilterPresenter = observer(({ model }) => {
             
         })
 
-        worstcourses = localFilteredCourses.filter(function (course){
+        worstcourses = this.localFilteredCourses.filter(function (course){
             return (course?.periods === undefined);
         })
 
-        localFilteredCourses = [...bestcourses, ...worstcourses];
+        this.localFilteredCourses = [...bestcourses, ...worstcourses];
 
 
     }
 
-    function updateCredits() {
-        if (localFilteredCourses.length == 0)
+    updateCredits() {
+        if (this.localFilteredCourses.length == 0)
             return;
-        const min = model.filterOptions.creditMin;
-        const max = model.filterOptions.creditMax;
+        const min = this.model.filterOptions.creditMin;
+        const max = this.model.filterOptions.creditMax;
 
-        localFilteredCourses = localFilteredCourses.filter(function (course) {
+        this.localFilteredCourses = this.localFilteredCourses.filter(function (course) {
             try {
                 return ((course?.credits >= min) && (course?.credits <= max));
             } catch (error) {
@@ -188,24 +188,24 @@ const FilterPresenter = observer(({ model }) => {
         });
     }
 
-    function updateLocations() {
+    updateLocations() {
         //possible locations:  'null', 'KTH Campus', 'KTH Kista', 'AlbaNova', 'KTH Flemingsberg', 'KTH Solna', 'KTH Södertälje', 'Handelshögskolan', 'KI Solna', 'Stockholms universitet', 'KONSTFACK'
         //model.filterOptions.location is an array of locations the user toggled on, just like with academic level
 
-        const locations = model.filterOptions.location;
+        const locations = this.model.filterOptions?.location;
         let bestCourses = [];
         let worstCourses = [];
 
-        bestCourses = localFilteredCourses.filter(function (course) {
+        bestCourses = this.localFilteredCourses.filter(function (course) {
             try {
-                return (locations.includes(course?.location.toUpperCase()));
+                return (locations.includes(course?.location?.toUpperCase()));
             } catch (error) {
                 console.log("for some reason course?.location is: ", course, error);
                 return false;
             }
 
         });
-        worstCourses = localFilteredCourses.filter(function (course) {
+        worstCourses = this.localFilteredCourses.filter(function (course) {
             try {
                 return (course?.location === undefined);
             } catch (error) {
@@ -215,16 +215,16 @@ const FilterPresenter = observer(({ model }) => {
 
         });
 
-        localFilteredCourses = [...bestCourses, ...worstCourses];
+        this.localFilteredCourses = [...bestCourses, ...worstCourses];
 
     }
 
-    function updateLanguages() {
-        if (localFilteredCourses.length == 0)
+    updateLanguages() {
+        if (this.localFilteredCourses.length == 0)
             return;
         //possible model.filterOptions.languages values: "none"/"english"/"swedish"/"both"
-        const languages = model.filterOptions.language;
-        let data = [...localFilteredCourses];
+        const languages = this.model.filterOptions.language;
+        let data = [...this.localFilteredCourses];
         let bestCourses = [];
         let middleCourses = [];
         let worstCourses = [];
@@ -321,28 +321,28 @@ const FilterPresenter = observer(({ model }) => {
                 }
         }
 
-        localFilteredCourses = [...bestCourses, ...middleCourses, ...worstCourses];
+        this.localFilteredCourses = [...bestCourses, ...middleCourses, ...worstCourses];
     }
 
-    function updateLevels() {
-        if (localFilteredCourses.length == 0)
+    updateLevels() {
+        if (this.localFilteredCourses.length == 0)
             return;
 
         //the possible values are: "PREPARATORY", "BASIC", "ADVANCED", "RESEARCH"
         //model.filterOptions.level is an array. it can have []
-        const levels = model.filterOptions.level;
+        const levels = this.model.filterOptions.level;
 
 
-        localFilteredCourses = localFilteredCourses.filter(course => levels.includes(course?.academicLevel));
+        this.localFilteredCourses = this.localFilteredCourses.filter(course => levels.includes(course?.academicLevel));
 
     }
 
-    function updateDepartments() {
-        const departments = model.filterOptions.department;
+    updateDepartments() {
+        const departments = this.model.filterOptions.department;
         let bestCourses = [];
         let worstCourses = [];
 
-        bestCourses = localFilteredCourses.filter(function (course) {
+        bestCourses = this.localFilteredCourses.filter(function (course) {
             try {
                 return (departments.includes(course?.department));
             } catch (error) {
@@ -351,7 +351,7 @@ const FilterPresenter = observer(({ model }) => {
             }
 
         });
-        worstCourses = localFilteredCourses.filter(function (course) {
+        worstCourses = this.localFilteredCourses.filter(function (course) {
             try {
                 return (course?.department === undefined);
             } catch (error) {
@@ -361,54 +361,54 @@ const FilterPresenter = observer(({ model }) => {
 
         });
 
-        localFilteredCourses = [...bestCourses, ...worstCourses];
+        this.localFilteredCourses = [...bestCourses, ...worstCourses];
     }
 
     /* Function that deals with removing the courses that have no properties or have null properties in the categories the user 
      * using for filtering. The "null" check is a remainder from a version where we didn't use the ?. property accessing yet,
      * should be able to be removed without problem in the future.
     */
-    function updateNoNullcourses(){
-        let local = [...localFilteredCourses];
+    updateNoNullcourses(){
+        let local = [...this.localFilteredCourses];
 
 
-        if(model.filterOptions.applyPeriodFilter){
+        if(this.model.filterOptions.applyPeriodFilter){
             local = local.filter(function(course){
                 return (course?.periods && (course?.periods !== "null"));
             })
         }
-        if(model.filterOptions.applyTranscriptFilter){
+        if(this.model.filterOptions.applyTranscriptFilter){
             local = local.filter(function(course){
                 return (course?.prerequisites && (course?.prerequisites !== "null"));
             })
         }
-        if(model.filterOptions.applyLevelFilter){
+        if(this.model.filterOptions.applyLevelFilter){
             local = local.filter(function(course){
                 return (course?.academicLevel && (course?.academicLevel !== "null"));
             })
         }
-        if(model.filterOptions.applyLanguageFilter){
+        if(this.model.filterOptions.applyLanguageFilter){
             local = local.filter(function(course){
                 return ((course?.language) && ((course?.language?.swedish !== "null") && (course?.language?.english !== "null")));
             })
         }
-        if(model.filterOptions.applyLocationFilter){
+        if(this.model.filterOptions.applyLocationFilter){
             local = local.filter(function(course){
                 return ((course?.location) && (course?.location !== "null"));
             })
         }
-        if(model.filterOptions.applyCreditsFilter){
+        if(this.model.filterOptions.applyCreditsFilter){
             local = local.filter(function(course){
                 return ((course?.credits) && (course?.credits !== "null"));
             })
         }
-        if(model.filterOptions.applyDepartmentFilter){
+        if(this.model.filterOptions.applyDepartmentFilter){
             local = local.filter(function(course){
                 return ((course?.department) && (course?.department !== "null"));
             })
         }
 
-        localFilteredCourses = [...local];
+        this.localFilteredCourses = [...local];
     }
 
     /* function that should run every single time the model changes (see note below) */
@@ -418,6 +418,4 @@ const FilterPresenter = observer(({ model }) => {
     */
     // run();
     
-});
-
-export { FilterPresenter };
+}

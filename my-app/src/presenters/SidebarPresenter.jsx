@@ -1,13 +1,17 @@
 import React, { useEffect } from 'react';
 import { observer } from "mobx-react-lite";
+import { reaction } from "mobx";
+
 import SidebarView from "../views/SidebarView.jsx";
 import transcriptScraperFunction from "./UploadTranscriptPresenter.jsx";
 import { useState } from "react";
+import { FilterPresenter } from './FilterPresenter.jsx';
 
 const SidebarPresenter = observer(({ model }) => {
     
+    const filter = new FilterPresenter(model);
 
-    let currentLanguageSet = model.filterOptions.language;
+    //let currentLanguageSet = model.filterOptions.language;
     let currentLevelSet = model.filterOptions.level;
     let currentPeriodSet = model.filterOptions.period;
     let currentDepartmentSet = model.filterOptions.department;
@@ -16,88 +20,108 @@ const SidebarPresenter = observer(({ model }) => {
     
     useEffect(() => {
         model.setFiltersChange();
+        filter.filterCourses();
     },[model]);
+
+    useEffect(() => {
+        const disposer = reaction(
+            () => ({
+                language: model.filterOptions.language,
+                level: model.filterOptions.level,
+                period: model.filterOptions.period,
+                department: model.filterOptions.department,
+                location: model.filterOptions.location,
+                credits: [model.filterOptions.creditMin, model.filterOptions.creditMax],
+            }),
+            (filterOptions) => {
+                console.log('Filter options changed:', filterOptions);
+                filter.filterCourses();
+            },
+            { fireImmediately: true }
+        );
+    
+        return () => disposer();
+    }, [model, filter]);
 
     function handleLanguageFilterChange(param) {
         if (param === "English") {
-            switch (currentLanguageSet) {
+            switch (model.filterOptions.language) {
                 case "none":
-                    currentLanguageSet = "english";
+                    model.filterOptions.language = "english";
                     break;
                 case "swedish":
-                    currentLanguageSet = "both";
+                    model.filterOptions.language = "both";
                     break;
                 case "english":
-                    currentLanguageSet = "none";
+                    model.filterOptions.language = "none";
                     break;
                 case "both":
-                    currentLanguageSet = "swedish";
+                    model.filterOptions.language = "swedish";
                     break;
                 default:
                     console.log("Invalid language filter value");
             }
         } else if (param === "Swedish") {
-            switch (currentLanguageSet) {
+            switch ( model.filterOptions.language) {
                 case "none":
-                    currentLanguageSet = "swedish";
+                     model.filterOptions.language = "swedish";
                     break;
                 case "english":
-                    currentLanguageSet = "both";
+                     model.filterOptions.language = "both";
                     break;
                 case "swedish":
-                    currentLanguageSet = "none";
+                     model.filterOptions.language = "none";
                     break;
                 case "both":
-                    currentLanguageSet = "english";
+                     model.filterOptions.language = "english";
                     break;
                 default:
                     console.log("Invalid language filter value");
             }
         }
-        model.updateLanguageFilter(currentLanguageSet);
+        model.updateLanguageFilter( model.filterOptions.language);
     }
     function handleLevelFilterChange(param) {
 
-        if (!currentLevelSet.includes(param)) {
-            currentLevelSet.push(param);
+        if (!model.filterOptions.level.includes(param)) {
+            model.filterOptions.level.push(param);
         } else {
-            const index = currentLevelSet.indexOf(param);
+            const index = model.filterOptions.level.indexOf(param);
             if (index > -1) {
-                currentLevelSet.splice(index, 1);
+                model.filterOptions.level.splice(index, 1);
             }
         }
-        model.updateLevelFilter(currentLevelSet);
+        model.updateLevelFilter(model.filterOptions.level);
     }
 
     function handleDepartmentFilterChange(param) {
-        if (currentDepartmentSet.includes(param)) {
-            const index = currentDepartmentSet.indexOf(param);
+        if (model.filterOptions.department.includes(param)) {
+            const index = model.filterOptions.department.indexOf(param);
             if (index > -1) {
-                currentDepartmentSet.splice(index, 1);
+                model.filterOptions.department.splice(index, 1);
             }
         } else {
-            currentDepartmentSet.push(param);
+            model.filterOptions.department.push(param);
         }
-        model.updateDepartmentFilter(currentDepartmentSet);
+        model.updateDepartmentFilter(model.filterOptions.department);
         model.setFiltersChange();
     }
 
     function handlePeriodFilterChange(param) {
-        currentPeriodSet[param] = !currentPeriodSet[param];
-        model.updatePeriodFilter(currentPeriodSet);
-        model.setFiltersChange();
+        model.filterOptions.period[param] = !model.filterOptions.period[param];
+        model.updatePeriodFilter(model.filterOptions.period);
     }
 
     function handleLocationFilterChange(param) {
-        if (currentLocationSet.includes(param)) {
-            const index = currentLocationSet.indexOf(param);
+        if (model.filterOptions.location.includes(param)) {
+            const index = model.filterOptions.location.indexOf(param);
             if (index > -1) {
-                currentLocationSet.splice(index, 1);
+                model.filterOptions.location.splice(index, 1);
             }
         } else {
-            currentLocationSet.push(param);
+            model.filterOptions.location.push(param);
         }
-        model.updateLocationFilter(currentLocationSet);
+        model.updateLocationFilter(model.filterOptions.location);
         model.setFiltersChange();
     }
 
@@ -134,6 +158,7 @@ const SidebarPresenter = observer(({ model }) => {
             default:
                 console.log("Invalid filter type");
         }
+        filter.filterCourses();
         model.setFiltersChange();
     }
 
@@ -223,11 +248,10 @@ const SidebarPresenter = observer(({ model }) => {
         transcriptScraperFunction(file, setErrorMessage, setErrorVisibility, reApplyFilter, truncatedCourses);
         document.getElementById('PDF-Scraper-Input').value = '';
         setFileInputValue('');
-
-        
+        model.setFiltersChange();
     };
     //==========================================================
-
+    filter.filterCourses();
     return (
         <SidebarView HandleFilterChange={HandleFilterChange}
             HandleFilterEnable={HandleFilterEnable}
@@ -237,20 +261,20 @@ const SidebarPresenter = observer(({ model }) => {
             initialApplyTranscriptFilter={model.filterOptions.applyTranscriptFilter}
             initialTranscriptElegiblityValue={model.filterOptions.eligibility}
             
-            initialLanguageFilterOptions={currentLanguageSet}
+            initialLanguageFilterOptions={ model.filterOptions.language}
             initialLanguageFilterEnable={model.filterOptions.applyLanguageFilter}
 
-            initialLevelFilterOptions={currentLevelSet}
+            initialLevelFilterOptions={model.filterOptions.level}
             initialLevelFilterEnable={model.filterOptions.applyLevelFilter}
 
-            initialPeriodFilterOptions={currentPeriodSet}
+            initialPeriodFilterOptions={model.filterOptions.period}
             initialPeriodFilterEnable={model.filterOptions.applyPeriodFilter}
 
-            initialDepartmentFilterOptions={formatDepartmentSet(currentDepartmentSet.filter(item => item !== "undefined/undefined"))}
+            initialDepartmentFilterOptions={formatDepartmentSet(model.filterOptions.department.filter(item => item !== "undefined/undefined"))}
             initialDepartmentFilterEnable={model.filterOptions.applyDepartmentFilter}
             DepartmentFilterField = {model.formatDepartments()}
 
-            initialLocationFilterOptions={currentLocationSet}
+            initialLocationFilterOptions={model.filterOptions.location}
             initialLocationFilterEnable={model.filterOptions.applyLocationFilter}
             LocationFilterField = {model.locations}
 

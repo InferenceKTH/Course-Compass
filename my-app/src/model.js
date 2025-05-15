@@ -209,6 +209,11 @@ export const model = {
 	},
 	//for filters
 
+	setFilteredCourses(courses) {
+		this.filteredCourses = courses;
+		this.filtersCalculated = true;
+	},
+
 	setFiltersChange() {
 		this.filtersChange = true;
 	},
