@@ -13,7 +13,6 @@ function CommentTree({ courseCode, comment, level = 0 }) {
     if (replyText.trim().length === 0) return;
 
     const reply = {
-      id: crypto.randomUUID(),
       userName: model.user?.displayName || "Anonymous",
       userId: model.user?.uid || "anonymous",
       text: replyText,

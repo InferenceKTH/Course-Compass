@@ -90,7 +90,6 @@ export function ReviewView(props) {
       commentAnonState?.[rev.uid] || !auth.currentUser?.displayName;
 
     const comment = {
-      id: crypto.randomUUID(),
       userId: userId,
       userName: isAnonymous ? "Anonymous" : auth.currentUser.displayName,
       text,
@@ -478,9 +477,27 @@ export function ReviewView(props) {
                                 key={idx}
                                 className="ml-4 bg-gray-100 p-2 rounded text-sm text-gray-700 border border-gray-200"
                               >
-                                <div className="text-xs text-gray-500 italic mb-1">
-                                  Replying to <span className="font-semibold">{rev.userName}</span>
-                                </div>
+<div className="text-xs text-gray-500 italic mb-1 flex justify-between items-center">
+  <span>
+    Replying to <span className="font-semibold">{rev.userName}</span>
+  </span>
+
+  {auth.currentUser?.uid === comment.userId && (
+    <button
+      onClick={async () => {
+        const confirmed = window.confirm("Are you sure you want to delete this comment?");
+        if (!confirmed) return;
+        await deleteComment(rev.courseCode, rev.uid, comment.id);
+        const refreshed = await getCommentsForReview(rev.courseCode, rev.uid);
+        setCommentsByReview((prev) => ({ ...prev, [rev.uid]: refreshed }));
+      }}
+      className="text-red-500 text-xs ml-2 hover:underline"
+    >
+      Delete
+    </button>
+  )}
+</div>
+
                                 <div className="flex items-start gap-2">
                                   <div className="w-5 h-5 rounded-full bg-blue-600 text-white text-xs font-semibold flex items-center justify-center">
                                     {getInitials(comment.userName)}
