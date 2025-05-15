@@ -34,11 +34,6 @@ export function ReviewView(props) {
     if (props.reviews?.length) fetchComments();
   }, [props.reviews]);
 
-  const [commentTexts, setCommentTexts] = useState({});
-  const [commentsByReview, setCommentsByReview] = useState({});
-  const [commentAnonState, setCommentAnonState] = useState({});
-  const [anonState, setAnonState] = useState(false); // local anonymous state
-
   useEffect(() => {
     async function fetchComments() {
       const result = {};
@@ -128,7 +123,6 @@ export function ReviewView(props) {
             {/* Overall Rating */}
             <div className="text-center">
               <p className="font-semibold text-gray-700 text-sm mb-1">Overall Rating</p>
-              <p className="font-semibold text-gray-700 text-sm mb-1">Overall Rating</p>
               <RatingComponent
                 className="flex gap-1 text-base justify-center"
                 value={formData.overallRating}
@@ -139,7 +133,6 @@ export function ReviewView(props) {
 
             {/* Professor Rating */}
             <div className="text-center">
-              <p className="font-semibold text-gray-700 text-sm mb-1">Professor Rating</p>
               <p className="font-semibold text-gray-700 text-sm mb-1">Professor Rating</p>
               <RatingComponent
                 className="flex gap-1 text-base justify-center"
@@ -548,7 +541,6 @@ export function ReviewView(props) {
           </div>
         </div>
       </div>
-    </div>
   );
 }
 
