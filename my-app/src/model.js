@@ -37,20 +37,20 @@ export const model = {
         //different arrays require different data, some uses string arrays, some boolean values, and so on
         applyTranscriptFilter: false,
         eligibility: "weak",  //the possible values for the string are: "weak"/"moderate"/"strong"
-        applyLevelFilter: true,
+        applyLevelFilter: false,
         level: ["PREPARATORY", "BASIC", "ADVANCED", "RESEARCH"], //the possible values for the array are: "PREPARATORY", "BASIC", "ADVANCED", "RESEARCH"
         applyLanguageFilter: false,
         language: "none", //the possible values for the string are: "none"/"english"/"swedish"/"both"
         applyLocationFilter: false,
         location: [], //the possible values for the array are: 'KTH Campus', 'KTH Kista', 'AlbaNova', 'KTH Flemingsberg', 'KTH Solna', 'KTH Södertälje', 'Handelshögskolan', 'KI Solna', 'Stockholms universitet', 'KONSTFACK'
-        applyCreditsFilter: true,
+        applyCreditsFilter: false,
         creditMin: 0,
         creditMax: 45,
         applyDepartmentFilter: false,
         department: [],
         applyRemoveNullCourses: false,
         period: [true, true, true, true],
-        applyPeriodFilter: true
+        applyPeriodFilter: false,
     },
     isPopupOpen: false,
     selectedCourse: null,

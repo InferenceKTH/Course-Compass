@@ -7,19 +7,13 @@ import { use } from 'react';
 
 const SidebarPresenter = observer(({ model }) => {
     
-
-    let currentLanguageSet = model.filterOptions.language;
-    let currentLevelSet = model.filterOptions.level;
-    let currentPeriodSet = model.filterOptions.period;
-    let currentDepartmentSet = model.filterOptions.department;
-    let currentLocationSet = model.filterOptions.location;
-
-    
     useEffect(() => {
         model.setFiltersChange();
-    },[]);
+        console.log(model.filterOptions);
+    },[model]);
 
     function handleLanguageFilterChange(param) {
+        let currentLanguageSet = model.filterOptions.language;
         if (param === "English") {
             switch (currentLanguageSet) {
                 case "none":
@@ -58,7 +52,9 @@ const SidebarPresenter = observer(({ model }) => {
         model.updateLanguageFilter(currentLanguageSet);
     }
     function handleLevelFilterChange(param) {
-
+        
+        let currentLevelSet = model.filterOptions.level;
+        
         if (!currentLevelSet.includes(param)) {
             currentLevelSet.push(param);
         } else {
@@ -71,6 +67,9 @@ const SidebarPresenter = observer(({ model }) => {
     }
 
     function handleDepartmentFilterChange(param) {
+        
+        let currentDepartmentSet = model.filterOptions.department;
+        
         if (currentDepartmentSet.includes(param)) {
             const index = currentDepartmentSet.indexOf(param);
             if (index > -1) {
@@ -84,12 +83,18 @@ const SidebarPresenter = observer(({ model }) => {
     }
 
     function handlePeriodFilterChange(param) {
+        
+        let currentPeriodSet = model.filterOptions.period;
+        
         currentPeriodSet[param] = !currentPeriodSet[param];
         model.updatePeriodFilter(currentPeriodSet);
         model.setFiltersChange();
     }
 
     function handleLocationFilterChange(param) {
+        
+        let currentLocationSet = model.filterOptions.location;
+        
         if (currentLocationSet.includes(param)) {
             const index = currentLocationSet.indexOf(param);
             if (index > -1) {
@@ -243,20 +248,20 @@ const SidebarPresenter = observer(({ model }) => {
             initialApplyTranscriptFilter={model.filterOptions.applyTranscriptFilter}
             initialTranscriptElegiblityValue={model.filterOptions.eligibility}
             
-            initialLanguageFilterOptions={currentLanguageSet}
+            initialLanguageFilterOptions={model.filterOptions.language}
             initialLanguageFilterEnable={model.filterOptions.applyLanguageFilter}
 
-            initialLevelFilterOptions={currentLevelSet}
+            initialLevelFilterOptions={model.filterOptions.level}
             initialLevelFilterEnable={model.filterOptions.applyLevelFilter}
 
-            initialPeriodFilterOptions={currentPeriodSet}
+            initialPeriodFilterOptions={model.filterOptions.period}
             initialPeriodFilterEnable={model.filterOptions.applyPeriodFilter}
 
-            initialDepartmentFilterOptions={formatDepartmentSet(currentDepartmentSet.filter(item => item !== "undefined/undefined"))}
+            initialDepartmentFilterOptions={formatDepartmentSet(model.filterOptions.department.filter(item => item !== "undefined/undefined"))}
             initialDepartmentFilterEnable={model.filterOptions.applyDepartmentFilter}
             DepartmentFilterField = {model.formatDepartments()}
 
-            initialLocationFilterOptions={currentLocationSet}
+            initialLocationFilterOptions={model.filterOptions.location}
             initialLocationFilterEnable={model.filterOptions.applyLocationFilter}
             LocationFilterField = {model.locations}
 
