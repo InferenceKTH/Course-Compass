@@ -9,7 +9,6 @@ const SidebarPresenter = observer(({ model }) => {
     
     useEffect(() => {
         model.setFiltersChange();
-        console.log(model.filterOptions);
     },[model]);
 
     function handleLanguageFilterChange(param) {

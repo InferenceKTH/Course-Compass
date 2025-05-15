@@ -115,7 +115,7 @@ function ListView(props) {
                 <Quantum size="400" speed="10" color="#000061" />
                 </div>
             ) : (
-                <div className="overflow-y-auto h-full" id="scrollableDiv" ref={props.scrollContainerRef}>
+                <div className="overflow-y-auto h-full pb-50" id="scrollableDiv" ref={props.scrollContainerRef}>
                     <div className="flex justify-between items-center mb-4">
                         <p className="text-base font-semibold text-gray-600">
                             Found
