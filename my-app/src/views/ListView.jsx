@@ -2,6 +2,10 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { DotPulse, Quantum } from 'ldrs/react';
 import 'ldrs/react/Quantum.css';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import RatingComponent from "./Components/RatingComponent";
+import { model } from "../model.js";
+
+
 
 const highlightText = (text, query) => {
     if (!query || !text) return text;
@@ -57,11 +61,15 @@ function ListView(props) {
 
     useEffect(() => {
         setIsLoading(true);
-        const initialCourses = props.sortedCourses.slice(0, 10);
+        const initialCourses = props.sortedCourses.slice(0, 10).map(course => ({
+            ...course,
+            avgRating: model.avgRatings[course.code]?.[0], 
+        }));
         setDisplayedCourses(initialCourses);
         setHasMore(props.sortedCourses.length > 10);
         setIsLoading(false);
     }, [props.sortedCourses]);
+    
 
     const fetchMoreCourses = useCallback(() => {
         if (!hasMore) return;
@@ -194,6 +202,15 @@ function ListView(props) {
                                            __html: highlightText(course.name, props.query) 
                                        }} 
                                     />
+                                    {course.avgRating !== undefined && (
+                                    <div className="flex items-center gap-1 mt-1">
+                                        <RatingComponent value={course.avgRating} readOnly />
+                                        <span className="text-sm text-gray-500">
+                                        ({course.avgRating.toFixed(1)} / 5)
+                                        </span>
+                                    </div>
+                                    )}
+
                                     <p
                                         className="text-gray-600"
                                         dangerouslySetInnerHTML={{
@@ -202,6 +219,19 @@ function ListView(props) {
                                                 : highlightText(course?.description?.slice(0, 200) + "...", props.query)
                                         }}
                                     />
+                                    {/* Rating stars and number */}
+                                    {props.model?.avgRating?.[course.code] !== undefined && (
+                                        <div className="mt-2 flex items-center gap-2">
+                                            <RatingComponent 
+                                            value={props.model.avgRating[course.code]} 
+                                            readOnly 
+                                            />
+                                            <span className="text-sm text-gray-500">
+                                            ({props.model.avgRating[course.code].toFixed(1)} / 5)
+                                            </span>
+                                        </div>
+                                        )}
+
                                     {course?.description?.length > 150 && (
 
                                         <span
