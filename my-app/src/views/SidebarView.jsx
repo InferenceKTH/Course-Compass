@@ -47,9 +47,9 @@ function SidebarView(props) {
                         initialValue={props.initialTranscriptElegiblityValue}
                     />
             <div className='flex-auto justify-center '>
-                <ResetButtonField
+                {/*<ResetButtonField
                     resetAllFilters = {props.resetAllFilters}                
-                />
+                />*/}
                 <div className="z-10 w-100% rounded-lg justify-center pb-10" >
 
                     <DropDownField
