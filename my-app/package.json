@@ -11,8 +11,11 @@
   },
   "dependencies": {
     "@dagrejs/dagre": "^1.1.4",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@headlessui/react": "^2.2.1",
     "@heroicons/react": "^2.2.0",
+    "@mui/material": "^7.1.0",
     "@tailwindcss/vite": "^4.0.17",
     "@xyflow/react": "^12.5.5",
     "autoprefixer": "^10.4.21",

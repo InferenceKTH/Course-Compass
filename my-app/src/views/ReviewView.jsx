@@ -34,6 +34,23 @@ export function ReviewView(props) {
     if (props.reviews?.length) fetchComments();
   }, [props.reviews]);
 
+  const [commentTexts, setCommentTexts] = useState({});
+  const [commentsByReview, setCommentsByReview] = useState({});
+  const [commentAnonState, setCommentAnonState] = useState({});
+  const [anonState, setAnonState] = useState(false); // local anonymous state
+
+  useEffect(() => {
+    async function fetchComments() {
+      const result = {};
+      for (let rev of props.reviews) {
+        const list = await getCommentsForReview(rev.courseCode, rev.uid);
+        result[rev.uid] = list;
+      }
+      setCommentsByReview(result);
+    }
+    if (props.reviews?.length) fetchComments();
+  }, [props.reviews]);
+
   const gradeRef = useRef(null);
   const recommendRef = useRef(null);
   const difficultyRef = useRef(null);
@@ -42,6 +59,7 @@ export function ReviewView(props) {
     if (!name) return "N/A";
     const words = name.trim().split(" ");
     if (words.length === 1) return words[0][0]?.toUpperCase() || "N/A";
+    return `${words[0][0]?.toUpperCase() || ""}${words[words.length - 1][0]?.toUpperCase() || ""}`;
     return `${words[0][0]?.toUpperCase() || ""}${words[words.length - 1][0]?.toUpperCase() || ""}`;
   };
 
@@ -110,9 +128,11 @@ export function ReviewView(props) {
             {/* Overall Rating */}
             <div className="text-center">
               <p className="font-semibold text-gray-700 text-sm mb-1">Overall Rating</p>
+              <p className="font-semibold text-gray-700 text-sm mb-1">Overall Rating</p>
               <RatingComponent
                 className="flex gap-1 text-base justify-center"
                 value={formData.overallRating}
+                onChange={(val) => setFormData({ ...formData, overallRating: val })}
                 onChange={(val) => setFormData({ ...formData, overallRating: val })}
               />
             </div>
@@ -120,9 +140,11 @@ export function ReviewView(props) {
             {/* Professor Rating */}
             <div className="text-center">
               <p className="font-semibold text-gray-700 text-sm mb-1">Professor Rating</p>
+              <p className="font-semibold text-gray-700 text-sm mb-1">Professor Rating</p>
               <RatingComponent
                 className="flex gap-1 text-base justify-center"
                 value={formData.professorRating}
+                onChange={(val) => setFormData({ ...formData, professorRating: val })}
                 onChange={(val) => setFormData({ ...formData, professorRating: val })}
               />
             </div>
@@ -248,6 +270,8 @@ export function ReviewView(props) {
           </div>
 
           {/* Professor name */}
+
+          {/* Professor name */}
           <div className="mt-4">
             <input
               type="text"
@@ -261,6 +285,7 @@ export function ReviewView(props) {
             />
           </div>
 
+          {/* Review text input */}
           {/* Review text input */}
           <div className="relative mt-4">
             <textarea
@@ -301,10 +326,14 @@ export function ReviewView(props) {
             </div>
           </div>
 
+          </div>
+
           <button
             className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
             onClick={() => props.handleReviewSubmit(anonState)}
+            onClick={() => props.handleReviewSubmit(anonState)}
           >
+            
             Submit Review
           </button>
         </div>

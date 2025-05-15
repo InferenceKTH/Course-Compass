@@ -13,6 +13,7 @@ import {
 } from "firebase/database";
 import { reaction, toJS } from "mobx";
 import { push } from "firebase/database";
+import { push } from "firebase/database";
 
 /**
  * Firebase configuration and initialization.
