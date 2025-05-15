@@ -188,15 +188,26 @@ export const model = {
         }
     },
 
-    async getReviews(courseCode) {
-        try {
-            return await getReviewsForCourse(courseCode);
-        } catch (error) {
-            console.error("Error fetching reviews:", error);
-            return [];
-        }
-    },
-    //for filters
+	async getReviews(courseCode) {
+		try {
+			const rawReviews = await getReviewsForCourse(courseCode);
+            if (!Array.isArray(rawReviews)) return [];
+    
+            const enriched = rawReviews.map((review) => {
+                return {
+                    ...review,
+                    uid: review.uid || review.id || "",       
+                    courseCode: courseCode || "",             
+                };
+            });
+    
+            return enriched;
+		} catch (error) {
+			console.error("Error fetching reviews:", error);
+			return [];
+		}
+	},
+	//for filters
 
     setFiltersChange() {
         this.filtersChange = true;

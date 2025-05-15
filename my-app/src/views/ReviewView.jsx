@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import RatingComponent from "../views/Components/RatingComponent.jsx";
 import { getCommentsForReview, addCommentToReview, auth } from "../../firebase";
+import { deleteReview, deleteComment } from "../../firebase";
+
 
 /**
  * Displays the user an interface to give a review for a specified course. Invoked by the ReviewPresenter.
@@ -32,6 +34,18 @@ export function ReviewView(props) {
     if (props.reviews?.length) fetchComments();
   }, [props.reviews]);
 
+  useEffect(() => {
+    async function fetchComments() {
+      const result = {};
+      for (let rev of props.reviews) {
+        const list = await getCommentsForReview(rev.courseCode, rev.uid);
+        result[rev.uid] = list;
+      }
+      setCommentsByReview(result);
+    }
+    if (props.reviews?.length) fetchComments();
+  }, [props.reviews]);
+
   const gradeRef = useRef(null);
   const recommendRef = useRef(null);
   const difficultyRef = useRef(null);
@@ -40,6 +54,7 @@ export function ReviewView(props) {
     if (!name) return "N/A";
     const words = name.trim().split(" ");
     if (words.length === 1) return words[0][0]?.toUpperCase() || "N/A";
+    return `${words[0][0]?.toUpperCase() || ""}${words[words.length - 1][0]?.toUpperCase() || ""}`;
     return `${words[0][0]?.toUpperCase() || ""}${words[words.length - 1][0]?.toUpperCase() || ""}`;
   };
 
@@ -68,6 +83,38 @@ export function ReviewView(props) {
     }));
   };
 
+  const handleCommentSubmit = async (rev) => {
+    const text = (commentTexts[rev.uid] || "").trim();
+    if (!text) return;
+
+    const userId = auth.currentUser?.uid || "anonymous";
+
+    // Load existing comments for this review
+    const updated = await getCommentsForReview(rev.courseCode, rev.uid);
+
+    // Count how many comments this user has made
+    const userComments = updated.filter(c => c.userId === userId);
+    if (userComments.length >= 3) {
+      alert("You can only post up to 3 comments under each review.");
+      return;
+    }
+
+    const isAnonymous =
+      commentAnonState?.[rev.uid] || !auth.currentUser?.displayName;
+
+    const comment = {
+      userId: userId,
+      userName: isAnonymous ? "Anonymous" : auth.currentUser.displayName,
+      text,
+      timestamp: Date.now(),
+    };
+
+    await addCommentToReview(rev.courseCode, rev.uid, comment);
+    const refreshed = await getCommentsForReview(rev.courseCode, rev.uid);
+    setCommentsByReview((prev) => ({ ...prev, [rev.uid]: refreshed }));
+    setCommentTexts((prev) => ({ ...prev, [rev.uid]: "" }));
+  };
+
   return (
     <div className="max-w-3xl mx-auto">
       <div className="mt-6">
@@ -80,6 +127,7 @@ export function ReviewView(props) {
                 className="flex gap-1 text-base justify-center"
                 value={formData.overallRating}
                 onChange={(val) => setFormData({ ...formData, overallRating: val })}
+                onChange={(val) => setFormData({ ...formData, overallRating: val })}
               />
             </div>
 
@@ -90,8 +138,10 @@ export function ReviewView(props) {
                 className="flex gap-1 text-base justify-center"
                 value={formData.professorRating}
                 onChange={(val) => setFormData({ ...formData, professorRating: val })}
+                onChange={(val) => setFormData({ ...formData, professorRating: val })}
               />
             </div>
+            
             {/* Difficulty Rating */}
             <div className="relative" ref={difficultyRef}>
               <div className="flex items-center justify-center gap-2">
@@ -213,6 +263,8 @@ export function ReviewView(props) {
           </div>
 
           {/* Professor name */}
+
+          {/* Professor name */}
           <div className="mt-4">
             <input
               type="text"
@@ -226,6 +278,7 @@ export function ReviewView(props) {
             />
           </div>
 
+          {/* Review text input */}
           {/* Review text input */}
           <div className="relative mt-4">
             <textarea
@@ -248,10 +301,10 @@ export function ReviewView(props) {
               </div>
             )}
             {auth.currentUser && props.hasPreviousReview && (
-  <div className="w-full bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-2 rounded-md text-sm">
-    You have already submitted a review. Submitting again will <strong>replace</strong> your previous one.
-  </div>
-)}
+              <div className="w-full bg-yellow-100 border border-yellow-400 text-yellow-800 px-4 py-2 rounded-md text-sm">
+                You have already submitted a review. Submitting again will <strong>replace</strong> your previous one.
+              </div>
+            )}
             <div className="flex items-center">
               <input
                 type="checkbox"
@@ -266,204 +319,228 @@ export function ReviewView(props) {
             </div>
           </div>
 
+          </div>
+
           <button
             className="mt-4 w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200"
+            onClick={() => props.handleReviewSubmit(anonState)}
             onClick={() => props.handleReviewSubmit(anonState)}
           >
             
             Submit Review
           </button>
         </div>
+
         {/* Previous Reviews */}
         <div className="mt-6">
           <h3 className="text-lg font-semibold text-gray-800 mb-4">Previous Reviews</h3>
           <div className="space-y-6">
-            {[...props.reviews]
-              .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-              .map((rev, i) => {
-                const maxLength = 200;
-                const isLongReview = rev.text.length > maxLength;
-                const isExpanded = expandedReviews[i] || false;
-
-                return (
-                  <div key={i} className="bg-white shadow-md rounded-lg p-4">
-                    <div className="flex justify-between items-center mb-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-semibold">
-                          {getInitials(rev.userName)}
-                        </div>
-                        <p className="font-semibold text-gray-800">{rev.userName}</p>
-                      </div>
-                      <p className="text-sm text-gray-500">
-                        Posted on{" "}
-                        {new Date(rev.timestamp).toLocaleDateString("en-US", {
-                          month: "long",
-                          day: "numeric",
-                          year: "numeric",
-                        })}
-                      </p>
-                    </div>
-
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-2">
-                      <div className="flex flex-col items-start">
-                        <p className="text-sm font-semibold text-gray-700">Overall Rating</p>
-                        {rev.overallRating > 0 ? (
-                          <RatingComponent
-                            className="flex space-x-1 text-sm mt-1"
-                            value={rev.overallRating}
-                            readOnly={true}
-                          />
-                        ) : (
-                          <p className="text-sm text-gray-600 mt-1">N/A</p>
-                        )}
-                      </div>
-                      <div className="flex flex-col items-start">
-                        <p className="text-sm font-semibold text-gray-700">Professor Rating</p>
-                        {rev.professorRating > 0 ? (
-                          <RatingComponent
-                            className="flex space-x-1 text-sm mt-1"
-                            value={rev.professorRating}
-                            readOnly={true}
-                          />
-                        ) : (
-                          <p className="text-sm text-gray-600 mt-1">N/A</p>
-                        )}
-                      </div>
-                      <div className="flex flex-col items-start">
-                        <p className="text-sm font-semibold text-gray-700">Difficulty</p>
-                        <p className="text-sm text-gray-600 mt-1">{rev.difficultyRating || "N/A"}</p>
-                      </div>
-                      <div className="flex flex-col items-start">
-                        <p className="text-sm font-semibold text-gray-700">Professor</p>
-                        <p className="text-sm text-gray-600 mt-1">{rev.professorName || "N/A"}</p>
-                      </div>
-                      <div className="flex flex-col items-start">
-                        <p className="text-sm font-semibold text-gray-700">Grade</p>
-                        <p className="text-sm text-gray-600 mt-1">{rev.grade || "N/A"}</p>
-                      </div>
-                      <div className="flex flex-col items-start">
-                        <p className="text-sm font-semibold text-gray-700">Recommended</p>
-                        <p className="text-sm text-gray-600 mt-1">
-                          {rev.recommend === true ? "Yes" : rev.recommend === false ? "No" : "N/A"}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div>
-                      <p className="text-sm font-semibold text-gray-700">Review</p>
-                      <div
-                        className={`text-sm text-gray-600 transition-all duration-300 ${
-                          isExpanded || !isLongReview ? "" : "max-h-10 overflow-hidden"
-                        }`}
-                      >
-                        {isExpanded || !isLongReview
-                          ? rev.text
-                          : `${rev.text.slice(0, maxLength)}...`}
-                      </div>
-                      {isLongReview && (
-                        <button
-                          onClick={() => toggleExpanded(i)}
-                          className="mt-1 text-blue-600 hover:text-blue-800 text-sm font-semibold focus:outline-none"
-                        >
-                          {isExpanded ? "Read Less" : "Read More"}
-                        </button>
-                      )}
-                    </div>
-
-                    {/* Comment Section */}
-                    <div className="mt-4 border-t pt-4">
-                      <p className="text-sm font-semibold text-gray-700 mb-1">Add a Comment</p>
-                      <textarea
-                        placeholder="Write your comment here..."
-                        value={commentTexts[rev.uid] || ""}
-                        onChange={(e) =>
-                          setCommentTexts((prev) => ({ ...prev, [rev.uid]: e.target.value }))
-                        }
-                        className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                      />
-
-                      {!auth.currentUser && (
-                        <div className="mt-2 w-full bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-md text-sm">
-                          You need to be logged in to post a comment – Posting anonymously is possible.
-                        </div>
-                      )}
-
-                      <div className="flex items-center mt-2">
-                        <input
-                          type="checkbox"
-                          id={`anon-${rev.uid}`}
-                          className="mr-2"
-                          checked={commentAnonState?.[rev.uid] || false}
-                          onChange={() =>
-                            setCommentAnonState((prev) => ({
-                              ...prev,
-                              [rev.uid]: !prev?.[rev.uid],
-                            }))
-                          }
-                        />
-                        <label htmlFor={`anon-${rev.uid}`} className="text-sm text-gray-700">
-                          Post anonymously
-                        </label>
-                      </div>
-
-                      <button
-                        onClick={async () => {
-                          const text = (commentTexts[rev.uid] || "").trim();
-                          if (!text) return;
-                          const comment = {
-                            userName:
-                              commentAnonState?.[rev.uid] || !auth.currentUser?.displayName
-                                ? "Anonymous"
-                                : auth.currentUser.displayName,
-                            text,
-                            timestamp: Date.now(),
-                          };
-                          await addCommentToReview(rev.courseCode, rev.uid, comment);
-                          const updated = await getCommentsForReview(rev.courseCode, rev.uid);
-                          setCommentsByReview((prev) => ({ ...prev, [rev.uid]: updated }));
-                          setCommentTexts((prev) => ({ ...prev, [rev.uid]: "" }));
-                        }}
-                        className="mt-2 bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700 text-sm"
-                      >
-                        Submit Comment
-                      </button>
-                    </div>
-
-                    {/* Comment List */}
-                    {commentsByReview[rev.uid] && commentsByReview[rev.uid].length > 0 && (
-                      <div className="mt-4 space-y-2">
-                        <p className="text-sm font-semibold text-gray-700">Comments:</p>
-                        {commentsByReview[rev.uid].map((comment, idx) => (
-                          <div
-                            key={idx}
-                            className="ml-4 bg-gray-100 p-2 rounded text-sm text-gray-700 border border-gray-200"
-                          >
-                            <div className="text-xs text-gray-500 italic mb-1">
-                              Replying to <span className="font-semibold">{rev.userName}</span>
-                            </div>
-                            <div className="flex items-start gap-2">
-                              <div className="w-5 h-5 rounded-full bg-blue-600 text-white text-xs font-semibold flex items-center justify-center">
-                                {getInitials(comment.userName)}
-                              </div>
-                              <div>
-                                <span className="font-semibold text-xs">{comment.userName}:</span>
-                                <span className="ml-2 text-sm">{comment.text}</span>
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            {props.reviews.length === 0 && (
+            {props.reviews.length === 0 ? (
               <p className="text-sm text-gray-600">No reviews yet.</p>
+            ) : (
+              [...props.reviews]
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .map((rev, i) => {
+                  const maxLength = 200;
+                  const isLongReview = rev.text.length > maxLength;
+                  const isExpanded = expandedReviews[i] || false;
+
+                  return (
+<div key={i} className="bg-white shadow-md rounded-lg p-4">
+  <div className="flex justify-between items-center mb-2">
+    <div className="flex items-center gap-2">
+      <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-semibold">
+        {getInitials(rev.userName)}
+      </div>
+      <p className="font-semibold text-gray-800">{rev.userName}</p>
+
+      {/* Show delete button if current user is the author */}
+      {auth.currentUser?.uid === rev.userId && (
+        <button
+          onClick={async () => {
+            const confirmed = window.confirm("Are you sure you want to delete this review?");
+            if (!confirmed) return;
+            await deleteReview(rev.courseCode, rev.userId);
+            window.location.reload(); // Optional: replace with props.refresh() if you have it
+          }}
+          className="text-red-500 text-xs ml-3 hover:underline"
+        >
+          Delete
+        </button>
+      )}
+    </div>
+
+    <p className="text-sm text-gray-500">
+      Posted on{" "}
+      {new Date(rev.timestamp).toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })}
+    </p>
+  </div>
+
+
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-2">
+                        <div className="flex flex-col items-start">
+                          <p className="text-sm font-semibold text-gray-700">Overall Rating</p>
+                          {rev.overallRating > 0 ? (
+                            <RatingComponent
+                              className="flex space-x-1 text-sm mt-1"
+                              value={rev.overallRating}
+                              readOnly={true}
+                            />
+                          ) : (
+                            <p className="text-sm text-gray-600 mt-1">N/A</p>
+                          )}
+                        </div>
+                        <div className="flex flex-col items-start">
+                          <p className="text-sm font-semibold text-gray-700">Professor Rating</p>
+                          {rev.professorRating > 0 ? (
+                            <RatingComponent
+                              className="flex space-x-1 text-sm mt-1"
+                              value={rev.professorRating}
+                              readOnly={true}
+                            />
+                          ) : (
+                            <p className="text-sm text-gray-600 mt-1">N/A</p>
+                          )}
+                        </div>
+                        <div className="flex flex-col items-start">
+                          <p className="text-sm font-semibold text-gray-700">Difficulty</p>
+                          <p className="text-sm text-gray-600 mt-1">{rev.difficultyRating || "N/A"}</p>
+                        </div>
+                        <div className="flex flex-col items-start">
+                          <p className="text-sm font-semibold text-gray-700">Professor</p>
+                          <p className="text-sm text-gray-600 mt-1">{rev.professorName || "N/A"}</p>
+                        </div>
+                        <div className="flex flex-col items-start">
+                          <p className="text-sm font-semibold text-gray-700">Grade</p>
+                          <p className="text-sm text-gray-600 mt-1">{rev.grade || "N/A"}</p>
+                        </div>
+                        <div className="flex flex-col items-start">
+                          <p className="text-sm font-semibold text-gray-700">Recommended</p>
+                          <p className="text-sm text-gray-600 mt-1">
+                            {rev.recommend === true ? "Yes" : rev.recommend === false ? "No" : "N/A"}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div>
+                        <p className="text-sm font-semibold text-gray-700">Review</p>
+                        <div
+                          className={`text-sm text-gray-600 transition-all duration-300 ${
+                            isExpanded || !isLongReview ? "" : "max-h-10 overflow-hidden"
+                          }`}
+                        >
+                          {isExpanded || !isLongReview
+                            ? rev.text
+                            : `${rev.text.slice(0, maxLength)}...`}
+                        </div>
+                        {isLongReview && (
+                          <button
+                            onClick={() => toggleExpanded(i)}
+                            className="mt-1 text-blue-600 hover:text-blue-800 text-sm font-semibold focus:outline-none"
+                          >
+                            {isExpanded ? "Read Less" : "Read More"}
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Comment Section */}
+                      <div className="mt-4 border-t pt-4">
+                        <p className="text-sm font-semibold text-gray-700 mb-1">Add a Comment</p>
+                        <textarea
+                          placeholder="Write your comment here..."
+                          value={commentTexts[rev.uid] || ""}
+                          onChange={(e) =>
+                            setCommentTexts((prev) => ({ ...prev, [rev.uid]: e.target.value }))
+                          }
+                          className="w-full border border-gray-300 rounded-md p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                        />
+
+                        {!auth.currentUser && (
+                          <div className="mt-2 w-full bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-md text-sm">
+                            You need to be logged in to post a comment – Posting anonymously is possible.
+                          </div>
+                        )}
+
+                        <div className="flex items-center mt-2">
+                          <input
+                            type="checkbox"
+                            id={`anon-${rev.uid}`}
+                            className="mr-2"
+                            checked={commentAnonState?.[rev.uid] || false}
+                            onChange={() =>
+                              setCommentAnonState((prev) => ({
+                                ...prev,
+                                [rev.uid]: !prev?.[rev.uid],
+                              }))
+                            }
+                          />
+                          <label htmlFor={`anon-${rev.uid}`} className="text-sm text-gray-700">
+                            Post anonymously
+                          </label>
+                        </div>
+
+                        <button
+                          onClick={() => handleCommentSubmit(rev)}
+                          className="mt-2 bg-blue-600 text-white py-1 px-3 rounded hover:bg-blue-700 text-sm"
+                        >
+                          Submit Comment
+                        </button>
+
+                        {/* Comment List */}
+                        {commentsByReview[rev.uid] && commentsByReview[rev.uid].length > 0 && (
+                          <div className="mt-4 space-y-2">
+                            <p className="text-sm font-semibold text-gray-700">Comments:</p>
+                            {commentsByReview[rev.uid].map((comment, idx) => (
+                              <div
+                                key={idx}
+                                className="ml-4 bg-gray-100 p-2 rounded text-sm text-gray-700 border border-gray-200"
+                              >
+<div className="text-xs text-gray-500 italic mb-1 flex justify-between items-center">
+  <span>
+    Replying to <span className="font-semibold">{rev.userName}</span>
+  </span>
+
+  {auth.currentUser?.uid === comment.userId && (
+    <button
+      onClick={async () => {
+        const confirmed = window.confirm("Are you sure you want to delete this comment?");
+        if (!confirmed) return;
+        await deleteComment(rev.courseCode, rev.uid, comment.id);
+        const refreshed = await getCommentsForReview(rev.courseCode, rev.uid);
+        setCommentsByReview((prev) => ({ ...prev, [rev.uid]: refreshed }));
+      }}
+      className="text-red-500 text-xs ml-2 hover:underline"
+    >
+      Delete
+    </button>
+  )}
+</div>
+
+                                <div className="flex items-start gap-2">
+                                  <div className="w-5 h-5 rounded-full bg-blue-600 text-white text-xs font-semibold flex items-center justify-center">
+                                    {getInitials(comment.userName)}
+                                  </div>
+                                  <div>
+                                    <span className="font-semibold text-xs">{comment.userName}:</span>
+                                    <span className="ml-2 text-sm">{comment.text}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })
             )}
           </div>
         </div>
       </div>
-    </div>
   );
 }
 

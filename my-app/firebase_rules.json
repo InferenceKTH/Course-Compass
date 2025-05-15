@@ -3,40 +3,37 @@
     // Courses and Metadata
     "courses": {
       ".read": true,
-      ".write": "auth != null && (auth.uid === '6qKa992eL4fRkGKzp3OG5Sjjk983' || auth.uid === 'wa9HoCfWe2Vpw6J7oiq5oCxNYz52')"
+      ".write": "auth != null && auth.uid === 'adminuid'"
     },
     "metadata": {
       ".read": true,
-      ".write": "auth != null && (auth.uid === '6qKa992eL4fRkGKzp3OG5Sjjk983' || auth.uid === 'wa9HoCfWe2Vpw6J7oiq5oCxNYz52')"
+      ".write": "auth != null && auth.uid === 'adminuid'"
     },
     "departments": {
       ".read": true,
-      ".write": "auth != null && (auth.uid === '6qKa992eL4fRkGKzp3OG5Sjjk983' || auth.uid === 'wa9HoCfWe2Vpw6J7oiq5oCxNYz52')"
+      ".write": "auth != null && auth.uid === 'adminuid'"
     },
     "locations": {
       ".read": true,
-      ".write": "auth != null && (auth.uid === '6qKa992eL4fRkGKzp3OG5Sjjk983' || auth.uid === 'wa9HoCfWe2Vpw6J7oiq5oCxNYz52')"
+      ".write": "auth != null && auth.uid === 'adminuid'"
     },
 
     // Reviews and Comments
     "reviews": {
       ".read": true,
       "$courseCode": {
-        "$reviewUserID": {
-          // Only the original author can write the main review
-          ".write": "auth != null && (auth.uid === $reviewUserID || data.child('uid').val() === auth.uid || !data.exists())",
-          ".validate": "newData.hasChildren(['text', 'timestamp']) &&
-                        newData.child('text').isString() &&
-                        newData.child('text').val().length <= 2501 &&
-                        newData.child('timestamp').isNumber()",
+        "$userID": {
+          // Only the review owner can write the main review fields (not including comments)
+          ".write": "auth != null && (auth.uid === $userID)",
 
-          // Allow any signed-in user to write comments under the review
+          // Allow anyone to write a comment
           "comments": {
-            ".write": "auth != null",
+            ".read": true,
             "$commentId": {
-              ".validate": "newData.hasChildren(['text', 'userName', 'timestamp']) &&
-                            newData.child('text').isString() &&
+              ".write": "auth != null",
+              ".validate": "newData.hasChildren(['userName', 'text', 'timestamp']) &&
                             newData.child('userName').isString() &&
+                            newData.child('text').isString() &&
                             newData.child('timestamp').isNumber()"
             }
           }
@@ -44,7 +41,7 @@
       }
     },
 
-    // User-specific Data
+    // Users
     "users": {
       "$userID": {
         ".read": "auth != null && auth.uid === $userID",

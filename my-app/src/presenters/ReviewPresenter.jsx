@@ -60,6 +60,7 @@ export const ReviewPresenter = observer(({ model, course }) => {
         const review = {
             userName: anon ? "Anonymous" : model.user?.displayName,  
             uid: model?.user?.uid,
+            userId: model?.user?.uid,
             timestamp: Date.now(),
             ...formData,
         };
