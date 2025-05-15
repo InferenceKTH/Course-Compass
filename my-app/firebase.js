@@ -56,15 +56,20 @@ export async function connectToFirebase(model) {
 	// also save filters to local storage
 	//
 	const options = JSON.parse(localStorage.getItem("filterOptions"));
+	const search = localStorage.getItem("search");
 	if (options) {
 		model.setFilterOptions(options);
 	}
+	if(search){
+		model.setCurrentSearchText(search);
+	}
 
-	// automaticaly save filter options to local storage whenever they change
+	// automaticaly save filter and search to local storage whenever they change
 	reaction(
-		() => ({ filterOptions: JSON.stringify(model.filterOptions) }),
-		({ filterOptions }) => {
+		() => ({ filterOptions: JSON.stringify(model.filterOptions), search: model.currentSearchText }),
+		({ filterOptions, search }) => {
 			localStorage.setItem("filterOptions", filterOptions);
+			localStorage.setItem("search", search);
 		}
 	);
 	/**
@@ -78,8 +83,10 @@ export async function connectToFirebase(model) {
 			syncScrollPositionToFirebase(model);
 		} else {
 			model.setUser(null); // If no user, clear user-specific data
+			model.setReady();
 		}
 	});
+	
 }
 
 // fetches all relevant information to create the model
@@ -100,6 +107,7 @@ async function firebaseToModel(model) {
 			return currentData; // Return the current data to avoid overwriting
 		});
 	});
+	model.setReady();
 }
 
 /**

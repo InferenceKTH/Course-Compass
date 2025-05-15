@@ -4,13 +4,13 @@ import { useState } from 'react';
 import SearchbarView from "../views/SearchbarView.jsx";
 import Fuse from 'fuse.js'
 import debounce from 'lodash.debounce';
+import { useEffect } from 'react';
 
 /**
  * This presenter handles searches. The searching is done via a debounced fuzzy search engine called "fuse.js".
  * Favourites are handled here as well.
  */
 const SearchbarPresenter = observer(({ model }) => {
-    const [searchQuery, setSearchQuery] = useState("");
 
     // the search uses fuse.js
     const fuseOptions = useMemo(() => ({
@@ -55,6 +55,16 @@ const SearchbarPresenter = observer(({ model }) => {
         model.addFavourite(course);
     };
 
+    const setCurrentSearchText = (text) =>{
+        model.setCurrentSearchText(text);
+        searchCourses(text);
+    }
+
+    useEffect(() => {
+        searchCourses(model.currentSearchText);
+        console.log("Current Search is:"+model.currentSearchText);
+    }, [model.isReady])
+
     const removeFavourite = (course) => {
         model.removeFavourite(course);
     };
@@ -80,7 +90,7 @@ const SearchbarPresenter = observer(({ model }) => {
     }
 
     if(model.filtersCalculated){
-        searchCourses(searchQuery);
+        searchCourses(model.currentSearchText);
         model.filtersCalculated = false;
     }
 
@@ -94,8 +104,8 @@ const SearchbarPresenter = observer(({ model }) => {
             isPopupOpen={model.isPopupOpen}
             setIsPopupOpen={(isOpen) => model.setPopupOpen(isOpen)}
             setSelectedCourse={(course) => model.setSelectedCourse(course)}
-            setSearchQuery={setSearchQuery}
-            searchQuery={searchQuery}
+            setSearchQuery={setCurrentSearchText}
+            searchQuery={model.currentSearchText}
             handleFavouriteClick={handleFavouriteClick}
             totalCredits={creditsSum(model.favourites)}
             resetScrollPosition={resetScoll}
