@@ -6,6 +6,7 @@ import CollapsibleCheckboxes from './Components/SideBarComponents/CollapsibleChe
 import Tooltip from './Components/SideBarComponents/ToolTip.jsx';
 import UploadField from './Components/SideBarComponents/UploadField';
 import MultipleChoiceButtons from './Components/SideBarComponents/MultipleChoiceButtons.jsx';
+import ResetButtonField from "./Components/SideBarComponents/ResetButtonField.jsx";
 
 
 /**
@@ -46,6 +47,9 @@ function SidebarView(props) {
                         initialValue={props.initialTranscriptElegiblityValue}
                     />
             <div className='flex-auto justify-center '>
+                {/*<ResetButtonField
+                    resetAllFilters = {props.resetAllFilters}                
+                />*/}
                 <div className="z-10 w-100% rounded-lg justify-center pb-10" >
 
                     <DropDownField
@@ -78,7 +82,7 @@ function SidebarView(props) {
                         description="Filter by the period a course is given, the autumn semester consists of P1 and P2, while the spring semester is P3 and P4.
                         Courses offered over multiple periods will also show up."
                     />
-
+                    
                     <DropDownField
                         options={props.LocationFilterField}
                         HandleFilterChange={props.HandleFilterChange}
@@ -107,6 +111,7 @@ function SidebarView(props) {
                         }
                         description="Filter for the departments the course is given by. Useful for finding courses in a variety of specifics topics."
                     />
+                    
                     <div className='mr-3 flex justify-between'>
                         <input
                             id="excludeNullCheckbox"
@@ -129,10 +134,9 @@ function SidebarView(props) {
                                 position={"left"}
                             />
                         </div>
-
+                        
                     </div>
                 </div>
-
             </div>
         </div>
     );

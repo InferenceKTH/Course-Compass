@@ -11,11 +11,8 @@ import { JsonToDatabase } from "./presenters/Tests/JsonToDatabase";
 import { AllCoursesPresenter } from "./presenters/Tests/AllCoursesPresenter.jsx";
 
 
-/**
- * This file contains the bootstrapping, as well as the router used in our webapp.
- */
+configure({ enforceActions: "never", reactionScheduler: (f) => setTimeout(f, 0),});
 
-configure({ enforceActions: "observed", reactionScheduler: (f) => setTimeout(f, 0),});
 const reactiveModel = makeAutoObservable(model);
 connectToFirebase(reactiveModel);
 

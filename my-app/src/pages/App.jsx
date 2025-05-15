@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { SidebarPresenter } from "../presenters/SidebarPresenter.jsx";
-import { SearchbarPresenter } from "../presenters/SearchbarPresenter.jsx";
-import { ListViewPresenter } from "../presenters/ListViewPresenter.jsx";
+import React, { useState, useEffect } from 'react';
+import { SidebarPresenter } from '../presenters/SidebarPresenter.jsx';
+import { SearchbarPresenter } from '../presenters/SearchbarPresenter.jsx';
+import { ListViewPresenter } from '../presenters/ListViewPresenter.jsx';
 import { FilterPresenter } from "../presenters/FilterPresenter.jsx";
 import { slide as Menu } from "react-burger-menu";
 
@@ -14,6 +14,18 @@ import { slide as Menu } from "react-burger-menu";
  */
 function App({ model }) {
 	const [sidebarIsOpen, setSidebarIsOpen] = useState(model.sidebarIsOpen);
+
+	useEffect(() => {
+		const clearStorageOnUnload = () => {
+		  localStorage.clear();
+		};
+	
+		window.addEventListener("unload", clearStorageOnUnload);
+	
+		return () => {
+		  window.removeEventListener("unload", clearStorageOnUnload);
+		};
+	  }, []);
 
 	return (
 		/* The sidebar styling(under the menu)*/

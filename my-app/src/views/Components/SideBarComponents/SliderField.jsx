@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
+import React, { useState, useRef, useEffect, useMemo, useCallback } from "react";
 import FilterEnableCheckbox from "./FilterEnableCheckbox";
 import Tooltip from "./ToolTip";
+import Slider from '@mui/material/Slider';
 
 
 /**
@@ -11,12 +12,13 @@ import Tooltip from "./ToolTip";
 export default function UploadField(props) {
     let paramFieldType = "slider";
 
-
     const values = useMemo(() => [
-        1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5,
+        0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5,
         6, 7, 7.5, 8, 8.5, 9, 10, 11, 12, 13.5,
         14, 15, 20, 22.5, 30, 45
     ], []);
+
+    const [value, setValue] = useState([0,values.length-1]);
 
     const [minIndex, setMinIndex] = useState(0);
     const [maxIndex, setMaxIndex] = useState(values.length - 1);
@@ -24,7 +26,19 @@ export default function UploadField(props) {
     const sliderRef = useRef(null);
     const checkboxRef = useRef(null);
 
-    useEffect(() => {
+    const [isChanging, setChanging] = useState(false);
+
+    useEffect(()=>{
+        
+        if (!isChanging && props.initialValues && props.initialValues[0] != 0) {
+            console.log(props.initialValues);
+            setValue([values.indexOf(values.find((c) => c == props.initialValues[0])), values.indexOf(values.find((c) => c == props.initialValues[1]))]);
+            setChanging(true);
+        }
+    }, [props.initialValues, isChanging])
+
+   /* useState(() => {
+        setValue(props.initialValues);
         for (let i = 0; i < values.length; i++) {
             if (values[i] === props?.initialValues[0]) {
                 setMinIndex(i);
@@ -33,9 +47,22 @@ export default function UploadField(props) {
                 setMaxIndex(i);
             }
         }
-    }, [props?.initialValues, values]); // Empty dependency array ensures this runs only once
+        
+    }, [props.initialValues]); // Empty dependency array ensures this runs only once*/
 
 
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+        const [min, max] = [...newValue];
+        setMinIndex(min);
+        setMaxIndex(max);
+    };
+
+    const handleCommit = (event, newValue) => {
+        const [minIndex, maxIndex] = newValue;
+        props.HandleFilterChange([paramFieldType, props.filterName, [values[minIndex], values[maxIndex]]]);
+    };
+    
 
     const handleDrag = (e, thumbType) => {
         const slider = sliderRef.current;
@@ -86,83 +113,42 @@ export default function UploadField(props) {
                  }}>
                 <div className="bg-[#aba8e0] text-white p-4 rounded-lg shadow-lg border border-gray-300">
                     <div className="mb-2 text-sm font-bold">
-                        Credits: {values[minIndex]} – {values[maxIndex]}
+                        Credits: {(values[minIndex]==props.initialValues[0]) ? values[minIndex] : props.initialValues[0]} – {(values[maxIndex]==props.initialValues[1]) ? values[maxIndex] : props.initialValues[1]}
                     </div>
 
                     {/* SLIDER */}
-                    <div
-                        ref={sliderRef}
-                        className="relative h-3 bg-gray-300 rounded-full cursor-pointer"
-                        onMouseDown={(e) => handleDrag(e, "bar")}
-                        onTouchStart={(e) => handleDrag(e, "bar")}
-                    >
-                        {/* Selected range bar */}
-                        <div
-                            className="absolute h-full bg-violet-500 rounded-full"
-                            style={{
-                                left: `${(minIndex / (values.length - 1)) * 100}%`,
-                                width: `${((maxIndex - minIndex) / (values.length - 1)) * 100}%`
-                            }}
-                        />
+                    <Slider
+                        
+                        getAriaLabel={() => 'Temperature range'}
+                        value={value}
+                        min={0}
+                        max={values.length - 1}
+                        onChange={handleChange}
+                        onChangeCommitted={handleCommit} 
+                    
+                        marks={values.slice(0, 45 + 1).map((_, idx) => ({ value: idx }))}
+                        step={1}
+                        
 
-                        {/* Min thumb */}
-                        <div
-                            onMouseDown={(e) => {
-                                e.stopPropagation();
-                                const move = (ev) => handleDrag(ev, "min");
-                                const up = () => {
-                                    window.removeEventListener("mousemove", move);
-                                    window.removeEventListener("mouseup", up);
-                                    //props.HandleFilterChange([paramFieldType, props.filterName, [values[minIndex], values[maxIndex]]]);
-                                };
-                                window.addEventListener("mousemove", move);
-                                window.addEventListener("mouseup", up);
-                            }}
-                            onTouchStart={() => {
-                                const move = (ev) => handleDrag(ev, "min");
-                                const end = () => {
-                                    window.removeEventListener("touchmove", move);
-                                    window.removeEventListener("touchend", end);
-                                    //props.HandleFilterChange([paramFieldType, props.filterName, [values[minIndex], values[maxIndex]]]);
-                                };
-                                window.addEventListener("touchmove", move);
-                                window.addEventListener("touchend", end);
-                            }}
-                            onMouseUp={() => props.HandleFilterChange([paramFieldType, props.filterName, [values[minIndex], values[maxIndex]]])}
-                            className="absolute top-1/2 -translate-y-1/2 bg-violet-600 h-4 w-4 rounded-full z-20"
-                            style={{
-                                left: `calc(${(minIndex / (values.length - 1)) * 100}% - 8px)`
-                            }}
-                        />
-
-                        {/* Max thumb */}
-                        <div
-                            onMouseDown={(e) => {
-                                e.stopPropagation();
-                                const move = (ev) => handleDrag(ev, "max");
-                                const up = () => {
-                                    window.removeEventListener("mousemove", move);
-                                    window.removeEventListener("mouseup", up);    
-                                };
-                                window.addEventListener("mousemove", move);
-                                window.addEventListener("mouseup", up);
-                            }}
-                            onTouchStart={() => {
-                                const move = (ev) => handleDrag(ev, "max");
-                                const end = () => {
-                                    window.removeEventListener("touchmove", move);
-                                    window.removeEventListener("touchend", end);
-                                };
-                                window.addEventListener("touchmove", move);
-                                window.addEventListener("touchend", end);
-                            }}
-                            onMouseUp={() => props.HandleFilterChange([paramFieldType, props.filterName, [values[minIndex], values[maxIndex]]])}
-                            className="absolute top-1/2 -translate-y-1/2 bg-violet-600 h-4 w-4 rounded-full z-20"
-                            style={{
-                                left: `calc(${(maxIndex / (values.length - 1)) * 100}% - 8px)`
-                            }}
-                        />
-                    </div>
+                        sx={{
+                            boxSizing: 'border-box',
+                            width: '100%',
+                            color: '#8e51ff',
+                            height: 8,
+                            '& .MuiSlider-thumb': {
+                              width: 20,
+                              height: 20,
+                              backgroundColor: '#8e51ff',
+                            },
+                            '& .MuiSlider-track': {
+                              border: 'none',
+                            },
+                            '& .MuiSlider-rail': {
+                              opacity: 0.3,
+                              backgroundColor: '#8e51ff',
+                            },
+                          }}
+                    />
                 </div>
             </div>
         </div>
