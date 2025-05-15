@@ -3,6 +3,7 @@ import { observer } from "mobx-react-lite";
 import SidebarView from "../views/SidebarView.jsx";
 import transcriptScraperFunction from "./UploadTranscriptPresenter.jsx";
 import { useState } from "react";
+import { use } from 'react';
 
 const SidebarPresenter = observer(({ model }) => {
     
@@ -226,6 +227,11 @@ const SidebarPresenter = observer(({ model }) => {
 
         
     };
+
+    const [initialSliderValues, setInitialSliderValues] = useState([0.5,45]);
+    useEffect(()=>{
+            setInitialSliderValues([model.filterOptions.creditMin, model.filterOptions.creditMax]);
+    }, [])
     //==========================================================
 
     return (
