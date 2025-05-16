@@ -17,7 +17,7 @@ import { push } from "firebase/database";
 /**
  * Firebase configuration and initialization.
  * This code connects to Firebase, sets up authentication and allows to save and fetch courses as well as user data.
- * Data Synchronization and caching are also handled. 
+ * Data Synchronization and caching are also handled.
  * The firebase realtime database is used to store courses, user data, and reviews.
  * If you would like to reuse this project, make sure to configure rules as shown in firebas_rules.json.
  */
@@ -56,17 +56,22 @@ export async function connectToFirebase(model) {
 	// also save filters to local storage
 	//
 	const options = JSON.parse(localStorage.getItem("filterOptions"));
-	const search = localStorage.getItem("search");
 	if (options) {
 		model.setFilterOptions(options);
 	}
-	if(search){
-		model.setCurrentSearchText(search);
+	if (!model?.currentSearchText) {
+		const search = localStorage.getItem("search");
+		if (search) {
+			model.setCurrentSearchText(search);
+		}
 	}
 
 	// automaticaly save filter and search to local storage whenever they change
 	reaction(
-		() => ({ filterOptions: JSON.stringify(model.filterOptions), search: model.currentSearchText }),
+		() => ({
+			filterOptions: JSON.stringify(model.filterOptions),
+			search: model.currentSearchText,
+		}),
 		({ filterOptions, search }) => {
 			localStorage.setItem("filterOptions", filterOptions);
 			localStorage.setItem("search", search);
@@ -86,7 +91,6 @@ export async function connectToFirebase(model) {
 			model.setReady();
 		}
 	});
-	
 }
 
 // fetches all relevant information to create the model
@@ -112,7 +116,7 @@ async function firebaseToModel(model) {
 
 /**
  * If the userid, favourites or search changes, sync to firebase.
- * @param {object} model reactive model object 
+ * @param {object} model reactive model object
  */
 export function syncModelToFirebase(model) {
 	reaction(
@@ -141,9 +145,9 @@ export function syncModelToFirebase(model) {
 
 /**
  * Synchronizes the scroll position of the container to Firebase / local storage.
- * @param {object} model 
- * @param {*} containerRef 
- * @returns 
+ * @param {object} model
+ * @param {*} containerRef
+ * @returns
  */
 export function syncScrollPositionToFirebase(model, containerRef) {
 	if (!containerRef?.current) return;
@@ -228,7 +232,7 @@ async function fetchLastUpdatedTimestamp() {
 
 /**
  * Admin function to add a course to the database.
- * @param {Array} course 
+ * @param {Array} course
  */
 export async function addCourse(course) {
 	if (!auth.currentUser) throw new Error("User must be authenticated");
@@ -262,9 +266,9 @@ export async function fetchAllCourses() {
 
 /**
  * Admin function to upload departments and locations to the database.
- * @param {} departments 
- * @param {*} locations 
- * @returns 
+ * @param {} departments
+ * @param {*} locations
+ * @returns
  */
 export async function uploadDepartmentsAndLocations(departments, locations) {
 	if (departments) {
@@ -290,7 +294,7 @@ export async function uploadDepartmentsAndLocations(departments, locations) {
 
 /**
  * Fetches departments and locations from the database.
- * @param {object} model 
+ * @param {object} model
  * @returns {Array} Array of departments and locations
  */
 export async function fetchDepartmentsAndLocations(model) {
@@ -318,7 +322,7 @@ export async function fetchDepartmentsAndLocations(model) {
 
 /**
  * Try to restore the courses from IndexedDB.
- * @param {object} model 
+ * @param {object} model
  * @returns void
  * @throws Error if IndexedDB is not available or no courses are found
  */
@@ -396,9 +400,11 @@ export async function addReviewForCourse(courseCode, review) {
 	try {
 		const reviewsRef = ref(db, `reviews/${courseCode}/${review.uid}`);
 		await set(reviewsRef, review);
-		const updateCourseAvgRating = httpsCallable(functions, 'updateCourseAvgRating');
-   		await updateCourseAvgRating({ courseCode });
-		
+		const updateCourseAvgRating = httpsCallable(
+			functions,
+			"updateCourseAvgRating"
+		);
+		await updateCourseAvgRating({ courseCode });
 	} catch (error) {
 		console.error(
 			"Error when adding a course to firebase or updating the average:",
@@ -408,10 +414,10 @@ export async function addReviewForCourse(courseCode, review) {
 }
 
 /**
- * Adding a course triggers a firebase function to update the average rating of the course. 
+ * Adding a course triggers a firebase function to update the average rating of the course.
  * This function sets up a listener for the average rating of each course, to update the model onChange.
  * It also fetches the initial average ratings if the model is not initialized.
- * @param {object} model 
+ * @param {object} model
  */
 function startAverageRatingListener(model) {
 	const coursesRef = ref(db, "reviews");
@@ -458,9 +464,9 @@ function startAverageRatingListener(model) {
 }
 
 /**
- * Fetches reviews for a specific course. 
- * @param {string} courseCode 
- * @returns 
+ * Fetches reviews for a specific course.
+ * @param {string} courseCode
+ * @returns
  */
 export async function getReviewsForCourse(courseCode) {
 	const reviewsRef = ref(db, `reviews/${courseCode}`);
@@ -489,8 +495,8 @@ export async function addCommentToReview(courseCode, reviewUserId, commentObj) {
 
 /**
  * Get comments for a specific review
- * @param {string} courseCode 
- * @param {string} reviewUserId 
+ * @param {string} courseCode
+ * @param {string} reviewUserId
  * @returns {Promise<Array<Object>>} Array of comments: { id, userName, text, timestamp }
  */
 export async function getCommentsForReview(courseCode, reviewUserId) {
@@ -501,15 +507,15 @@ export async function getCommentsForReview(courseCode, reviewUserId) {
 	snapshot.forEach((childSnapshot) => {
 		comments.push({
 			id: childSnapshot.key,
-			...childSnapshot.val()
+			...childSnapshot.val(),
 		});
 	});
 	return comments;
 }
 /**
  * Delete a review for a course (by userId).
- * @param {string} courseCode 
- * @param {string} userId 
+ * @param {string} courseCode
+ * @param {string} userId
  */
 export async function deleteReview(courseCode, userId) {
 	const reviewRef = ref(db, `reviews/${courseCode}/${userId}`);
@@ -518,32 +524,39 @@ export async function deleteReview(courseCode, userId) {
 
 /**
  * Delete a specific comment from a review.
- * @param {string} courseCode 
+ * @param {string} courseCode
  * @param {string} reviewUserId - UID of the review's author
  * @param {string} commentId - ID of the comment (Firebase push key)
  */
 export async function deleteComment(courseCode, reviewUserId, commentId) {
-	const commentRef = ref(db, `reviews/${courseCode}/${reviewUserId}/comments/${commentId}`);
+	const commentRef = ref(
+		db,
+		`reviews/${courseCode}/${reviewUserId}/comments/${commentId}`
+	);
 	await set(commentRef, null);
 }
 // Delete a review or comment by its ID
-export const deleteReviewById = async (courseCode, commentId, parentId = null) => {
-  const db = getDatabase();
+export const deleteReviewById = async (
+	courseCode,
+	commentId,
+	parentId = null
+) => {
+	const db = getDatabase();
 
-  if (!parentId) {
-    // Top-level review
-    const reviewRef = ref(db, `reviews/${courseCode}/${commentId}`);
-    await remove(reviewRef);
-  } else {
-    // Nested reply - remove it from the parent's replies array
-    const parentRef = ref(db, `reviews/${courseCode}/${parentId}`);
-    const snapshot = await get(parentRef);
-    if (snapshot.exists()) {
-      const parentData = snapshot.val();
-      const replies = parentData.replies || [];
+	if (!parentId) {
+		// Top-level review
+		const reviewRef = ref(db, `reviews/${courseCode}/${commentId}`);
+		await remove(reviewRef);
+	} else {
+		// Nested reply - remove it from the parent's replies array
+		const parentRef = ref(db, `reviews/${courseCode}/${parentId}`);
+		const snapshot = await get(parentRef);
+		if (snapshot.exists()) {
+			const parentData = snapshot.val();
+			const replies = parentData.replies || [];
 
-      const updatedReplies = replies.filter((r) => r.id !== commentId);
-      await update(parentRef, { replies: updatedReplies });
-    }
-  }
+			const updatedReplies = replies.filter((r) => r.id !== commentId);
+			await update(parentRef, { replies: updatedReplies });
+		}
+	}
 };
