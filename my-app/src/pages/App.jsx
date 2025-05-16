@@ -20,7 +20,7 @@ function App({ model }) {
 		  localStorage.removeItem("filterOptions");
 		};
 	
-		window.addEventListener("unload", clearStorageOnUnload);
+		// 	window.addEventListener("unload", clearStorageOnUnload);
 	
 		return () => {
 		  window.removeEventListener("unload", clearStorageOnUnload);
