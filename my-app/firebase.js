@@ -55,28 +55,18 @@ export async function connectToFirebase(model) {
 	// setting missing
 	// also save filters to local storage
 	//
-	const options = JSON.parse(localStorage.getItem("filterOptions"));
-	if (options) {
-		model.setFilterOptions(options);
-	}
-	if (!model?.currentSearchText) {
-		const search = localStorage.getItem("search");
-		if (search) {
-			model.setCurrentSearchText(search);
-		}
+	// we dont restore for the expo...
+	//
+	// const options = JSON.parse(localStorage.getItem("filterOptions"));
+	// if (options) {
+	// 	model.setFilterOptions(options);
+	// }
+	const search = localStorage.getItem("search");
+	if (search) {
+		model.setCurrentSearchText(search);
 	}
 
 	// automaticaly save filter and search to local storage whenever they change
-	reaction(
-		() => ({
-			filterOptions: JSON.stringify(model.filterOptions),
-			search: model.currentSearchText,
-		}),
-		({ filterOptions, search }) => {
-			localStorage.setItem("filterOptions", filterOptions);
-			localStorage.setItem("search", search);
-		}
-	);
 	/**
 	 * Hook to start synchronization when user is authenticated.
 	 */
@@ -91,6 +81,16 @@ export async function connectToFirebase(model) {
 			model.setReady();
 		}
 	});
+	reaction(
+		() => ({
+			filterOptions: JSON.stringify(model.filterOptions),
+			search: model.currentSearchText,
+		}),
+		({ filterOptions, search }) => {
+			localStorage.setItem("filterOptions", filterOptions);
+			localStorage.setItem("search", search);
+		}
+	);
 }
 
 // fetches all relevant information to create the model
@@ -104,8 +104,8 @@ async function firebaseToModel(model) {
 		await runTransaction(userRef, (currentData) => {
 			if (currentData) {
 				if (data?.favourites) model.setFavourite(data.favourites);
-				if (data?.currentSearchText)
-					model.setCurrentSearchText(data.currentSearchText);
+				// if (data?.currentSearchText)
+				// 	model.setCurrentSearchText(data.currentSearchText);
 				// Add other fields as needed
 			}
 			return currentData; // Return the current data to avoid overwriting
@@ -123,7 +123,7 @@ export function syncModelToFirebase(model) {
 		() => ({
 			userId: model?.user.uid,
 			favourites: toJS(model.favourites),
-			currentSearchText: toJS(model.currentSearchText),
+			//currentSearchText: toJS(model.currentSearchText),
 		}),
 		async ({ userId, favourites, currentSearchText }) => {
 			if (!userId) return;
@@ -134,7 +134,7 @@ export function syncModelToFirebase(model) {
 				return {
 					...currentData,
 					favourites,
-					currentSearchText,
+					//currentSearchText,
 				};
 			}).catch((error) => {
 				console.error("Error syncing model to Firebase:", error);

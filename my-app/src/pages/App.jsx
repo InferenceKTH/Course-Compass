@@ -15,18 +15,6 @@ import { slide as Menu } from "react-burger-menu";
 function App({ model }) {
 	const [sidebarIsOpen, setSidebarIsOpen] = useState(model.sidebarIsOpen);
 
-	useEffect(() => {
-		const clearStorageOnUnload = () => {
-		  localStorage.removeItem("filterOptions");
-		};
-	
-		// 	window.addEventListener("unload", clearStorageOnUnload);
-	
-		return () => {
-		  window.removeEventListener("unload", clearStorageOnUnload);
-		};
-	  }, []);
-	
 	useState(() => {
 		if (window.innerWidth < 700) {
 			setSidebarIsOpen(false);
