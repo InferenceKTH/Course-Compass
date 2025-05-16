@@ -44,4 +44,4 @@ createRoot(document.getElementById("root")).render(
   <RouterProvider router={makeRouter(reactiveModel)} />
 );
 // give user access for debugging purpose
-window.myModel = reactiveModel;
+//window.myModel = reactiveModel;
