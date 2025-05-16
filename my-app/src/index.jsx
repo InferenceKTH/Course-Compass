@@ -7,8 +7,6 @@ import App from "./pages/App.jsx";
 import "./styles.css";
 
 import SharedView from "./pages/SharedView.jsx";
-import { JsonToDatabase } from "./presenters/Tests/JsonToDatabase";
-import { AllCoursesPresenter } from "./presenters/Tests/AllCoursesPresenter.jsx";
 
 
 configure({ enforceActions: "never", reactionScheduler: (f) => setTimeout(f, 0),});
